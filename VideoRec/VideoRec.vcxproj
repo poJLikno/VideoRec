@@ -116,6 +116,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,16 +137,27 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DoubleBuffer\DoubleBuffer.cpp" />
     <ClCompile Include="DoubleBuffer\FormatTransform.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="IntegralTimer\CPUCounter\CPUCounter.cpp" />
+    <ClCompile Include="IntegralTimer\IntegralTimer.cpp" />
+    <ClCompile Include="ScreenCapture\ScreenCapture.cpp" />
+    <ClCompile Include="VideoWrite\FileMP4.cpp" />
+    <ClCompile Include="VideoWrite\VideoWrite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DoubleBuffer\DoubleBuffer.h" />
     <ClInclude Include="DoubleBuffer\FormatTransform.h" />
+    <ClInclude Include="IntegralTimer\CPUCounter\CPUCounter.h" />
+    <ClInclude Include="IntegralTimer\IntegralTimer.h" />
+    <ClInclude Include="ScreenCapture\ScreenCapture.h" />
+    <ClInclude Include="VideoWrite\FileMP4.h" />
+    <ClInclude Include="VideoWrite\VideoWrite.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

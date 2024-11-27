@@ -17,7 +17,7 @@ private:
     const int _src_buffer_linesize;
 
 public:
-    FormatTransform(uint8_t **src_buffer, const int &src_width, const int &src_height, const int &dst_width, const int &dst_height);
+    FormatTransform(uint8_t *src_buffer, const int &width, const int &height);
     ~FormatTransform();
 
     void Transform(AVFrame *frame);
