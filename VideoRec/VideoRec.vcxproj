@@ -167,6 +167,9 @@
     <ClInclude Include="VideoRecorder\FileMP4\FileMP4.h" />
     <ClInclude Include="VideoRecorder\VideoRecorder.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="gpu_prog.cl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
