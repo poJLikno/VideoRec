@@ -16,16 +16,22 @@ FileMP4::FileMP4(
 
     /* Stream configuration */
     _stream = avformat_new_stream(_format_context, NULL);
-    if (_stream = 0)
+    if (_stream == 0)
     {
         throw std::string("Couldn't create new stream!");
     }
 
     /* Codec configuration */
-    _codec = avcodec_find_encoder_by_name("mpeg4");
+    
+    //_codec = avcodec_find_encoder_by_name("mpeg4");
+    //_codec = avcodec_find_encoder(AV_CODEC_ID_AV1);/* doesn't work */
+
+    _codec = avcodec_find_encoder_by_name("h264_d3d11va2");
+    
+    //_codec = avcodec_find_encoder(AV_CODEC_ID_H264);
+    //_codec = avcodec_find_encoder(AV_CODEC_ID_MPEG4);
     if (_codec == 0)
     {
-        //if ((_codec = avcodec_find_encoder(AV_CODEC_ID_H264)) == 0) {
         throw std::string("Couldn't set codec!");
     }
 
@@ -37,12 +43,8 @@ FileMP4::FileMP4(
 
     /* Set preset for codec */
     if (_codec->id == AV_CODEC_ID_H264) {
-        //if (av_opt_set(codec_context->priv_data, "preset", "slow", 0)) {// zero on success
-        //	fprintf(stderr, "could not set options\n");
-        //	exit(1);
-        //}
         av_opt_set(_codec_context->priv_data, "preset", "fast", 0);
-        av_opt_set(_codec_context->priv_data, "crf", "20", 0);
+        //av_opt_set(_codec_context->priv_data, "crf", "20", 0);
     }
 
     /* Configure codec framerate and fps */
@@ -53,8 +55,10 @@ FileMP4::FileMP4(
         //av_opt_set(_codec_context->priv_data, "preset", "slow", 0);
 
         _codec_context->thread_count = 1;
-        _codec_context->bit_rate = 400000;
-        /* resolution must be a multiple of two */
+        _codec_context->bit_rate = 7130317;/* !!! */
+        //_codec_context->bit_rate = 400000;
+
+        /* "resolution must be a multiple of two" ??? */
         _codec_context->width = width;
         _codec_context->height = height;
         _codec_context->time_base = AVRational{ 1, fps * 1000 };
@@ -66,7 +70,9 @@ FileMP4::FileMP4(
          * will always be I frame irrespective to gop_size
          */
         _codec_context->gop_size = 10;
+        //_codec_context->gop_size = 1;/* !!! */
         _codec_context->max_b_frames = 1;
+        //_codec_context->max_b_frames = 0;/* !!! */
         _codec_context->pix_fmt = AV_PIX_FMT_YUV420P;
     }
     _stream->time_base = _codec_context->time_base;
@@ -112,16 +118,12 @@ FileMP4::FileMP4(
 
 FileMP4::~FileMP4()
 {
-    /* Flush the encoder & Flush the rest of the packets */
-    _frame_duration = 0ll;
-    WriteFrame(nullptr);
+    if (!_file_is_closed)
+    {
+        CloseFile();
+    }
 
-    /* Write file ending */
-    av_write_trailer(_format_context);
-
-    /* Free frame buffer & packet */
-    /*av_frame_free(&_frame);
-    _frame = nullptr;*/
+    /* Free packet buffer */
     av_packet_free(&_packet);
     _packet = nullptr;
 
@@ -145,7 +147,7 @@ void FileMP4::WriteFrame(AVFrame *frame)
     /* Set frame time stamp */
     if (frame)
     {
-        frame->pts = _frame_number++ * _frame_duration;
+        frame->pts = _frame_number * _frame_duration;
     }
 
     /* Send frame */
@@ -159,6 +161,8 @@ void FileMP4::WriteFrame(AVFrame *frame)
     do
     {
         result = avcodec_receive_packet(_codec_context, _packet);
+        _packet->pts = _frame_number * _frame_duration;
+        _packet->dts = 0;
         _packet->duration = _frame_duration;
 
         /* Write frame */
@@ -166,7 +170,9 @@ void FileMP4::WriteFrame(AVFrame *frame)
         av_packet_unref(_packet);
     } while (result >= 0);
 
-    //++_frame_number;
+    /* Increace frame number */
+    ++_frame_number;
+
     if (result == AVERROR(EAGAIN) || result == AVERROR_EOF)
     {
         return;
@@ -178,4 +184,16 @@ void FileMP4::WriteFrame(AVFrame *frame)
     }
 
     /* Increase frame number */
+}
+
+void FileMP4::CloseFile()
+{
+    /* Flush the encoder & Flush the rest of the packets */
+    _frame_duration = 0ll;
+    WriteFrame(nullptr);
+
+    /* Write file ending */
+    av_write_trailer(_format_context);
+
+    _file_is_closed = true;
 }

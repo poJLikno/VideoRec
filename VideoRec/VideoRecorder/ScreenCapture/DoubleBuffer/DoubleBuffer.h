@@ -15,7 +15,8 @@ private:
     bool _has_new_frame = false;
 
 public:
-    DoubleBuffer(uint8_t *src_buffer, const int &width, const int &height);
+    DoubleBuffer(uint8_t *src_buffer, const int &src_width, const int &src_height, const int &dst_width, const int &dst_height);
+    DoubleBuffer(const DoubleBuffer &) = delete;
     ~DoubleBuffer();
 
     void LockFrame();

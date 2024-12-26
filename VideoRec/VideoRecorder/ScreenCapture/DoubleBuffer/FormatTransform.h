@@ -16,8 +16,11 @@ private:
     uint8_t *_src[4] = { nullptr };
     const int _src_buffer_linesize;
 
+    int _src_height = 0;
+
 public:
-    FormatTransform(uint8_t *src_buffer, const int &width, const int &height);
+    FormatTransform(uint8_t *src_buffer, const int &src_width, const int &src_height, const int &dst_width, const int &dst_height);
+    FormatTransform(const FormatTransform &) = delete;
     ~FormatTransform();
 
     void Transform(AVFrame *frame);

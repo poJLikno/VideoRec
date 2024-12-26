@@ -24,11 +24,15 @@ private:
     long long _frame_duration = 0ll;
     long long _frame_number = 0ll;
 
+    bool _file_is_closed = false;
+
 public:
     FileMP4(const char *file_name, const uint16_t &fps, const uint32_t &width, const uint32_t &height);
+    FileMP4(const FileMP4 &) = delete;
     ~FileMP4();
 
     void WriteFrame(AVFrame *frame);
+    void CloseFile();
 };
 
 #endif /* FILE_MP4_H_ */

@@ -18,48 +18,51 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DoubleBuffer\DoubleBuffer.cpp">
+    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DoubleBuffer\FormatTransform.cpp">
+    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\FormatTransform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VideoWrite\VideoWrite.cpp">
+    <ClCompile Include="VideoRecorder\FileMP4\FileMP4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VideoWrite\FileMP4.cpp">
+    <ClCompile Include="VideoRecorder\ScreenCapture\ScreenCapture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ScreenCapture\ScreenCapture.cpp">
+    <ClCompile Include="VideoRecorder\StableTimer\StableTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IntegralTimer\IntegralTimer.cpp">
+    <ClCompile Include="VideoRecorder\StableTimer\CPUCounter\CPUCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IntegralTimer\CPUCounter\CPUCounter.cpp">
+    <ClCompile Include="VideoRecorder\VideoRecorder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DoubleBuffer\DoubleBuffer.h">
+    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DoubleBuffer\FormatTransform.h">
+    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\FormatTransform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VideoWrite\VideoWrite.h">
+    <ClInclude Include="VideoRecorder\FileMP4\FileMP4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VideoWrite\FileMP4.h">
+    <ClInclude Include="VideoRecorder\ScreenCapture\ScreenCapture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ScreenCapture\ScreenCapture.h">
+    <ClInclude Include="VideoRecorder\StableTimer\CPUCounter\CPUCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IntegralTimer\CPUCounter\CPUCounter.h">
+    <ClInclude Include="VideoRecorder\StableTimer\StableTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IntegralTimer\IntegralTimer.h">
+    <ClInclude Include="VideoRecorder\VideoRecorder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SmtObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

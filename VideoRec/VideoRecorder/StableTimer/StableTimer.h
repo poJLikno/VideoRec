@@ -1,28 +1,22 @@
-#ifndef INTEGRAL_TIMER_H_
-#define INTEGRAL_TIMER_H_
+#ifndef STABLE_TIMER_H_
+#define STABLE_TIMER_H_
 
 #include <stdint.h>
 #include <chrono>
 #include <thread>
 
+#include "../../SmtObj.h"
+
 #include "CPUCounter/CPUCounter.h"
 
-class PIDCoeffs
-{
-public:
-    long double p = 0.0l;
-    long double i = 0.0l;
-    long double d = 0.0l;
-};
-
-class IntegralTimer
+class StableTimer
 {
 private:
     /* CPU Counter */
     CPUCounter _counter = CPUCounter();
 
     /* Loop thread */
-    std::thread *_timer_loop = nullptr;
+    SmtObj<std::thread> _timer_loop;
     bool _run_flag = false;
 
     /* Input value */
@@ -31,7 +25,7 @@ private:
     void *_action_parameters = nullptr;
 
     /* Timepoints */
-    CPUCounter::Ticks _dst_timepoint = 0.0l;
+    CPUCounter::Ticks _dst_timepoint = 0ll;
     CPUCounter::Ticks _check_period_start_timepoint = 0.0l;
 
     /* Loop periods */
@@ -40,14 +34,19 @@ private:
     long double _loop_period_ctrl = 0.0l;
 
     /* PID - loop methods */
-    static void _TimerLoop(IntegralTimer *integral_timer);
+    static void _TimerLoop(StableTimer *integral_timer);
 
 public:
-    IntegralTimer(const uint16_t &dst_fps, void (*function)(void *) = nullptr, void *func_parameters = nullptr);
-    ~IntegralTimer();
+    StableTimer(const uint16_t &dst_fps, void (*function)(void *) = nullptr, void *func_parameters = nullptr);
+    StableTimer(const StableTimer &) = delete;
+    ~StableTimer();
 
     void Start();
     void Stop();
+
+    const bool &IsRunning();
+
+    //void SetFps(const uint16_t &fps);
 };
 
-#endif /* INTEGRAL_TIMER_H_ */
+#endif /* STABLE_TIMER_H_ */

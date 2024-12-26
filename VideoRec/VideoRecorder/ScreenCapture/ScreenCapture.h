@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <windows.h>
 
+#include "DoubleBuffer/DoubleBuffer.h"
+
 class ScreenCapture
 {
 private:
@@ -21,17 +23,19 @@ private:
     int _dst_width = 0;
     int _dst_height = 0;
 
+    DoubleBuffer *_frames_buffer = nullptr;
 
 public:
     ScreenCapture(const char *window_name, const int &dst_width, const int &dst_height);
+    ScreenCapture(const ScreenCapture &) = delete;
     ~ScreenCapture();
 
     void TakeShot();
 
-    int GetDstWidth();
-    int GetDstHeight();
+    const int &GetDstWidth();
+    const int &GetDstHeight();
 
-    uint8_t *GetScreenShotBuffer();
+    DoubleBuffer &FramesBuffer();
 };
 
 #endif /* SCREEN_CAPTURE_H_ */
