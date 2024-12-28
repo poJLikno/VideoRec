@@ -26,7 +26,7 @@ private:
 
     /* Timepoints */
     CPUCounter::Ticks _dst_timepoint = 0ll;
-    CPUCounter::Ticks _check_period_start_timepoint = 0.0l;
+    CPUCounter::Ticks _check_period_start_timepoint = 0ll;
 
     /* Loop periods */
     long double _real_loop_period = 0.0l;
