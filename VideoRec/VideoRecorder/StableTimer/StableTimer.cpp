@@ -73,7 +73,7 @@ StableTimer::StableTimer(const uint16_t &dst_fps, void (*function)(void *), void
 
 StableTimer::~StableTimer()
 {
-    if (_timer_loop.Ptr())
+    if (_timer_loop)
     {
         Stop();
     }
@@ -81,7 +81,7 @@ StableTimer::~StableTimer()
 
 void StableTimer::Start()
 {
-    if (_timer_loop.Ptr() || _run_flag == true)
+    if (_timer_loop || _run_flag == true)
     {
         throw std::string("StableTimer loop has been already started!");
     }
@@ -93,16 +93,16 @@ void StableTimer::Start()
 
     /* Create loop thread */
     _timer_loop = new std::thread(_TimerLoop, this);
-    _timer_loop.Ref().detach();
+    _timer_loop->detach();
 }
 
 void StableTimer::Stop()
 {
-    if (!_timer_loop.Ptr() && _run_flag == false)
+    if (!_timer_loop && _run_flag == false)
     {
         throw std::string("StableTimer are not running now!");
     }
-    else if (_timer_loop.Ptr() && _run_flag == true)
+    else if (_timer_loop && _run_flag == true)
     {
         _run_flag = false;
         while (!_run_flag);
@@ -119,7 +119,7 @@ const bool &StableTimer::IsRunning()
 
 /*void StableTimer::SetFps(const uint16_t &fps)
 {
-    if (_timer_loop.Ptr())
+    if (_timer_loop)
     {
         Stop();
     }
