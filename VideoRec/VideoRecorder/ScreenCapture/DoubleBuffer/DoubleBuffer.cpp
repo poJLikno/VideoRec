@@ -26,6 +26,9 @@ DoubleBuffer::DoubleBuffer(
 
         /* Set frame parameters */
         _frames[i]->format = AV_PIX_FMT_YUV420P;//_codec_context->pix_fmt;
+        //_frames[i]->format = AV_PIX_FMT_YUV420P16LE;
+
+
         _frames[i]->width = dst_width;//_codec_context->width;
         _frames[i]->height = dst_height;//_codec_context->height;
 
@@ -38,6 +41,12 @@ DoubleBuffer::DoubleBuffer(
         {
             throw std::string("Couldn't make frame writable!");
         }
+
+
+        /* Need for manual yuv convertation */
+        _old_uv_linesize = _frames[i]->linesize[1];
+        //_frames[i]->linesize[1] = _frames[i]->width / 2;
+        //_frames[i]->linesize[2] = _frames[i]->linesize[1];
     }
 
     
@@ -47,9 +56,14 @@ DoubleBuffer::~DoubleBuffer()
 {
     if (_frames)
     {
+
         /* Free frames*/
         for (uint8_t i = 0u; i < 2u; ++i)
         {
+            /* Need for manual yuv convertation */
+            _frames[i]->linesize[1] = _old_uv_linesize;
+            _frames[i]->linesize[2] = _frames[i]->linesize[1];
+
             av_frame_free(&_frames[i]);
             _frames[i] = nullptr;
         }

@@ -65,27 +65,6 @@
     <ClInclude Include="SmtObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenCL\include\CL\cl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenCL\include\CL\cl.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenCL\include\CL\cl_ext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenCL\include\CL\cl_gl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenCL\include\CL\cl_gl_ext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenCL\include\CL\cl_platform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenCL\include\CL\opencl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="gpu_prog.cl" />

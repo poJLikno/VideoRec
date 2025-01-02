@@ -5,7 +5,8 @@
 
 #include "VideoRecorder/VideoRecorder.h"
 
-/*#pragma comment(lib, "avcodec.lib")
+/*
+#pragma comment(lib, "avcodec.lib")
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "avdevice.lib")
 #pragma comment(lib, "avfilter.lib")
@@ -13,13 +14,19 @@
 #pragma comment(lib, "swresample.lib")
 #pragma comment(lib, "swscale.lib")
 
-#pragma comment(lib, "OpenCL.lib")*/
+#pragma comment(lib, "OpenCL.lib")
+*/
 
 #include <fstream>
+
+//#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #include <CL/opencl.h>
 
 int old_main(int argc, const char **argv)
 {
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
+
     try
     {
         std::cout << "Aloha!\n";
@@ -39,7 +46,7 @@ int old_main(int argc, const char **argv)
     return 0;
 }
 
-void ShowOpenCLDevices()
+static void ShowOpenCLDevices()
 {
     cl_int ret = 0;
 
@@ -162,7 +169,8 @@ int main(int argc, const char **argv)
         }
 
         /* создаем команду */
-        command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
+        //command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
+        command_queue = clCreateCommandQueueWithProperties(context, device_id, nullptr, &ret);
         if (ret)
         {
             throw std::string("Error #4!");
@@ -221,13 +229,15 @@ int main(int argc, const char **argv)
         }
 
         /* Create buffer */
-        cl_mem memobj = nullptr;
-
-        int memLength = 10;
-        cl_int *mem = new cl_int[memLength] { 0 };
+        int memLength = 16;
+        cl_int *mem = new cl_int[memLength]
+        { 0, 0, 255, 0,
+          0, 255, 0, 0,
+          255, 0, 0, 0,
+          255, 255, 255, 0 };/* BGR0 */
 
         /* создать буфер */
-        memobj = clCreateBuffer(context, CL_MEM_READ_WRITE, memLength * sizeof(cl_int), NULL, &ret);
+        cl_mem memobj = clCreateBuffer(context, CL_MEM_READ_WRITE, memLength * sizeof(cl_int), NULL, &ret);
         if (ret)
         {
             throw std::string("Error #8!");
@@ -248,24 +258,32 @@ int main(int argc, const char **argv)
         }
 
         /* Run GPU code */
-        size_t global_work_size = 10ull;
+        size_t global_work_size = 16ull;
 
         /* выполнить кернел */
         ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, (const size_t *) &global_work_size, NULL, 0, NULL, NULL);
 
         /* считать данные из буфера */
-        ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0, memLength * sizeof(float), mem, 0, NULL, NULL);
+        ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0, memLength * sizeof(cl_int), mem, 0, NULL, NULL);
 
-        for (int i = 0; i < 10; ++i)
+        for (int i = 0; i < memLength; ++i)
         {
             std::cout << mem[i] << "\n";
         }
 
         /* Clean up */
         delete[] mem;
+        mem = nullptr;
 
         delete[] gpu_code;
         gpu_code = nullptr;
+
+        clReleaseMemObject(memobj);
+        clReleaseKernel(kernel);
+        clReleaseProgram(program);
+        clReleaseCommandQueue(command_queue);
+        clReleaseContext(context);
+        clReleaseDevice(device_id);
     }
     catch (const std::string &error)
     {

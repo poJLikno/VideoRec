@@ -110,13 +110,17 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\Users\poJLikno\Documents\GitRepos\VideoRec\VideoRec\OpenCL\include;C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\include\;C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\poJLikno\Documents\GitRepos\VideoRec\VideoRec\OpenCL\lib;C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\lib;C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,15 +133,19 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\Users\poJLikno\Documents\GitRepos\VideoRec\VideoRec\OpenCL\include;C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\include\;C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\poJLikno\Documents\GitRepos\VideoRec\VideoRec\OpenCL\lib;C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\lib;C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -151,13 +159,6 @@
     <ClCompile Include="VideoRecorder\VideoRecorder.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="OpenCL\include\CL\cl.h" />
-    <ClInclude Include="OpenCL\include\CL\cl.hpp" />
-    <ClInclude Include="OpenCL\include\CL\cl_ext.h" />
-    <ClInclude Include="OpenCL\include\CL\cl_gl.h" />
-    <ClInclude Include="OpenCL\include\CL\cl_gl_ext.h" />
-    <ClInclude Include="OpenCL\include\CL\cl_platform.h" />
-    <ClInclude Include="OpenCL\include\CL\opencl.h" />
     <ClInclude Include="SmtObj.h" />
     <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.h" />
     <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\FormatTransform.h" />
