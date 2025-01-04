@@ -150,8 +150,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.cpp" />
-    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\FormatTransform.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.cpp" />
     <ClCompile Include="VideoRecorder\StableTimer\CPUCounter\CPUCounter.cpp" />
     <ClCompile Include="VideoRecorder\StableTimer\StableTimer.cpp" />
     <ClCompile Include="VideoRecorder\ScreenCapture\ScreenCapture.cpp" />
@@ -161,7 +161,7 @@
   <ItemGroup>
     <ClInclude Include="SmtObj.h" />
     <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.h" />
-    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\FormatTransform.h" />
+    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.h" />
     <ClInclude Include="VideoRecorder\StableTimer\CPUCounter\CPUCounter.h" />
     <ClInclude Include="VideoRecorder\StableTimer\StableTimer.h" />
     <ClInclude Include="VideoRecorder\ScreenCapture\ScreenCapture.h" />
@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="gpu_prog.cl" />
+    <None Include="gpu_test.cl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

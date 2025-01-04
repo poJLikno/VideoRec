@@ -1,16 +1,22 @@
 #ifndef DOUBLE_BUFFER_H_
 #define DOUBLE_BUFFER_H_
 
-#include "FormatTransform.h"
+#include "HWAccelCL.h"
+
+extern "C"
+{
+#include <libswresample/swresample.h>
+}
 
 class DoubleBuffer
 {
 private:
     AVFrame **_frames = nullptr;
+    int _old_y_linesize = 0;
     int _old_uv_linesize = 0;
     uint8_t _curr_safe_frame_idx = 0;
 
-    FormatTransform _fmt_transform;
+    HWAccelCL _hw_accel_cl;
 
     bool _frame_is_locked = false;
     bool _has_new_frame = false;

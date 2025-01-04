@@ -86,9 +86,14 @@ public:
         return _ptr[index];
     }
 
+    operator T *() noexcept
+    {
+        return get();
+    }
+
     operator const T *() const noexcept
     {
-        return _ptr;
+        return get();
     }
 };
 
@@ -171,9 +176,14 @@ public:
         return _ptr[index];
     }
 
+    operator T *() noexcept
+    {
+        return get();
+    }
+
     operator const T *() const noexcept
     {
-        return _ptr;
+        return get();
     }
 };
 

@@ -19,10 +19,7 @@
 
 #include <fstream>
 
-//#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
-#include <CL/opencl.h>
-
-int old_main(int argc, const char **argv)
+int main(int argc, const char **argv)
 {
     SetConsoleCP(65001);
     SetConsoleOutputCP(65001);
@@ -33,9 +30,14 @@ int old_main(int argc, const char **argv)
 
         VideoRecorder rec;
         rec.SetNewSource(nullptr, 1920, 1080);
+        //rec.SetNewSource(nullptr, 1440, 900);
+        //rec.SetNewSource(nullptr, 800, 600);
+        //rec.SetNewSource(nullptr, 2880, 1800);
         rec.StartRecording("test_file.mp4", 60);
         while (GetAsyncKeyState('L') >= 0);
         rec.StopRecording();
+
+        std::cout << "Bye!\n";
 
     }
     catch (const std::string &error)
@@ -115,6 +117,8 @@ static void ShowOpenCLDevices()
             }
             std::cout << "\t[" << i << "] " << (char *)device_name << "\n";/* Output device name */
             memset(device_name, 0, sizeof(device_name));
+
+            clReleaseDevice(device_ids_list[j]);
         }
 
         delete[] device_ids_list;
@@ -129,7 +133,7 @@ static void ShowOpenCLDevices()
     platform_ids_list = nullptr;
 }
 
-int main(int argc, const char **argv)
+int main_old(int argc, const char **argv)
 {
     SetConsoleCP(65001);
     SetConsoleOutputCP(65001);
@@ -250,6 +254,8 @@ int main(int argc, const char **argv)
             throw std::string("Error #9!");
         }
 
+        clFinish(command_queue);
+
         /* устанавливаем параметр */
         ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&memobj);
         if (ret)
@@ -262,6 +268,8 @@ int main(int argc, const char **argv)
 
         /* выполнить кернел */
         ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, (const size_t *) &global_work_size, NULL, 0, NULL, NULL);
+
+        clFinish(command_queue);
 
         /* считать данные из буфера */
         ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0, memLength * sizeof(cl_int), mem, 0, NULL, NULL);
