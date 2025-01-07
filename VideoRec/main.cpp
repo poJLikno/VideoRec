@@ -81,7 +81,7 @@ static void ShowOpenCLDevices()
     /* Get names of platforms */
     cl_platform_info platform_name[32] = { 0 };
     cl_device_info device_name[32] = { 0 };
-    for (int i = 0; i < platforms_num; ++i)
+    for (unsigned int i = 0; i < platforms_num; ++i)
     {
         if (clGetPlatformInfo(platform_ids_list[i], CL_PLATFORM_NAME, sizeof(platform_name), platform_name, nullptr))
         {
@@ -109,7 +109,7 @@ static void ShowOpenCLDevices()
         }
 
         /* Get names of devices */
-        for (int j = 0; j < devices_num; ++j)
+        for (unsigned int j = 0; j < devices_num; ++j)
         {
             if (clGetDeviceInfo(device_ids_list[j], CL_DEVICE_NAME, sizeof(device_name), device_name, nullptr))
             {

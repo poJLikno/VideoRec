@@ -56,13 +56,10 @@ void StableTimer::_TimerLoop(StableTimer *stable_timer)
                 stable_timer->_dst_timepoint = stable_timer->_counter.Now() + CPUCounter::TimeToTicks(stable_timer->_loop_period_ctrl, CPUCounter::Scale::Microseconds);
             }
         }
-
-        //stable_timer->_run_flag = true;
     }
     catch (const std::string &error)/* Exeption termintion */
     {
         std::cout << "!!!-- " << error << " --!!!\n";
-        //stable_timer->_run_flag = false;
         stable_timer->Stop();
     }
 }
@@ -94,7 +91,6 @@ void StableTimer::Start()
 
     /* Create loop thread */
     _timer_loop = new std::thread(_TimerLoop, this);
-    //_timer_loop->detach();
 }
 
 void StableTimer::Stop()
@@ -103,8 +99,6 @@ void StableTimer::Stop()
     {
         _run_flag = false;
         _timer_loop->join();
-        //while (!_run_flag);
-        //_run_flag = false;
     }
 
     _timer_loop.reset();

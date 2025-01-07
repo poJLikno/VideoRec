@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <string>
-#include <iostream>
 
 size_t HWAccelCL::_GetKernelCode(const char *file_name, SmtObj<char[]> *kernel_code)
 {
@@ -66,6 +65,10 @@ HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &
 
     /* Get kernel code */
     size_t code_length = _GetKernelCode(file_name, &_kernel_code);
+    if (!code_length)
+    {
+        throw std::string("Couldn't read the kernel code!");
+    }
     /* Check file output */
     /*std::cout << _kernel_code << "\n";*/
 
@@ -159,16 +162,31 @@ HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &
 HWAccelCL::~HWAccelCL()
 {
     /* Clean up */
+    _src_rgb = nullptr;
+
     clReleaseMemObject(_cl_src_rgb);
     clReleaseMemObject(_cl_dst_y);
     clReleaseMemObject(_cl_dst_u);
     clReleaseMemObject(_cl_dst_v);
+
+    _cl_src_rgb = nullptr;
+    _cl_dst_y = nullptr;
+    _cl_dst_u = nullptr;
+    _cl_dst_v = nullptr;
 
     clReleaseKernel(_kernel);
     clReleaseProgram(_program);
     clReleaseCommandQueue(_command_queue);
     clReleaseContext(_context);
     clReleaseDevice(_device_id);
+
+    _kernel = nullptr;
+    _program = nullptr;
+    _command_queue = nullptr;
+    _context = nullptr;
+    _device_id = nullptr;
+
+    _platform_id = nullptr;
 }
 
 void HWAccelCL::Run(uint8_t *y, uint8_t *u, uint8_t *v)

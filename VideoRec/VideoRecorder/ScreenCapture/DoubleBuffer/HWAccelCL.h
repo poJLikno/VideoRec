@@ -4,7 +4,10 @@
 #include <stdint.h>
 
 //#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
+extern "C"
+{
 #include <CL/opencl.h>
+}
 
 #include "../../../SmtObj.h"
 

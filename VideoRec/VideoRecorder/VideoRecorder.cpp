@@ -23,9 +23,12 @@ VideoRecorder::~VideoRecorder()
         _file->CloseFile();
     }
 
-    if (_screen_capture_timer->IsRunning())
+    if (_screen_capture_timer)
     {
-        _screen_capture_timer->Stop();
+        if (_screen_capture_timer->IsRunning())
+        {
+            _screen_capture_timer->Stop();
+        }
     }
 }
 

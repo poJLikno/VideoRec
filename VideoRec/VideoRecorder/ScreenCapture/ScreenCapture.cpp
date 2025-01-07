@@ -48,9 +48,7 @@ ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, cons
         _bitmap_info.biYPelsPerMeter = 0;
     }
 
-    /* Create frame buffer */
-    _buffer = new uint8_t[_src_width * _src_height * 4] { 0 };
-
+    /* Create bitmap */
     _bitmap_ctx = CreateCompatibleDC(_wnd_dev_ctx);
     //_bitmap = CreateCompatibleBitmap(_wnd_dev_ctx, _width, _height);
     if ((_bitmap = CreateDIBSection(_wnd_dev_ctx, (const BITMAPINFO *)&_bitmap_info, DIB_RGB_COLORS, (void **)&_buffer, nullptr, 0)) == NULL) {
@@ -65,23 +63,21 @@ ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, cons
 
 ScreenCapture::~ScreenCapture()
 {
-    /* Delete double buffer */
-    delete _frames_buffer;
-    _frames_buffer = nullptr;
-
-    _buffer = nullptr;/* GDI will release bitmap buffer */
-
     /* Release resources */
-    //GdiFlush();/* Flushes the calling thread's current batch *//* ??? */
+    GdiFlush();/* Flushes the calling thread's current batch *//* ??? */
+
     SelectObject(_bitmap_ctx, _old_obj);
     DeleteDC(_bitmap_ctx);
-    DeleteObject((HGDIOBJ)_bitmap);
+    DeleteObject((HGDIOBJ)_bitmap);/* Also release memory for buffer */
     ReleaseDC(_hwnd, _wnd_dev_ctx);
+
+    _buffer = nullptr;/* GDI will release bitmap buffer */
 }
 
 void ScreenCapture::TakeShot()
 {
     BitBlt(_bitmap_ctx, 0, 0, _src_width, _src_height, _wnd_dev_ctx, 0, 0, SRCCOPY);
+    GdiFlush();/* Flushes the calling thread's current batch *//* ??? */
     _frames_buffer->WriteFrame();
 }
 
