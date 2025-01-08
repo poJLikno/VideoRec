@@ -38,7 +38,7 @@ ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, cons
         _bitmap_info.biSize = sizeof(BITMAPINFOHEADER);
         _bitmap_info.biWidth = _src_width;
         _bitmap_info.biHeight = -(_src_height);/* Make top-down DIB (upper-left corner) */
-        _bitmap_info.biBitCount = 32u;
+        _bitmap_info.biBitCount = 24u;
         _bitmap_info.biSizeImage = _dst_width * _dst_height * 4;
         _bitmap_info.biPlanes = 1u;
         _bitmap_info.biCompression = BI_RGB;

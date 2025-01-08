@@ -44,12 +44,14 @@ void StableTimer::_TimerLoop(StableTimer *stable_timer)
                 std::cout << current_fps << " | min: " << min_fps << " | avg: " << avg_fps << " | max: " << max_fps << " | ";
                 if (fps_changes >= 0)
                 {
-                    std::cout << "+" << fps_changes << "\n";
+                    std::cout << "+" << fps_changes;// << "\n";
                 }
                 else
                 {
-                    std::cout << fps_changes << "\n";
+                    std::cout << fps_changes;// << "\n";
                 }
+
+                std::cout << " | val: " << stable_timer->_loop_period_ctrl << "\n";
                 *//**/
                 /* Fix loop period */
                 stable_timer->_loop_period_ctrl += stable_timer->_dst_loop_period - stable_timer->_real_loop_period;
