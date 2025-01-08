@@ -1,11 +1,21 @@
 #include "StableTimer.h"
 
-#include <iostream>/**/
+#include <iostream>
 
 void StableTimer::_TimerLoop(StableTimer *stable_timer)
 {
     try
     {
+        /**//*
+        double loop_num = 1;
+        double current_fps = 0;
+        double old_fps = 0;
+        double min_fps = 9999;
+        double max_fps = -9999;
+        double avg_fps = 0;
+        double fps_changes = 0;
+        *//**/
+
         while (stable_timer->_run_flag)
         {
             if (stable_timer->_counter.Now() > stable_timer->_dst_timepoint)
@@ -18,14 +28,6 @@ void StableTimer::_TimerLoop(StableTimer *stable_timer)
                 stable_timer->_real_loop_period = CPUCounter::TicksToTime(stable_timer->_counter.Now() - stable_timer->_check_period_start_timepoint, CPUCounter::Scale::Microseconds);
                 stable_timer->_check_period_start_timepoint = stable_timer->_counter.Now();
                 /**//*
-                static double loop_num = 1;
-                static double current_fps = 0;
-                static double old_fps = 0;
-                static double min_fps = 9999;
-                static double max_fps = -9999;
-                static double avg_fps = 0;
-                static double fps_changes = 0;
-
                 old_fps = current_fps;
                 current_fps = 1000000.0l / stable_timer->_real_loop_period;
                 if (loop_num == 150)
@@ -42,26 +44,28 @@ void StableTimer::_TimerLoop(StableTimer *stable_timer)
                 std::cout << current_fps << " | min: " << min_fps << " | avg: " << avg_fps << " | max: " << max_fps << " | ";
                 if (fps_changes >= 0)
                 {
-                    std::cout << "+" << fps_changes << "\n";
+                    std::cout << "+" << fps_changes;// << "\n";
                 }
                 else
                 {
-                    std::cout << fps_changes << "\n";
+                    std::cout << fps_changes;// << "\n";
                 }
+
+                std::cout << " | val: " << stable_timer->_loop_period_ctrl << "\n";
                 *//**/
                 /* Fix loop period */
                 stable_timer->_loop_period_ctrl += stable_timer->_dst_loop_period - stable_timer->_real_loop_period;
+                if (stable_timer->_loop_period_ctrl < 0.0l)
+                {
+                    stable_timer->_loop_period_ctrl = 0.0l;
+                }
                 stable_timer->_dst_timepoint = stable_timer->_counter.Now() + CPUCounter::TimeToTicks(stable_timer->_loop_period_ctrl, CPUCounter::Scale::Microseconds);
-
             }
         }
-
-        stable_timer->_run_flag = true;
     }
     catch (const std::string &error)/* Exeption termintion */
     {
         std::cout << "!!!-- " << error << " --!!!\n";
-        stable_timer->_run_flag = false;
         stable_timer->Stop();
     }
 }
@@ -93,23 +97,17 @@ void StableTimer::Start()
 
     /* Create loop thread */
     _timer_loop = new std::thread(_TimerLoop, this);
-    _timer_loop->detach();
 }
 
 void StableTimer::Stop()
 {
-    if (!_timer_loop && _run_flag == false)
-    {
-        throw std::string("StableTimer are not running now!");
-    }
-    else if (_timer_loop && _run_flag == true)
+    if (_timer_loop && _run_flag == true)
     {
         _run_flag = false;
-        while (!_run_flag);
-        _run_flag = false;
+        _timer_loop->join();
     }
 
-    _timer_loop = nullptr;/* maybe not need */
+    _timer_loop.reset();
 }
 
 const bool &StableTimer::IsRunning()

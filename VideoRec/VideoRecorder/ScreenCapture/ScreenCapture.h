@@ -23,7 +23,7 @@ private:
     int _dst_width = 0;
     int _dst_height = 0;
 
-    DoubleBuffer *_frames_buffer = nullptr;
+    SmtObj<DoubleBuffer> _frames_buffer;
 
 public:
     ScreenCapture(const char *window_name, const int &dst_width, const int &dst_height);

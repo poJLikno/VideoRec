@@ -110,13 +110,17 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\include\;C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\lib;C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,21 +133,25 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\include\;C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\lib;C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.cpp" />
-    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\FormatTransform.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.cpp" />
     <ClCompile Include="VideoRecorder\StableTimer\CPUCounter\CPUCounter.cpp" />
     <ClCompile Include="VideoRecorder\StableTimer\StableTimer.cpp" />
     <ClCompile Include="VideoRecorder\ScreenCapture\ScreenCapture.cpp" />
@@ -153,12 +161,16 @@
   <ItemGroup>
     <ClInclude Include="SmtObj.h" />
     <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.h" />
-    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\FormatTransform.h" />
+    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.h" />
     <ClInclude Include="VideoRecorder\StableTimer\CPUCounter\CPUCounter.h" />
     <ClInclude Include="VideoRecorder\StableTimer\StableTimer.h" />
     <ClInclude Include="VideoRecorder\ScreenCapture\ScreenCapture.h" />
     <ClInclude Include="VideoRecorder\FileMP4\FileMP4.h" />
     <ClInclude Include="VideoRecorder\VideoRecorder.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gpu_prog.cl" />
+    <None Include="gpu_test.cl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

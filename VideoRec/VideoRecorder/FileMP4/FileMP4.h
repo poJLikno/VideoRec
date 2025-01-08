@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 
-extern "C" {
+extern "C"
+{
 #include <libavcodec/avcodec.h>
 
 #include <libavutil/opt.h>

@@ -21,9 +21,6 @@
     <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\FormatTransform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="VideoRecorder\FileMP4\FileMP4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,12 +36,12 @@
     <ClCompile Include="VideoRecorder\VideoRecorder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\FormatTransform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VideoRecorder\FileMP4\FileMP4.h">
@@ -65,5 +62,11 @@
     <ClInclude Include="SmtObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gpu_prog.cl" />
   </ItemGroup>
 </Project>

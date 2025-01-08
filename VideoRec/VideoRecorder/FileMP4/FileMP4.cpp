@@ -26,9 +26,9 @@ FileMP4::FileMP4(
     //_codec = avcodec_find_encoder_by_name("mpeg4");
     //_codec = avcodec_find_encoder(AV_CODEC_ID_AV1);/* doesn't work */
 
-    _codec = avcodec_find_encoder_by_name("h264_d3d11va2");
+    //_codec = avcodec_find_encoder_by_name("h264_d3d12va");
     
-    //_codec = avcodec_find_encoder(AV_CODEC_ID_H264);
+    _codec = avcodec_find_encoder(AV_CODEC_ID_H264);
     //_codec = avcodec_find_encoder(AV_CODEC_ID_MPEG4);
     if (_codec == 0)
     {
