@@ -67,3 +67,22 @@ __kernel void image_resample(__global unsigned char* dst_y, __global unsigned ch
         dst_v[(y * dst_width / 2 + x) / 2] = ((112 * r + -94 * g + -18 * b) >> 8) + 128;
     }
 }
+
+__kernel void image_resample_no_resize(__global unsigned char* dst_y, __global unsigned char* dst_u, __global unsigned char* dst_v, int width, int height, __global unsigned char* src_rgb)
+{
+	unsigned long i = get_global_id(0);
+
+    unsigned long x = i % width;
+    unsigned long y = i / width;
+
+    unsigned char b = src_rgb[3 * (y * width + x)] * 219 / 255 + 16;
+    unsigned char g = src_rgb[3 * (y * width + x) + 1] * 219 / 255 + 16;
+    unsigned char r = src_rgb[3 * (y * width + x) + 2] * 219 / 255 + 16;
+
+    dst_y[y * width + x] = ((66 * r + 129 * g + 25 * b) >> 8);
+    if (!(x % 2) && !(y % 2))
+    {
+        dst_u[(y * width / 2 + x) / 2] = ((-38 * r + -74 * g + 112 * b) >> 8) + 128;
+        dst_v[(y * width / 2 + x) / 2] = ((112 * r + -94 * g + -18 * b) >> 8) + 128;
+    }
+}

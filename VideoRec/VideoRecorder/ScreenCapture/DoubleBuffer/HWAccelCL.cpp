@@ -87,7 +87,7 @@ HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &
     }
 
     /* Create the kernel */
-    _kernel = clCreateKernel(_program, kernel_name, &_result);
+    _kernel = clCreateKernel(_program, (dst_width == src_width && dst_height == src_height ? std::string(kernel_name + std::string("_no_resize")).c_str() : kernel_name), &_result);
     if (_result)
     {
         throw std::string("Couldn't create the kernel!");
@@ -147,15 +147,19 @@ HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &
     {
         throw std::string("Couldn't pass arg #5 to kernel!");
     }
-    _result = clSetKernelArg(_kernel, 6, sizeof(int), (void *)&_src_width);
-    if (_result)
+
+    if (dst_width != src_width || dst_height != src_height)
     {
-        throw std::string("Couldn't pass arg #6 to kernel!");
-    }
-    _result = clSetKernelArg(_kernel, 7, sizeof(int), (void *)&_src_height);
-    if (_result)
-    {
-        throw std::string("Couldn't pass arg #7 to kernel!");
+        _result = clSetKernelArg(_kernel, 6, sizeof(int), (void *)&_src_width);
+        if (_result)
+        {
+            throw std::string("Couldn't pass arg #6 to kernel!");
+        }
+        _result = clSetKernelArg(_kernel, 7, sizeof(int), (void *)&_src_height);
+        if (_result)
+        {
+            throw std::string("Couldn't pass arg #7 to kernel!");
+        }
     }
 }
 

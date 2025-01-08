@@ -55,6 +55,10 @@ void StableTimer::_TimerLoop(StableTimer *stable_timer)
                 *//**/
                 /* Fix loop period */
                 stable_timer->_loop_period_ctrl += stable_timer->_dst_loop_period - stable_timer->_real_loop_period;
+                if (stable_timer->_loop_period_ctrl < 0.0l)
+                {
+                    stable_timer->_loop_period_ctrl = 0.0l;
+                }
                 stable_timer->_dst_timepoint = stable_timer->_counter.Now() + CPUCounter::TimeToTicks(stable_timer->_loop_period_ctrl, CPUCounter::Scale::Microseconds);
             }
         }
