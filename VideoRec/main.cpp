@@ -32,7 +32,9 @@ int main(int argc, const char **argv)
         //rec.SetNewSource(nullptr, 1920, 1080);
         //rec.SetNewSource(nullptr, 1440, 900);
         //rec.SetNewSource(nullptr, 800, 600);
-        rec.SetNewSource(nullptr, 2880, 1800);
+        //rec.SetNewSource(nullptr, 2880, 1800);
+        rec.SetNewSource("Roblox");
+        //rec.SetNewSource(nullptr, 1606, 1204);
         rec.StartRecording("test_file.mp4", 60);
         while (GetAsyncKeyState('L') >= 0);
         rec.StopRecording();

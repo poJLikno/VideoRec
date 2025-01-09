@@ -26,7 +26,7 @@ private:
     SmtObj<DoubleBuffer> _frames_buffer;
 
 public:
-    ScreenCapture(const char *window_name, const int &dst_width, const int &dst_height);
+    ScreenCapture(const char *window_name, const int &dst_width = -1, const int &dst_height = -1);
     ScreenCapture(const ScreenCapture &) = delete;
     ~ScreenCapture();
 

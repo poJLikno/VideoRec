@@ -36,21 +36,21 @@ __kernel void image_resample(__global unsigned char* dst_y, __global unsigned ch
     float d3 = pix_dist_w * pix_dist_h;
     float d4 = (1 - pix_dist_w) * pix_dist_h;
 
-    unsigned char p1b = src_rgb[3 * (rel_h * src_width + rel_w)];
-    unsigned char p1g = src_rgb[3 * (rel_h * src_width + rel_w) + 1];
-    unsigned char p1r = src_rgb[3 * (rel_h * src_width + rel_w) + 2];
+    unsigned char p1b = src_rgb[4 * (rel_h * src_width + rel_w)];
+    unsigned char p1g = src_rgb[4 * (rel_h * src_width + rel_w) + 1];
+    unsigned char p1r = src_rgb[4 * (rel_h * src_width + rel_w) + 2];
 
-    unsigned char p2b = src_rgb[3 * (rel_h * src_width + rel_w + 1)];
-    unsigned char p2g = src_rgb[3 * (rel_h * src_width + rel_w + 1) + 1];
-    unsigned char p2r = src_rgb[3 * (rel_h * src_width + rel_w + 1) + 2];
+    unsigned char p2b = src_rgb[4 * (rel_h * src_width + rel_w + 1)];
+    unsigned char p2g = src_rgb[4 * (rel_h * src_width + rel_w + 1) + 1];
+    unsigned char p2r = src_rgb[4 * (rel_h * src_width + rel_w + 1) + 2];
 
-    unsigned char p3b = src_rgb[3 * ((rel_h + 1) * src_width + rel_w + 1)];
-    unsigned char p3g = src_rgb[3 * ((rel_h + 1) * src_width + rel_w + 1) + 1];
-    unsigned char p3r = src_rgb[3 * ((rel_h + 1) * src_width + rel_w + 1) + 2];
+    unsigned char p3b = src_rgb[4 * ((rel_h + 1) * src_width + rel_w + 1)];
+    unsigned char p3g = src_rgb[4 * ((rel_h + 1) * src_width + rel_w + 1) + 1];
+    unsigned char p3r = src_rgb[4 * ((rel_h + 1) * src_width + rel_w + 1) + 2];
 
-    unsigned char p4b = src_rgb[3 * ((rel_h + 1) * src_width + rel_w)];
-    unsigned char p4g = src_rgb[3 * ((rel_h + 1) * src_width + rel_w) + 1];
-    unsigned char p4r = src_rgb[3 * ((rel_h + 1) * src_width + rel_w) + 2];
+    unsigned char p4b = src_rgb[4 * ((rel_h + 1) * src_width + rel_w)];
+    unsigned char p4g = src_rgb[4 * ((rel_h + 1) * src_width + rel_w) + 1];
+    unsigned char p4r = src_rgb[4 * ((rel_h + 1) * src_width + rel_w) + 2];
 
     unsigned char b = p1b * d1 + p2b * d2 + p3b * d3 + p4b * d4;
     unsigned char g = p1g * d1 + p2g * d2 + p3g * d3 + p4g * d4;
@@ -75,9 +75,9 @@ __kernel void image_resample_no_resize(__global unsigned char* dst_y, __global u
     unsigned long x = i % width;
     unsigned long y = i / width;
 
-    unsigned char b = src_rgb[3 * (y * width + x)] * 219 / 255 + 16;
-    unsigned char g = src_rgb[3 * (y * width + x) + 1] * 219 / 255 + 16;
-    unsigned char r = src_rgb[3 * (y * width + x) + 2] * 219 / 255 + 16;
+    unsigned char b = src_rgb[4 * (y * width + x)] * 219 / 255 + 16;
+    unsigned char g = src_rgb[4 * (y * width + x) + 1] * 219 / 255 + 16;
+    unsigned char r = src_rgb[4 * (y * width + x) + 2] * 219 / 255 + 16;
 
     dst_y[y * width + x] = ((66 * r + 129 * g + 25 * b) >> 8);
     if (!(x % 2) && !(y % 2))

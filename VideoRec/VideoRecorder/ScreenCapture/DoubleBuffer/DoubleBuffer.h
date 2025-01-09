@@ -12,8 +12,6 @@ class DoubleBuffer
 {
 private:
     AVFrame **_frames = nullptr;
-    int _old_y_linesize = 0;
-    int _old_uv_linesize = 0;
     uint8_t _curr_safe_frame_idx = 0;
 
     HWAccelCL _hw_accel_cl;

@@ -3,13 +3,12 @@
 #include <string>
 
 ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, const int &dst_height)
-    : _dst_width(dst_width), _dst_height(dst_height)
 {
     /* Get window */
     if (window_name)
     {
         int text_size = (int)strlen(window_name) + 1;
-        wchar_t *w_window_name = new wchar_t[text_size] { 0 };
+        SmtObj<wchar_t[]> w_window_name = new wchar_t[text_size] { 0 };
         MultiByteToWideChar(CP_UTF8, 0, window_name, text_size, w_window_name, text_size);
 
         _hwnd = FindWindowW(NULL, w_window_name);
@@ -25,10 +24,16 @@ ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, cons
 
     /* Get window size */
     RECT rect = { 0 };
+
+    /* Make window opened */
+    ShowWindow(_hwnd, SW_NORMAL);
     GetClientRect(_hwnd, &rect);
     int dpi = GetDpiForWindow(_hwnd);
-    _src_width = rect.right * dpi / USER_DEFAULT_SCREEN_DPI;
-    _src_height = rect.bottom * dpi / USER_DEFAULT_SCREEN_DPI;
+    _src_width = (rect.right - rect.left) * dpi / USER_DEFAULT_SCREEN_DPI;
+    _src_height = (rect.bottom - rect.top) * dpi / USER_DEFAULT_SCREEN_DPI;
+
+    _dst_width = (dst_width == -1 ? _src_width : dst_width);
+    _dst_height = (dst_height == -1 ? _src_height : dst_height);
 
     /* Get window device context */
     _wnd_dev_ctx = GetDC(_hwnd);
@@ -38,7 +43,7 @@ ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, cons
         _bitmap_info.biSize = sizeof(BITMAPINFOHEADER);
         _bitmap_info.biWidth = _src_width;
         _bitmap_info.biHeight = -(_src_height);/* Make top-down DIB (upper-left corner) */
-        _bitmap_info.biBitCount = 24u;
+        _bitmap_info.biBitCount = 32u;
         _bitmap_info.biSizeImage = _dst_width * _dst_height * 4;
         _bitmap_info.biPlanes = 1u;
         _bitmap_info.biCompression = BI_RGB;
@@ -51,7 +56,8 @@ ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, cons
     /* Create bitmap */
     _bitmap_ctx = CreateCompatibleDC(_wnd_dev_ctx);
     //_bitmap = CreateCompatibleBitmap(_wnd_dev_ctx, _width, _height);
-    if ((_bitmap = CreateDIBSection(_wnd_dev_ctx, (const BITMAPINFO *)&_bitmap_info, DIB_RGB_COLORS, (void **)&_buffer, nullptr, 0)) == NULL) {
+    _bitmap = CreateDIBSection(_wnd_dev_ctx, (const BITMAPINFO *)&_bitmap_info, DIB_RGB_COLORS, (void **)&_buffer, nullptr, 0);
+    if (_bitmap == nullptr) {
         throw std::string("Couldn't allocate frame buffer!");
     }
 

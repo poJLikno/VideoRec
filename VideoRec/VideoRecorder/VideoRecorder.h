@@ -27,7 +27,7 @@ public:
     void StartRecording(const char *file_name, const int &fps);
     void StopRecording();
 
-    void SetNewSource(const char *wnd_name, const int &dst_width, const int &dst_height);
+    void SetNewSource(const char *wnd_name, const int &dst_width = -1, const int &dst_height = -1);
 };
 
 #endif

@@ -30,6 +30,11 @@ DoubleBuffer::DoubleBuffer(
         _frames[i]->width = dst_width;//_codec_context->width;
         _frames[i]->height = dst_height;//_codec_context->height;
 
+        /* Need for manual yuv convertation (after allocation) */
+        _frames[i]->linesize[0] = _frames[i]->width;
+
+        _frames[i]->linesize[1] = _frames[i]->width / 2;
+        _frames[i]->linesize[2] = _frames[i]->width / 2;
 
         if (av_frame_get_buffer(_frames[i], 0) < 0)
         {
@@ -40,14 +45,6 @@ DoubleBuffer::DoubleBuffer(
         {
             throw std::string("Couldn't make frame writable!");
         }
-
-        /* Need for manual yuv convertation (after allocation) */
-        _old_y_linesize = _frames[i]->linesize[0];
-        _frames[i]->linesize[0] = _frames[i]->width;
-
-        _old_uv_linesize = _frames[i]->linesize[1];
-        _frames[i]->linesize[1] = _frames[i]->width / 2;
-        _frames[i]->linesize[2] = _frames[i]->linesize[1];
     }
 
     
@@ -61,14 +58,7 @@ DoubleBuffer::~DoubleBuffer()
         /* Free frames*/
         for (uint8_t i = 0u; i < 2u; ++i)
         {
-            /* Need for manual yuv convertation (before memory release) */
-            _frames[i]->linesize[0] = _old_y_linesize;
-
-            _frames[i]->linesize[1] = _old_uv_linesize;
-            _frames[i]->linesize[2] = _frames[i]->linesize[1];
-
-            av_frame_free(&_frames[i]);
-            _frames[i] = nullptr;
+            av_frame_free(&_frames[i]);/* = NULL already */
         }
 
         delete[] _frames;

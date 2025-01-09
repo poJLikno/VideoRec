@@ -22,14 +22,8 @@ FileMP4::FileMP4(
     }
 
     /* Codec configuration */
-    
-    //_codec = avcodec_find_encoder_by_name("mpeg4");
-    //_codec = avcodec_find_encoder(AV_CODEC_ID_AV1);/* doesn't work */
-
-    //_codec = avcodec_find_encoder_by_name("h264_d3d12va");
-    
-    _codec = avcodec_find_encoder(AV_CODEC_ID_H264);
     //_codec = avcodec_find_encoder(AV_CODEC_ID_MPEG4);
+    _codec = avcodec_find_encoder(AV_CODEC_ID_H264);
     if (_codec == 0)
     {
         throw std::string("Couldn't set codec!");
@@ -48,27 +42,15 @@ FileMP4::FileMP4(
     }
 
     /* Configure codec framerate and fps */
-
     {
-
-
-        //av_opt_set(_codec_context->priv_data, "preset", "slow", 0);
-
         _codec_context->thread_count = 1;
-        _codec_context->bit_rate = 7130317;/* !!! */
-        //_codec_context->bit_rate = 400000;
+        _codec_context->bit_rate = 70000000ll/*70 Mb/s*/;
 
         /* "resolution must be a multiple of two" ??? */
         _codec_context->width = width;
         _codec_context->height = height;
         _codec_context->time_base = AVRational{ 1, fps * 1000 };
         _codec_context->framerate = AVRational{ fps, 1 };
-        /* emit one intra frame every ten frames
-         * check frame pict_type before passing frame
-         * to encoder, if frame->pict_type is AV_PICTURE_TYPE_I
-         * then gop_size is ignored and the output of encoder
-         * will always be I frame irrespective to gop_size
-         */
         _codec_context->gop_size = 10;
         //_codec_context->gop_size = 1;/* !!! */
         _codec_context->max_b_frames = 1;

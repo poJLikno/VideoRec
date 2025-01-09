@@ -33,7 +33,7 @@ size_t HWAccelCL::_GetKernelCode(const char *file_name, SmtObj<char[]> *kernel_c
 
 HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &dst_width, const int &dst_height, uint8_t *src_rgb, const int &src_width, const int &src_height)
     : _src_rgb(src_rgb), _src_width(src_width), _src_height(src_height), _dst_width(dst_width), _dst_height(dst_height),
-    _src_rgb_buffer_size(src_width * src_height * 3), _dst_y_buffer_size(dst_width * dst_height), _dst_uv_buffer_size(dst_width *dst_height / 4)
+    _src_rgb_buffer_size(src_width * src_height * 4), _dst_y_buffer_size(dst_width * dst_height), _dst_uv_buffer_size(dst_width *dst_height / 4)
 {
     /* Get a default OpenCL platform */
     _result = clGetPlatformIDs(1, &_platform_id, nullptr);
