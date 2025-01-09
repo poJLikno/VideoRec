@@ -26,15 +26,44 @@ int main(int argc, const char **argv)
 
     try
     {
+        std::cout << "./VideoRec.exe <window name | \"desktop\"> <width> <height>\n";
         std::cout << "Aloha!\n";
 
         VideoRecorder rec;
-        //rec.SetNewSource(nullptr, 1920, 1080);
+
+
+        if (argc == 2)
+        {
+            if (strcmp("desktop", argv[1]) == 0)
+            {
+                rec.SetNewSource(nullptr);
+            }
+            else
+            {
+                rec.SetNewSource(argv[1]);
+            }
+        }
+        else if (argc == 4)
+        {
+            if (strcmp("desktop", argv[1]) == 0)
+            {
+                rec.SetNewSource(nullptr, atoi(argv[2]), atoi(argv[3]));
+            }
+            else
+            {
+                rec.SetNewSource(argv[1], atoi(argv[2]), atoi(argv[3]));
+            }
+        }
+        else
+        {
+            rec.SetNewSource(nullptr);
+        }
+
+
         //rec.SetNewSource(nullptr, 1440, 900);
         //rec.SetNewSource(nullptr, 800, 600);
         //rec.SetNewSource(nullptr, 2880, 1800);
-        rec.SetNewSource("Roblox");
-        //rec.SetNewSource(nullptr, 1606, 1204);
+        //rec.SetNewSource("Roblox", 1920, 1080);
         rec.StartRecording("test_file.mp4", 60);
         while (GetAsyncKeyState('L') >= 0);
         rec.StopRecording();

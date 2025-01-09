@@ -33,7 +33,7 @@ size_t HWAccelCL::_GetKernelCode(const char *file_name, SmtObj<char[]> *kernel_c
 
 HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &dst_width, const int &dst_height, uint8_t *src_rgb, const int &src_width, const int &src_height)
     : _src_rgb(src_rgb), _src_width(src_width), _src_height(src_height), _dst_width(dst_width), _dst_height(dst_height),
-    _src_rgb_buffer_size(src_width * src_height * 4), _dst_y_buffer_size(dst_width * dst_height), _dst_uv_buffer_size(dst_width *dst_height / 4)
+    _src_rgb_buffer_size(src_width * src_height * 4), _dst_y_buffer_size(dst_width * dst_height), _dst_uv_buffer_size(dst_width * dst_height / 4)
 {
     /* Get a default OpenCL platform */
     _result = clGetPlatformIDs(1, &_platform_id, nullptr);
@@ -203,7 +203,7 @@ void HWAccelCL::Run(uint8_t *y, uint8_t *u, uint8_t *v)
     }
 
     /* Run the kernel */
-    _result = clEnqueueNDRangeKernel(_command_queue, _kernel, 1, NULL, (const size_t *)&_dst_y_buffer_size/*global_work_size*/, NULL, 0, NULL, NULL);
+    _result = clEnqueueNDRangeKernel(_command_queue, _kernel, 1, NULL, (const size_t *)&_dst_uv_buffer_size, NULL, 0, NULL, NULL);
     if (_result)
     {
         throw std::string("Couldn't run the kernel!");
