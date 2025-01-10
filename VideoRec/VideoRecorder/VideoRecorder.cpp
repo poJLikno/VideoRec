@@ -57,16 +57,21 @@ void VideoRecorder::StartRecording(const char *file_name, const int &fps)
 
 void VideoRecorder::StopRecording()
 {
-    if (!_file)
+    if (_file_writer_timer)
     {
-        throw std::string("VideoRecorder has already stopped!");
+        _file_writer_timer->Stop();
     }
 
-    _file_writer_timer->Stop();
-    _screen_capture_timer->Stop();
+    if (_screen_capture_timer)
+    {
+        _screen_capture_timer->Stop();
+    }
 
-    _file->CloseFile();
-    _file.reset();
+    if (_file)
+    {
+        _file->CloseFile();
+        _file.reset();
+    }
     /*_file = nullptr;*/
 
     /* For preview window */
