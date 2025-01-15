@@ -1,7 +1,7 @@
 #ifndef VIDEO_RECORDER_H_
 #define VIDEO_RECORDER_H_
 
-#include "../SmtObj.h"
+#include "../../SmtObj.h"
 
 #include "ScreenCapture/ScreenCapture.h"
 #include "FileMP4/FileMP4.h"
@@ -16,11 +16,13 @@ private:
     SmtObj<StableTimer> _screen_capture_timer;
     SmtObj<StableTimer> _file_writer_timer;
 
+    bool &_preview_flag;
+
     static void _ScreenCaptureLoop(void *this_class);
     static void _FileWriterLoop(void *this_class);
 
 public:
-    VideoRecorder() = default;
+    VideoRecorder(bool &preview_flag);
     VideoRecorder(const VideoRecorder &) = delete;
     ~VideoRecorder();
 
@@ -28,6 +30,11 @@ public:
     void StopRecording();
 
     void SetNewSource(const char *wnd_name, const int &dst_width = -1, const int &dst_height = -1);
+
+    const int &GetSrcWidth();
+    const int &GetSrcHeight();
+
+    HDC GetPreviewContext();
 };
 
 #endif

@@ -3,6 +3,8 @@
 #include <fstream>
 #include <string>
 
+#include <iostream>
+
 size_t HWAccelCL::_GetKernelCode(const char *file_name, SmtObj<char[]> *kernel_code)
 {
     size_t file_size = 0ull;
@@ -231,4 +233,89 @@ void HWAccelCL::Run(uint8_t *y, uint8_t *u, uint8_t *v)
 
     /* Wait until end of data recording */
     clFinish(_command_queue);
+}
+
+void HWAccelCL::ShowOpenCLDevices()
+{
+    cl_int ret = 0;
+
+    cl_uint platforms_num = 0u;
+    cl_platform_id *platform_ids_list = nullptr;
+
+    cl_uint devices_num = 0u;
+    cl_device_id *device_ids_list = nullptr;
+
+    std::cout << "OpenCL platform & device list:\n";
+
+    /* Get number of platforms */
+    ret = clGetPlatformIDs(0, nullptr, &platforms_num);
+    if (ret)
+    {
+        throw std::string("Couldn't get number of platforms!");
+    }
+
+    std::cout << "Platforms number - " << platforms_num << ":\n";/* Output platform number */
+
+    /* Get platform list */
+    platform_ids_list = new cl_platform_id[platforms_num]{ nullptr };
+
+    clGetPlatformIDs(platforms_num, platform_ids_list, nullptr);
+    if (ret)
+    {
+        throw std::string("Couldn't get platform list!");
+    }
+
+    /* Get names of platforms */
+    cl_platform_info platform_name[32] = { 0 };
+    cl_device_info device_name[32] = { 0 };
+    for (unsigned int i = 0; i < platforms_num; ++i)
+    {
+        if (clGetPlatformInfo(platform_ids_list[i], CL_PLATFORM_NAME, sizeof(platform_name), platform_name, nullptr))
+        {
+            throw std::string("Couldn't get platform name!");
+        }
+        std::cout << "[" << i << "] " << (char *)platform_name << "\n";/* Output platform name */
+
+        /* Devices section */
+        /* Get number of devices */
+        ret = clGetDeviceIDs(platform_ids_list[i], CL_DEVICE_TYPE_DEFAULT, 0, nullptr, &devices_num);
+        if (ret)
+        {
+            throw std::string("Couldn't get number of devices!");
+        }
+
+        std::cout << "\tDevices number - " << devices_num << ":\n";/* Output devices number */
+
+        /* Get device list */
+        device_ids_list = new cl_device_id[devices_num]{ nullptr };
+
+        ret = clGetDeviceIDs(platform_ids_list[i], CL_DEVICE_TYPE_DEFAULT, devices_num, device_ids_list, nullptr);
+        if (ret)
+        {
+            throw std::string("Couldn't get device list!");
+        }
+
+        /* Get names of devices */
+        for (unsigned int j = 0; j < devices_num; ++j)
+        {
+            if (clGetDeviceInfo(device_ids_list[j], CL_DEVICE_NAME, sizeof(device_name), device_name, nullptr))
+            {
+                throw std::string("Couldn't get device name!");
+            }
+            std::cout << "\t[" << i << "] " << (char *)device_name << "\n";/* Output device name */
+            memset(device_name, 0, sizeof(device_name));
+
+            clReleaseDevice(device_ids_list[j]);
+        }
+
+        delete[] device_ids_list;
+        device_ids_list = nullptr;
+
+        memset(platform_name, 0, sizeof(platform_name));
+    }
+
+    std::cout << "\n";
+
+    delete[] platform_ids_list;
+    platform_ids_list = nullptr;
 }

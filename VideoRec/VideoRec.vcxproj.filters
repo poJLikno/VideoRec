@@ -18,55 +18,152 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.cpp">
+    <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VideoRecorder\FileMP4\FileMP4.cpp">
+    <ClCompile Include="App\Model\VideoRecorder\FileMP4\FileMP4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VideoRecorder\ScreenCapture\ScreenCapture.cpp">
+    <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\ScreenCapture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VideoRecorder\StableTimer\StableTimer.cpp">
+    <ClCompile Include="App\Model\VideoRecorder\StableTimer\StableTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VideoRecorder\StableTimer\CPUCounter\CPUCounter.cpp">
+    <ClCompile Include="App\Model\VideoRecorder\StableTimer\CPUCounter\CPUCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VideoRecorder\VideoRecorder.cpp">
+    <ClCompile Include="App\Model\VideoRecorder\VideoRecorder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.cpp">
+    <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\UI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\ComboBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\Edit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\Label.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\MenuBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\MenuPoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\NormalFont.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\WndBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\WndProc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Model\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\PreviewWindow\PreviewWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Model\FileNameGenerator\FileNameGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.h">
+    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VideoRecorder\FileMP4\FileMP4.h">
+    <ClInclude Include="App\Model\VideoRecorder\FileMP4\FileMP4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VideoRecorder\ScreenCapture\ScreenCapture.h">
+    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\ScreenCapture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VideoRecorder\StableTimer\CPUCounter\CPUCounter.h">
+    <ClInclude Include="App\Model\VideoRecorder\StableTimer\CPUCounter\CPUCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VideoRecorder\StableTimer\StableTimer.h">
+    <ClInclude Include="App\Model\VideoRecorder\StableTimer\StableTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VideoRecorder\VideoRecorder.h">
+    <ClInclude Include="App\Model\VideoRecorder\VideoRecorder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SmtObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.h">
+    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\UI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\Button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\CallbackManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\ComboBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\Edit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\Label.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\Menu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\MenuBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\MenuPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\NormalFont.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\WndBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\WndList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\App.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\PreviewWindow\PreviewWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\FileNameGenerator\FileNameGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="gpu_prog.cl" />
+    <None Include="gpu_test.cl" />
   </ItemGroup>
 </Project>

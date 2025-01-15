@@ -40,22 +40,25 @@ ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, cons
 
     /* Fill bitmap information */
     {
-        _bitmap_info.biSize = sizeof(BITMAPINFOHEADER);
-        _bitmap_info.biWidth = _src_width;
-        _bitmap_info.biHeight = -(_src_height);/* Make top-down DIB (upper-left corner) */
-        _bitmap_info.biBitCount = 32u;
-        _bitmap_info.biSizeImage = _dst_width * _dst_height * 4;
-        _bitmap_info.biPlanes = 1u;
-        _bitmap_info.biCompression = BI_RGB;
-        _bitmap_info.biClrUsed = 0u;
-        _bitmap_info.biClrImportant = 0u;
-        _bitmap_info.biXPelsPerMeter = 0;
-        _bitmap_info.biYPelsPerMeter = 0;
+        _bitmap_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+        _bitmap_info.bmiHeader.biWidth = _src_width;
+        _bitmap_info.bmiHeader.biHeight = -(_src_height);/* Make top-down DIB (upper-left corner) */
+        _bitmap_info.bmiHeader.biBitCount = 32u;
+        _bitmap_info.bmiHeader.biSizeImage = _src_width * _src_height * 4;
+        _bitmap_info.bmiHeader.biPlanes = 1u;
+        _bitmap_info.bmiHeader.biCompression = BI_RGB;
+        _bitmap_info.bmiHeader.biClrUsed = 0u;
+        _bitmap_info.bmiHeader.biClrImportant = 0u;
+        _bitmap_info.bmiHeader.biXPelsPerMeter = 0;
+        _bitmap_info.bmiHeader.biYPelsPerMeter = 0;
     }
 
     /* Create bitmap */
     _bitmap_ctx = CreateCompatibleDC(_wnd_dev_ctx);
-    //_bitmap = CreateCompatibleBitmap(_wnd_dev_ctx, _width, _height);
+
+    //_bitmap = CreateCompatibleBitmap(_wnd_dev_ctx, _src_width, _src_height);
+    //GetDIBits()
+    
     _bitmap = CreateDIBSection(_wnd_dev_ctx, (const BITMAPINFO *)&_bitmap_info, DIB_RGB_COLORS, (void **)&_buffer, nullptr, 0);
     if (_bitmap == nullptr) {
         throw std::string("Couldn't allocate frame buffer!");
@@ -87,6 +90,16 @@ void ScreenCapture::TakeShot()
     _frames_buffer->WriteFrame();
 }
 
+const int &ScreenCapture::GetSrcWidth()
+{
+    return _src_width;
+}
+
+const int &ScreenCapture::GetSrcHeight()
+{
+    return _src_height;
+}
+
 const int &ScreenCapture::GetDstWidth()
 {
     return _dst_width;
@@ -100,4 +113,9 @@ const int &ScreenCapture::GetDstHeight()
 DoubleBuffer &ScreenCapture::FramesBuffer()
 {
     return *_frames_buffer;
+}
+
+HDC ScreenCapture::GetBitmapContextForPreview()
+{
+    return _bitmap_ctx;
 }

@@ -9,7 +9,7 @@ extern "C"
 #include <CL/opencl.h>
 }
 
-#include "../../../SmtObj.h"
+#include "../../../../../SmtObj.h"
 
 class HWAccelCL
 {
@@ -51,6 +51,8 @@ public:
     ~HWAccelCL();
 
     void Run(uint8_t *y, uint8_t *u, uint8_t *v);
+
+    static void ShowOpenCLDevices();
 };
 
 #endif /* HW_ACCCEL_CL_H_ */

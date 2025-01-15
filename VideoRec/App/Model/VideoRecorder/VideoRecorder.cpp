@@ -14,6 +14,11 @@ void VideoRecorder::_FileWriterLoop(void *this_class)
     ((VideoRecorder *)this_class)->_screen->FramesBuffer().UnlockFrame();
 }
 
+VideoRecorder::VideoRecorder(bool &preview_flag)
+    : _preview_flag(preview_flag)
+{
+}
+
 VideoRecorder::~VideoRecorder()
 {
     if (_file)
@@ -57,21 +62,26 @@ void VideoRecorder::StartRecording(const char *file_name, const int &fps)
 
 void VideoRecorder::StopRecording()
 {
-    if (!_file)
+    if (_file_writer_timer)
     {
-        throw std::string("VideoRecorder has already stopped!");
+        _file_writer_timer->Stop();
     }
 
-    _file_writer_timer->Stop();
-    _screen_capture_timer->Stop();
+    if (_file)
+    {
+        _file->CloseFile();
+        _file.reset();
+    }
 
-    _file->CloseFile();
-    _file.reset();
-    /*_file = nullptr;*/
-
-    /* For preview window */
-    //_screen_capture_timer->SetFps(10);
-
+    if (_preview_flag)
+    {
+        _screen_capture_timer = new StableTimer(10/*Base value*/, _ScreenCaptureLoop, this);
+        _screen_capture_timer->Start();
+    }
+    else
+    {
+        _screen_capture_timer.reset();
+    }
 }
 
 void VideoRecorder::SetNewSource(const char *wnd_name, const int &dst_width, const int &dst_height)
@@ -92,5 +102,39 @@ void VideoRecorder::SetNewSource(const char *wnd_name, const int &dst_width, con
     _screen = new ScreenCapture(wnd_name, dst_width, dst_height);
 
     /* Init screen capture timer */
-    _screen_capture_timer = new StableTimer(10/*Base value*/, _ScreenCaptureLoop, this);
+    if (_preview_flag)
+    {
+        _screen_capture_timer = new StableTimer(10/*Base value*/, _ScreenCaptureLoop, this);
+        _screen_capture_timer->Start();
+    }
+}
+
+const int &VideoRecorder::GetSrcWidth()
+{
+    if (_screen)
+    {
+        return _screen->GetSrcWidth();
+    }
+
+    return 0;
+}
+
+const int &VideoRecorder::GetSrcHeight()
+{
+    if (_screen)
+    {
+        return _screen->GetSrcHeight();
+    }
+
+    return 0;
+}
+
+HDC VideoRecorder::GetPreviewContext()
+{
+    if (_screen)
+    {
+        return _screen->GetBitmapContextForPreview();
+    }
+
+    return nullptr;
 }

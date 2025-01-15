@@ -11,7 +11,7 @@ class ScreenCapture
 private:
     HWND _hwnd = { 0 };
     HDC _wnd_dev_ctx = { 0 };
-    BITMAPINFOHEADER _bitmap_info = { 0 };
+    BITMAPINFO _bitmap_info = { 0 };
     HDC _bitmap_ctx = { 0 };
     HBITMAP _bitmap = { 0 };
     HGDIOBJ _old_obj = { 0 };
@@ -32,10 +32,15 @@ public:
 
     void TakeShot();
 
+    const int &GetSrcWidth();
+    const int &GetSrcHeight();
+
     const int &GetDstWidth();
     const int &GetDstHeight();
 
     DoubleBuffer &FramesBuffer();
+
+    HDC GetBitmapContextForPreview();
 };
 
 #endif /* SCREEN_CAPTURE_H_ */
