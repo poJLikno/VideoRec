@@ -110,12 +110,12 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\include\;C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\include;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\lib;C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\lib;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -133,14 +133,14 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\include\;C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\include;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\lib;C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\lib;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
