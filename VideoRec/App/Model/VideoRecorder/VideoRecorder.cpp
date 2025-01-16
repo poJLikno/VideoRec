@@ -113,20 +113,20 @@ const int &VideoRecorder::GetSrcWidth()
 {
     if (_screen)
     {
-        return _screen->GetSrcWidth();
+        return (const int &)_screen->GetSrcWidth();
     }
 
-    return 0;
+    return (const int &)0;
 }
 
 const int &VideoRecorder::GetSrcHeight()
 {
     if (_screen)
     {
-        return _screen->GetSrcHeight();
+        return (const int &)_screen->GetSrcHeight();
     }
 
-    return 0;
+    return (const int &)0;
 }
 
 HDC VideoRecorder::GetPreviewContext()

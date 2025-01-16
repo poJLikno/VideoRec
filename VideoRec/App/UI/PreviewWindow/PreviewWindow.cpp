@@ -31,20 +31,21 @@ LRESULT PreviewWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
         }
         else {
             if (uMsg == WM_PAINT) {
-                PAINTSTRUCT ps;
+                /* Get device context */
+                PAINTSTRUCT ps = { 0 };
                 HDC hdc = BeginPaint(hwnd, &ps);
-
+                /* Configure DC */
                 HPEN pen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
                 HGDIOBJ old_obj = SelectObject(hdc, (HGDIOBJ)pen);
                 SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
 
                 /* Paint */
-
+                auto [wnd_width, wnd_height] = Wnd->GetWndSize();
                 if (Wnd->_src_hdc)
                 {
-                    StretchBlt(hdc, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom, Wnd->_src_hdc, 0, 0, Wnd->_src_width, Wnd->_src_height, SRCCOPY);
+                    StretchBlt(hdc, 0, 0, wnd_width, wnd_height, Wnd->_src_hdc, 0, 0, Wnd->_src_width, Wnd->_src_height, SRCCOPY);
                 }
-                Rectangle(hdc, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom);
+                Rectangle(hdc, 0, 0, wnd_width, wnd_height);
 
                 /**/
 
@@ -53,7 +54,6 @@ LRESULT PreviewWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                 DeleteObject((HGDIOBJ)pen);
 
                 EndPaint(hwnd, &ps);
-
                 result = 0;
             }
             else if (uMsg == WM_CLOSE) {
@@ -87,7 +87,7 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
     // Register window class
     WNDCLASSW wc = { 0 };
     {
-        wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_PARENTDC;
+        wc.style = CS_HREDRAW | CS_VREDRAW;
         wc.lpfnWndProc = PreviewWindow::WndProc;
         wc.cbClsExtra = 0;// 1 - Reserve for ability change WndProc
         wc.cbWndExtra = sizeof(LONG_PTR);
@@ -106,7 +106,9 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
         _pos.first, _pos.second, _size.first, _size.second,
         NULL, NULL, NULL, NULL);
     if (!this->_hwnd)
+    {
         throw std::string("Can't create window -> Error code: " + std::to_string(GetLastError()));
+    }
 
     /* Add to global list of windows */
     _wnd_list.Append(this);
@@ -118,11 +120,18 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
 
     /* Create a paint timer loop */
     _paint_timer = new std::thread([this]()->void {
+        std::chrono::time_point<std::chrono::steady_clock> millis_timer = std::chrono::steady_clock::now();
+
         while (_timer_flag)
         {
             /* Draw window ~10 times per second */
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            InvalidateRect(_hwnd, NULL, FALSE);
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - millis_timer).count() >= 100)
+            {
+                millis_timer = std::chrono::steady_clock::now();
+                InvalidateRect(_hwnd, NULL, FALSE);
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
         });
 }
@@ -130,7 +139,7 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
 PreviewWindow::~PreviewWindow()
 {
     _timer_flag = false;
-    _paint_timer->join();
+    _paint_timer->join();    
 
     if (!UnregisterClassW(L"preview_window_class", NULL))
         MessageBoxW(NULL, std::wstring(L"Can't unregister class -> Error code: " + std::to_wstring(GetLastError())).c_str(), L"Error", MB_OK);

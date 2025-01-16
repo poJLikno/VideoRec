@@ -4,7 +4,7 @@
 #include "VideoRecorder/VideoRecorder.h"
 #include "FileNameGenerator/FileNameGenerator.h"
 
-#ifndef GETTER(obj)
+#ifndef GETTER
 #define GETTER(obj) decltype(obj) &get##obj() { return obj; }
 #endif
 

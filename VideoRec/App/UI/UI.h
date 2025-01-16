@@ -6,7 +6,7 @@
 #include "WindowLib/NormalFont.h"
 #include "PreviewWindow/PreviewWindow.h"
 
-#ifndef GETTER(obj)
+#ifndef GETTER
 #define GETTER(obj) decltype(obj) &get##obj() { return obj; }
 #endif
 

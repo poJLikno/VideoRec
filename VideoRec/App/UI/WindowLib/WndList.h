@@ -45,15 +45,30 @@ inline int WndList<T>::GetCount() {
 template<class T>
 inline void WndList<T>::Append(T *wnd) {
     if (!_wnd_count) {
-        _wnd_list = (T **)malloc(++_wnd_count * sizeof(T *));
+        _wnd_list = (T **)malloc((_wnd_count + 1) * sizeof(T *));
+        if (_wnd_list == nullptr) {
+            throw std::string("Malloc error!");
+        }
+        ++_wnd_count;
     }
     else if (_wnd_count && _wnd_list) {
-        if ((_wnd_list = (T **)realloc(_wnd_list, ++_wnd_count * sizeof(T **))) == nullptr) {
+        T **tmp = (T **)realloc(_wnd_list, (_wnd_count + 1) * sizeof(T *));
+        if (!tmp) {
+            for (int i = 0; i < _wnd_count; ++i) {
+                _wnd_list[i] = nullptr;
+            }
+            free(_wnd_list);
+            _wnd_list = nullptr;
+
             throw std::string("Realloc error!");
         }
+        _wnd_list = tmp;
+        ++_wnd_count;
     }
 
-    _wnd_list[_wnd_count - 1] = wnd;
+    if (_wnd_list) {
+        _wnd_list[_wnd_count - 1] = wnd;
+    }
 }
 
 #endif

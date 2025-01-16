@@ -5,19 +5,19 @@
 #include <vector>
 
 /* For main callbacks */
-#ifndef GetControl(type, ptr)
+#ifndef GetControl
 #define GetControl(type, ptr) \
     ((type *)ptr)
 #endif
 
 /* For parent resize callback only */
-#ifndef GetControlForParentResize(type, ptr)
+#ifndef GetControlForParentResize
 #define GetControlForParentResize(type, ptr) \
     ((type *)((ParentResizeCallbackParams *)ptr)->wnd)
 #endif
 
 /* For parent resize callback only */
-#ifndef GetMiscForParentResize(ptr)
+#ifndef GetMiscForParentResize
 #define GetMiscForParentResize(ptr) \
     Window *parent_wnd = (Window *)GetControlForParentResize(WndBase, ptr)->GetWndParent();\
     const WndPairValue &old_parent_size = (const WndPairValue &)((ParentResizeCallbackParams *)ptr)->old_size;\

@@ -30,7 +30,7 @@ const SmtObj<char[]> &FileNameGenerator::CreateFileName()
         + std::to_string(system_time.wSecond)
         + ".mp4");
 
-    int file_name_length = file_name.length() + 1;
+    int file_name_length = static_cast<int>(file_name.length()) + 1;
     _file_name = new char[file_name_length] { 0 };
     snprintf(_file_name, file_name_length, "%s", file_name.c_str());
 

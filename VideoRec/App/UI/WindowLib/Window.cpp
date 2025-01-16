@@ -19,7 +19,7 @@ Window::Window(const char *name, WndPairValue pos, WndPairValue size, int icon_i
 
     WNDCLASSW wc = { 0 };
     {
-        wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_PARENTDC;
+        wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC /*|  CS_PARENTDC (or this or OWNDC or CLASSDC or none) */;
         wc.lpfnWndProc = Window::WndProc;
         wc.cbClsExtra = 0;// 1 - Reserve for ability change WndProc
         wc.cbWndExtra = sizeof(LONG_PTR);
