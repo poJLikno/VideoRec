@@ -110,12 +110,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\include\;C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\include;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>
+      </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\lib;C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\lib;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -133,14 +134,15 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\include\;C:\vcpkg\packages\ffmpeg_x64-windows-rel\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\include;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>
+      </SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\vcpkg\packages\opencl_x64-windows-rel\lib;C:\vcpkg\packages\ffmpeg_x64-windows-rel\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\lib;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -149,28 +151,67 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.cpp" />
+    <ClCompile Include="App\App.cpp" />
+    <ClCompile Include="App\Model\FileNameGenerator\FileNameGenerator.cpp" />
+    <ClCompile Include="App\Model\Model.cpp" />
+    <ClCompile Include="App\UI\PreviewWindow\PreviewWindow.cpp" />
+    <ClCompile Include="App\UI\UI.cpp" />
+    <ClCompile Include="App\UI\WindowLib\Button.cpp" />
+    <ClCompile Include="App\UI\WindowLib\ComboBox.cpp" />
+    <ClCompile Include="App\UI\WindowLib\Edit.cpp" />
+    <ClCompile Include="App\UI\WindowLib\Label.cpp" />
+    <ClCompile Include="App\UI\WindowLib\MenuBase.cpp" />
+    <ClCompile Include="App\UI\WindowLib\MenuPoint.cpp" />
+    <ClCompile Include="App\UI\WindowLib\NormalFont.cpp" />
+    <ClCompile Include="App\UI\WindowLib\Window.cpp" />
+    <ClCompile Include="App\UI\WindowLib\WndBase.cpp" />
+    <ClCompile Include="App\UI\WindowLib\WndProc.cpp" />
+    <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.cpp" />
-    <ClCompile Include="VideoRecorder\StableTimer\CPUCounter\CPUCounter.cpp" />
-    <ClCompile Include="VideoRecorder\StableTimer\StableTimer.cpp" />
-    <ClCompile Include="VideoRecorder\ScreenCapture\ScreenCapture.cpp" />
-    <ClCompile Include="VideoRecorder\FileMP4\FileMP4.cpp" />
-    <ClCompile Include="VideoRecorder\VideoRecorder.cpp" />
+    <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.cpp" />
+    <ClCompile Include="App\Model\VideoRecorder\StableTimer\CPUCounter\CPUCounter.cpp" />
+    <ClCompile Include="App\Model\VideoRecorder\StableTimer\StableTimer.cpp" />
+    <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\ScreenCapture.cpp" />
+    <ClCompile Include="App\Model\VideoRecorder\FileMP4\FileMP4.cpp" />
+    <ClCompile Include="App\Model\VideoRecorder\VideoRecorder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="App\App.h" />
+    <ClInclude Include="App\Model\FileNameGenerator\FileNameGenerator.h" />
+    <ClInclude Include="App\Model\Model.h" />
+    <ClInclude Include="App\UI\PreviewWindow\PreviewWindow.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SmtObj.h" />
-    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.h" />
-    <ClInclude Include="VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.h" />
-    <ClInclude Include="VideoRecorder\StableTimer\CPUCounter\CPUCounter.h" />
-    <ClInclude Include="VideoRecorder\StableTimer\StableTimer.h" />
-    <ClInclude Include="VideoRecorder\ScreenCapture\ScreenCapture.h" />
-    <ClInclude Include="VideoRecorder\FileMP4\FileMP4.h" />
-    <ClInclude Include="VideoRecorder\VideoRecorder.h" />
+    <ClInclude Include="App\UI\UI.h" />
+    <ClInclude Include="App\UI\WindowLib\Button.h" />
+    <ClInclude Include="App\UI\WindowLib\CallbackManager.h" />
+    <ClInclude Include="App\UI\WindowLib\ComboBox.h" />
+    <ClInclude Include="App\UI\WindowLib\Edit.h" />
+    <ClInclude Include="App\UI\WindowLib\Label.h" />
+    <ClInclude Include="App\UI\WindowLib\Menu.h" />
+    <ClInclude Include="App\UI\WindowLib\MenuBase.h" />
+    <ClInclude Include="App\UI\WindowLib\MenuPoint.h" />
+    <ClInclude Include="App\UI\WindowLib\NormalFont.h" />
+    <ClInclude Include="App\UI\WindowLib\Window.h" />
+    <ClInclude Include="App\UI\WindowLib\WndBase.h" />
+    <ClInclude Include="App\UI\WindowLib\WndList.h" />
+    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.h" />
+    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffer\HWAccelCL.h" />
+    <ClInclude Include="App\Model\VideoRecorder\StableTimer\CPUCounter\CPUCounter.h" />
+    <ClInclude Include="App\Model\VideoRecorder\StableTimer\StableTimer.h" />
+    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\ScreenCapture.h" />
+    <ClInclude Include="App\Model\VideoRecorder\FileMP4\FileMP4.h" />
+    <ClInclude Include="App\Model\VideoRecorder\VideoRecorder.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="gpu_prog.cl" />
     <None Include="gpu_test.cl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VideoRec.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
