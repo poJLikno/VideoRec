@@ -46,11 +46,11 @@ LRESULT Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
                 lpMMI->ptMinTrackSize.x = 752 + 16;// 16 * 47 +...
                 lpMMI->ptMinTrackSize.y = 301 + 59;//423 + 59;// 9 * 47 +...
             }*/
-            /*if (uMsg == WM_CTLCOLORSTATIC) {// !!! For transparent "Label" !!!
+            if (uMsg == WM_CTLCOLORSTATIC) {// !!! For transparent "Label" !!!
                 SetBkMode((HDC)wParam, TRANSPARENT);
                 result = 0;
             }
-            else */if (uMsg == WM_MOVE) {
+            else if (uMsg == WM_MOVE) {
                 WndPos->first = LOWORD(lParam);
                 WndPos->second = HIWORD(lParam);
                 result = 0;

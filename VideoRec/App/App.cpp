@@ -62,25 +62,35 @@ App::App(const char *app_name, const char *app_version)
             _ui->get_video_resolution_x_symbol_label()->ShowWnd(true);
             _ui->get_video_width_edit()->ShowWnd(true);
             _ui->get_video_height_edit()->ShowWnd(true);
+            _ui->get_video_fps_label()->ShowWnd(true);
+            _ui->get_video_fps_edit()->ShowWnd(true);
             
             /* Init VideoRec module */
             _model->get_video_rec() = new VideoRecorder(_model->get_allow_preview_flag());
 
-            /* Set source window and video resolution */
-            char wnd_name[65] = { 0 };
-            _ui->get_video_source_wnd_edit()->GetWndText(wnd_name, 64);
-
-            char wnd_width[6] = { 0 };
-            char wnd_height[6] = { 0 };
-            _ui->get_video_width_edit()->GetWndText(wnd_width, 5);
-            _ui->get_video_height_edit()->GetWndText(wnd_height, 5);
-
             try
             {
+                /* Set source window and video resolution */
+                char wnd_name[65] = { 0 };
+                _ui->get_video_source_wnd_edit()->GetWndText(wnd_name, 64);
+
+                char video_width[6] = { 0 };
+                char video_height[6] = { 0 };
+                _ui->get_video_width_edit()->GetWndText(video_width, 5);
+                _ui->get_video_height_edit()->GetWndText(video_height, 5);
+                if (atoi(video_width) == 0 && video_width[0] != '0' && video_width[0] != '\0')
+                {
+                    throw std::string("Video width must be a number!");
+                }
+                else if (atoi(video_height) == 0 && video_height[0] != '0' && video_height[0] != '\0')
+                {
+                    throw std::string("Video height must be a number!");
+                }
+
                 _model->get_video_rec()->SetNewSource(
                     (wnd_name[0] == '\0' ? nullptr : wnd_name),
-                    (wnd_width[0] == '\0' ? -1 : atoi(wnd_width)),
-                    (wnd_height[0] == '\0' ? -1 : atoi(wnd_height)));
+                    (video_width[0] == '\0' ? -1 : atoi(video_width)),
+                    (video_height[0] == '\0' ? -1 : atoi(video_height)));
             }
             catch (std::string error)
             {
@@ -128,15 +138,36 @@ App::App(const char *app_name, const char *app_version)
     _ui->get_start_recording_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
         MenuPoint *menu_point = GetControl(MenuPoint, ptr);
 
-        if (_model->get_video_rec())
+        try
         {
-            int fps = 60;
-            _model->get_video_rec()->StartRecording((const char *)_model->get_file_name_generator()->CreateFileName(), fps);
+            if (_model->get_video_rec())
+            {
+                char video_fps[6] = { 0 };
+                _ui->get_video_fps_edit()->GetWndText(video_fps, 5);
+                if (video_fps[0] == '\0')
+                {
+                    throw std::string("FPS is not set!");
+                }
+                else if (atoi(video_fps) == 0 && video_fps[0] != '0')
+                {
+                    throw std::string("Video FPS must be a number!");
+                }
 
+                _model->get_video_rec()->StartRecording((const char *)_model->get_file_name_generator()->CreateFileName(), atoi(video_fps));
+
+            }
+
+            menu_point->SetState(false);
+            _ui->get_stop_recording_menu_point()->SetState(true);
         }
+        catch (const std::string &error)
+        {
+            int str_size = (int)error.length() + 1;
+            SmtObj<wchar_t[]> w_error = new wchar_t[str_size] { 0 };
+            MultiByteToWideChar(CP_UTF8, 0, error.c_str(), str_size, w_error, str_size);
 
-        menu_point->SetState(false);
-        _ui->get_stop_recording_menu_point()->SetState(true);
+            MessageBoxW(NULL, w_error, L"Error", MB_OK);
+        }
         });
 
     _ui->get_stop_recording_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {

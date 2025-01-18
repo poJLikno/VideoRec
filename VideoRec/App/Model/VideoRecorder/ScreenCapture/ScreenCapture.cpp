@@ -36,7 +36,11 @@ ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, cons
     _dst_height = (dst_height == -1 ? _src_height : dst_height);
 
     /* Get window device context */
-    _wnd_dev_ctx = GetDC(_hwnd);
+    _wnd_dev_ctx = GetDCEx(_hwnd, nullptr, DCX_WINDOW | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
+    if (!_wnd_dev_ctx)
+    {
+        throw std::string("Couldn't get window's DC!");
+    }
 
     /* Fill bitmap information */
     {

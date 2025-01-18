@@ -5,7 +5,7 @@ UI::UI(const char *app_name, const char *app_version)
     /* Create the main window */
     _wnd = new Window(app_name,
         WndPairValue{ CW_USEDEFAULT, CW_USEDEFAULT },
-        WndPairValue{ 768/*752*/, 301 + 59/*482/*423*/ });
+        WndPairValue{ 768/*752*/, 301 + 59/*482/*423*/ }, IDI_ICON1);
     /* Setup the main window */
     _wnd->SetWndText(std::string(app_name + std::string(" ") + app_version).c_str());
     _wnd->EnableControlsDialogMessages(true);
@@ -20,54 +20,60 @@ UI::UI(const char *app_name, const char *app_version)
         WndPairValue{ _start_pos_x, _start_pos_y }, WndPairValue{ 130, 17 });
 
     _video_source_wnd_label = new Label("Captured window: ",
-        WndPairValue{ _start_pos_x, _start_pos_y + 55 }, WndPairValue{ 100, 17 });
+        WndPairValue{ _start_pos_x, _start_pos_y + 50 }, WndPairValue{ 100, 17 });
 
     _video_resolution_label = new Label("Video resolution: ",
-        WndPairValue{ _start_pos_x, _start_pos_y + 80 }, WndPairValue{ 100, 17 });
+        WndPairValue{ _start_pos_x, _start_pos_y + 70 }, WndPairValue{ 100, 17 });
 
     _video_resolution_x_symbol_label = new Label("X",
-        WndPairValue{ _start_pos_x + 145, _start_pos_y + 80 }, WndPairValue{ 10, 17 });
+        WndPairValue{ _start_pos_x + 145, _start_pos_y + 70 }, WndPairValue{ 10, 17 });
+
+    _video_fps_label = new Label("Video FPS: ",
+        WndPairValue{ _start_pos_x, _start_pos_y + 90 }, WndPairValue{ 60, 17 });
 
     _video_codec_label = new Label("Video codec: ",
-        WndPairValue{ _start_pos_x, _start_pos_y + 55 }, WndPairValue{ 80, 17 });
+        WndPairValue{ _start_pos_x, _start_pos_y + 50 }, WndPairValue{ 80, 17 });
 
     _video_quality_label = new Label("Quality: ",
-        WndPairValue{ _start_pos_x + 10, _start_pos_y + 80 }, WndPairValue{ 42, 17 });
+        WndPairValue{ _start_pos_x + 10, _start_pos_y + 70 }, WndPairValue{ 42, 17 });
 
     _video_quality_percent_label = new Label("%",
-        WndPairValue{ _start_pos_x + 95, _start_pos_y + 80 }, WndPairValue{ 12, 17 });
+        WndPairValue{ _start_pos_x + 95, _start_pos_y + 70 }, WndPairValue{ 12, 17 });
 
     _audio_source_label = new Label("Audio source: ",
-        WndPairValue{ _start_pos_x, _start_pos_y + 110 }, WndPairValue{ 130, 17 });
+        WndPairValue{ _start_pos_x, _start_pos_y + 135 }, WndPairValue{ 130, 17 });
 
     _audio_codec_label = new Label("Audio codec: ",
-        WndPairValue{ _start_pos_x, _start_pos_y + 165 }, WndPairValue{ 80, 17 });
+        WndPairValue{ _start_pos_x, _start_pos_y + 185 }, WndPairValue{ 80, 17 });
 
     /* Edits */
     _video_source_wnd_edit = new Edit(
-        WndPairValue{ _start_pos_x + 110, _start_pos_y + 55 }, WndPairValue{ 50, 17 });
+        WndPairValue{ _start_pos_x + 110, _start_pos_y + 50 }, WndPairValue{ 50, 17 });
 
     _video_width_edit = new Edit(
-        WndPairValue{ _start_pos_x + 110, _start_pos_y + 80 }, WndPairValue{ 30, 17 });
+        WndPairValue{ _start_pos_x + 110, _start_pos_y + 70 }, WndPairValue{ 30, 17 });
 
     _video_height_edit = new Edit(
-        WndPairValue{ _start_pos_x + 160, _start_pos_y + 80 }, WndPairValue{ 30, 17 });
+        WndPairValue{ _start_pos_x + 160, _start_pos_y + 70 }, WndPairValue{ 30, 17 });
+
+    _video_fps_edit = new Edit(
+        WndPairValue{ _start_pos_x + 110, _start_pos_y + 90 }, WndPairValue{ 30, 17 });
 
     _video_quality_edit = new Edit(
-        WndPairValue{ _start_pos_x + 60, _start_pos_y + 80 }, WndPairValue{ 30, 17 });
+        WndPairValue{ _start_pos_x + 60, _start_pos_y + 70 }, WndPairValue{ 30, 17 });
 
     /* Combo boxes */
     _video_sources_list = new ComboBox(
         WndPairValue{ _start_pos_x, _start_pos_y + 20 }, WndPairValue{ _controls_block_width, 50 });
 
     _video_codecs_list = new ComboBox(
-        WndPairValue{ _start_pos_x + 90, _start_pos_y + 50 }, WndPairValue{ _controls_block_width - 90, 50 });
+        WndPairValue{ _start_pos_x + 90, _start_pos_y + 45 }, WndPairValue{ _controls_block_width - 90, 50 });
 
     _audio_sources_list = new ComboBox(
-        WndPairValue{ _start_pos_x, _start_pos_y + 130 }, WndPairValue{ _controls_block_width, 50 });
+        WndPairValue{ _start_pos_x, _start_pos_y + 155 }, WndPairValue{ _controls_block_width, 50 });
 
     _audio_codecs_list = new ComboBox(
-        WndPairValue{ _start_pos_x + 90, _start_pos_y + 160 }, WndPairValue{ _controls_block_width - 90, 50 });
+        WndPairValue{ _start_pos_x + 90, _start_pos_y + 180 }, WndPairValue{ _controls_block_width - 90, 50 });
 
     /* Menus */
     _preview_chekced_menu_point = new MenuPoint("Preview", Checked);
@@ -100,6 +106,7 @@ UI::UI(const char *app_name, const char *app_version)
     _wnd->AttachChildControl(_video_source_wnd_label);
     _wnd->AttachChildControl(_video_resolution_label);
     _wnd->AttachChildControl(_video_resolution_x_symbol_label);
+    _wnd->AttachChildControl(_video_fps_label);
     _wnd->AttachChildControl(_video_codec_label);
     _wnd->AttachChildControl(_video_quality_label);
     _wnd->AttachChildControl(_video_quality_percent_label);
@@ -109,6 +116,7 @@ UI::UI(const char *app_name, const char *app_version)
     _wnd->AttachChildControl(_video_source_wnd_edit);
     _wnd->AttachChildControl(_video_width_edit);
     _wnd->AttachChildControl(_video_height_edit);
+    _wnd->AttachChildControl(_video_fps_edit);
     _wnd->AttachChildControl(_video_quality_edit);
 
     _wnd->AttachChildControl(_video_sources_list);
@@ -124,6 +132,7 @@ UI::UI(const char *app_name, const char *app_version)
     _normal_font->SetFont(_video_source_wnd_label);
     _normal_font->SetFont(_video_resolution_label);
     _normal_font->SetFont(_video_resolution_x_symbol_label);
+    _normal_font->SetFont(_video_fps_label);
     _normal_font->SetFont(_video_codec_label);
     _normal_font->SetFont(_video_quality_label);
     _normal_font->SetFont(_video_quality_percent_label);
@@ -133,6 +142,7 @@ UI::UI(const char *app_name, const char *app_version)
     _normal_font->SetFont(_video_source_wnd_edit);
     _normal_font->SetFont(_video_width_edit);
     _normal_font->SetFont(_video_height_edit);
+    _normal_font->SetFont(_video_fps_edit);
     _normal_font->SetFont(_video_quality_edit);
 
     _normal_font->SetFont(_video_sources_list);
@@ -141,6 +151,7 @@ UI::UI(const char *app_name, const char *app_version)
     _normal_font->SetFont(_audio_codecs_list);
 
     /* Default controls' settings */
+    _video_fps_edit->SetWndText("30");
     _video_quality_edit->SetWndText("0");
 
     _video_sources_list->AddItem("None");
@@ -158,6 +169,8 @@ UI::UI(const char *app_name, const char *app_version)
     _video_resolution_x_symbol_label->ShowWnd(false);
     _video_width_edit->ShowWnd(false);
     _video_height_edit->ShowWnd(false);
+    _video_fps_label->ShowWnd(false);
+    _video_fps_edit->ShowWnd(false);
 
     _video_codec_label->ShowWnd(false);
     _video_codecs_list->ShowWnd(false);
@@ -205,7 +218,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 55 });
+        label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 50 });
         });
 
     _video_resolution_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
@@ -213,7 +226,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 80 });
+        label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 70 });
         });
 
     _video_resolution_x_symbol_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
@@ -221,7 +234,15 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        label->SetWndPos(WndPairValue{ new_preview_width + 20 + 100 + 10 + 5 + (new_parent_size.first - new_preview_width - 100 - 10 - 30 - 20) / 2, _start_pos_y + 80 });
+        label->SetWndPos(WndPairValue{ new_preview_width + 20 + 100 + 10 + 5 + (new_parent_size.first - new_preview_width - 100 - 10 - 30 - 20) / 2, _start_pos_y + 70 });
+        });
+
+    _video_fps_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+        Label *label = GetControlForParentResize(Label, ptr);
+        GetMiscForParentResize(ptr);
+
+        int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
+        label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 90 });
         });
 
     _video_codec_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
@@ -229,7 +250,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 55 });
+        label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 50 });
         });
 
     _video_quality_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
@@ -237,7 +258,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        label->SetWndPos(WndPairValue{ new_preview_width + 30, _start_pos_y + 80 });
+        label->SetWndPos(WndPairValue{ new_preview_width + 30, _start_pos_y + 70 });
         });
 
     _video_quality_percent_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
@@ -245,7 +266,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        label->SetWndPos(WndPairValue{ new_preview_width + 115, _start_pos_y + 80 });
+        label->SetWndPos(WndPairValue{ new_preview_width + 115, _start_pos_y + 70 });
         });
 
     _audio_source_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
@@ -253,7 +274,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 110 });
+        label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 135 });
         });
 
     _audio_codec_label->AddCallback("ParentResizeCallback", [this, main_wnd_sides_callback, preview_wnd_resize_callback](void *ptr)->void {
@@ -261,7 +282,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 165 });
+        label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 185 });
 
         /* Preview window resize */
         preview_wnd_resize_callback(ptr);
@@ -276,7 +297,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        edit->SetWndPos(WndPairValue{ new_preview_width + 130, _start_pos_y + 55});
+        edit->SetWndPos(WndPairValue{ new_preview_width + 130, _start_pos_y + 50 });
         edit->SetWndSize(WndPairValue{ new_parent_size.first - new_preview_width - 100 - 10 - 30, 17 });
         });
 
@@ -285,7 +306,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        edit->SetWndPos(WndPairValue{ new_preview_width + 130, _start_pos_y + 80 });
+        edit->SetWndPos(WndPairValue{ new_preview_width + 130, _start_pos_y + 70 });
         edit->SetWndSize(WndPairValue{ (new_parent_size.first - new_preview_width - 100 - 10 - 30 - 20) / 2, 17 });
         });
 
@@ -294,8 +315,16 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        edit->SetWndPos(WndPairValue{ new_preview_width + 130 + 20 + (new_parent_size.first - new_preview_width - 100 - 10 - 30 - 20) / 2, _start_pos_y + 80 });
+        edit->SetWndPos(WndPairValue{ new_preview_width + 130 + 20 + (new_parent_size.first - new_preview_width - 100 - 10 - 30 - 20) / 2, _start_pos_y + 70 });
         edit->SetWndSize(WndPairValue{ (new_parent_size.first - new_preview_width - 100 - 10 - 30 - 20) / 2, 17 });
+        });
+
+    _video_fps_edit->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+        Edit *edit = GetControlForParentResize(Edit, ptr);
+        GetMiscForParentResize(ptr);
+
+        int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
+        edit->SetWndPos(WndPairValue{ new_preview_width + 130, _start_pos_y + 90 });
         });
 
     _video_quality_edit->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
@@ -303,7 +332,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        edit->SetWndPos(WndPairValue{ new_preview_width + 80, _start_pos_y + 80 });
+        edit->SetWndPos(WndPairValue{ new_preview_width + 80, _start_pos_y + 70 });
         });
 
     /* Combo boxes */
@@ -321,7 +350,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
             int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        list->SetWndPos(WndPairValue{ new_preview_width + 110, _start_pos_y + 50 });
+        list->SetWndPos(WndPairValue{ new_preview_width + 110, _start_pos_y + 45 });
         list->SetWndSize(WndPairValue{ new_parent_size.first - new_preview_width - 120, 50 });
         });
 
@@ -330,7 +359,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
             int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        list->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 130 });
+        list->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 155 });
         list->SetWndSize(WndPairValue{ new_parent_size.first - new_preview_width - 30, 50 });
         });
 
@@ -339,7 +368,7 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
             int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
-        list->SetWndPos(WndPairValue{ new_preview_width + 110, _start_pos_y + 160 });
+        list->SetWndPos(WndPairValue{ new_preview_width + 110, _start_pos_y + 180 });
         list->SetWndSize(WndPairValue{ new_parent_size.first - new_preview_width - 120, 50 });
         });
 }
@@ -355,6 +384,8 @@ void UI::ResetVideoRecordingRelatedControls()
     _video_resolution_x_symbol_label->ShowWnd(false);
     _video_width_edit->ShowWnd(false);
     _video_height_edit->ShowWnd(false);
+    _video_fps_label->ShowWnd(false);
+    _video_fps_edit->ShowWnd(false);
 
     _video_codec_label->ShowWnd(false);
     _video_codecs_list->ShowWnd(false);

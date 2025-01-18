@@ -6,6 +6,8 @@
 #include "WindowLib/NormalFont.h"
 #include "PreviewWindow/PreviewWindow.h"
 
+#include "../../resource.h"
+
 #ifndef GETTER
 #define GETTER(obj) decltype(obj) &get##obj() { return obj; }
 #endif
@@ -30,6 +32,7 @@ private:
     SmtObj<Label> _video_source_wnd_label;
     SmtObj<Label> _video_resolution_label;
     SmtObj<Label> _video_resolution_x_symbol_label;
+    SmtObj<Label> _video_fps_label;
 
     SmtObj<Label> _video_codec_label;
     SmtObj<Label> _video_quality_label;
@@ -41,6 +44,7 @@ private:
     SmtObj<Edit> _video_source_wnd_edit;
     SmtObj<Edit> _video_width_edit;
     SmtObj<Edit> _video_height_edit;
+    SmtObj<Edit> _video_fps_edit;
     SmtObj<Edit> _video_quality_edit;
 
     SmtObj<ComboBox> _video_sources_list;
@@ -75,6 +79,7 @@ public:
     GETTER(_video_source_wnd_label)
     GETTER(_video_resolution_label)
     GETTER(_video_resolution_x_symbol_label)
+    GETTER(_video_fps_label)
 
     GETTER(_video_codec_label)
     GETTER(_video_quality_label)
@@ -86,6 +91,7 @@ public:
     GETTER(_video_source_wnd_edit)
     GETTER(_video_width_edit)
     GETTER(_video_height_edit)
+    GETTER(_video_fps_edit)
     GETTER(_video_quality_edit)
 
     GETTER(_video_sources_list)

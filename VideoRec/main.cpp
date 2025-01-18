@@ -1,7 +1,8 @@
 #define APP_NAME "VideoRec"
 #define APP_VERSION "2.0 Alfa"
 
-#define WINDOWLIB_NO_MANIFEST
+//#define WINDOWLIB_NO_MANIFEST
+#define WINDOWLIB_NO_CONSOLE
 
 #include <iostream>
 #include <string>
@@ -30,12 +31,8 @@ int main(int argc, const char **argv)
 
     try
     {
-        std::cout << "Aloha!\n";
-
         App app(APP_NAME, APP_VERSION);
         result = app.Run();
-
-        std::cout << "Bye!\n";
     }
     catch (const std::string &error)
     {

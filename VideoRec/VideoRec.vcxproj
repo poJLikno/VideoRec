@@ -113,7 +113,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\include;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>
+      </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\lib;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -136,7 +137,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\include;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>
+      </SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -178,6 +180,7 @@
     <ClInclude Include="App\Model\FileNameGenerator\FileNameGenerator.h" />
     <ClInclude Include="App\Model\Model.h" />
     <ClInclude Include="App\UI\PreviewWindow\PreviewWindow.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SmtObj.h" />
     <ClInclude Include="App\UI\UI.h" />
     <ClInclude Include="App\UI\WindowLib\Button.h" />
@@ -203,6 +206,12 @@
   <ItemGroup>
     <None Include="gpu_prog.cl" />
     <None Include="gpu_test.cl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VideoRec.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

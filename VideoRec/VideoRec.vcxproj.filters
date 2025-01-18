@@ -161,9 +161,22 @@
     <ClInclude Include="App\Model\FileNameGenerator\FileNameGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="gpu_prog.cl" />
     <None Include="gpu_test.cl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VideoRec.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
