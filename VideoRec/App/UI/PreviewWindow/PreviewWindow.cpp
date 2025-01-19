@@ -35,6 +35,7 @@ LRESULT PreviewWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                 PAINTSTRUCT ps = { 0 };
                 HDC hdc = BeginPaint(hwnd, &ps);
                 /* Configure DC */
+                SetStretchBltMode(hdc, HALFTONE);/* Make normal scale */
                 HPEN pen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
                 HGDIOBJ old_obj = SelectObject(hdc, (HGDIOBJ)pen);
                 SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));

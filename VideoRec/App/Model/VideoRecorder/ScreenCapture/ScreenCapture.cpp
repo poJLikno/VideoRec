@@ -24,10 +24,18 @@ ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, cons
 
     /* Get window size */
     RECT rect = { 0 };
+    POINT upper_left = { 0 };
 
-    /* Make window opened */
-    ShowWindow(_hwnd, SW_NORMAL);
-    GetClientRect(_hwnd, &rect);
+    /* check iconic (minimized) twice, ABA is very unlikely (OBS code segment) */
+    bool window_available = !IsIconic(_hwnd) && GetClientRect(_hwnd, &rect) && !IsIconic(_hwnd) &&
+        (rect.right > 0) && (rect.bottom > 0) && ClientToScreen(_hwnd, &upper_left);
+
+    if (!window_available)
+    {
+        /* Make window opened */
+        ShowWindow(_hwnd, SW_RESTORE);
+        GetClientRect(_hwnd, &rect);
+    }
     int dpi = GetDpiForWindow(_hwnd);
     _src_width = (rect.right - rect.left) * dpi / USER_DEFAULT_SCREEN_DPI;
     _src_height = (rect.bottom - rect.top) * dpi / USER_DEFAULT_SCREEN_DPI;
@@ -62,7 +70,7 @@ ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, cons
 
     //_bitmap = CreateCompatibleBitmap(_wnd_dev_ctx, _src_width, _src_height);
     //GetDIBits()
-    
+
     _bitmap = CreateDIBSection(_wnd_dev_ctx, (const BITMAPINFO *)&_bitmap_info, DIB_RGB_COLORS, (void **)&_buffer, nullptr, 0);
     if (_bitmap == nullptr) {
         throw std::string("Couldn't allocate frame buffer!");

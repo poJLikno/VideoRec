@@ -1,5 +1,5 @@
 #define APP_NAME "VideoRec"
-#define APP_VERSION "2.0 Alfa"
+#define APP_VERSION "2.1 Alfa"
 
 //#define WINDOWLIB_NO_MANIFEST
 #define WINDOWLIB_NO_CONSOLE
@@ -20,7 +20,6 @@
 
 #pragma comment(lib, "OpenCL.lib")
 */
-
 
 int main(int argc, const char **argv)
 {
