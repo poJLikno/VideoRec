@@ -2,6 +2,7 @@
 #define MODEL_H_
 
 #include "VideoRecorder/VideoRecorder.h"
+#include "DShowRecorder/DShowRecorder.h"
 #include "FileNameGenerator/FileNameGenerator.h"
 
 #ifndef GETTER
@@ -14,6 +15,7 @@ private:
     SmtObj<FileNameGenerator> _file_name_generator;
 
     SmtObj<VideoRecorder> _video_rec;
+    SmtObj<DShowRecorder> _dshow_rec;
     bool _allow_preview_flag = true;
 
 public:
@@ -21,10 +23,11 @@ public:
     Model(const Model &) = delete;
     ~Model() = default;
 
-    void ResetAll();
+    void ResetAllVideo();
 
     GETTER(_file_name_generator)
     GETTER(_video_rec)
+    GETTER(_dshow_rec)
     GETTER(_allow_preview_flag)
 };
 

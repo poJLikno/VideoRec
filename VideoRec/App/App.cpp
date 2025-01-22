@@ -7,7 +7,32 @@ App::App(const char *app_name, const char *app_version)
     _ui = new UI(app_name, app_version);
 
     /* Add init settings */
+    _model->get_dshow_rec() = new DShowRecorder(_model->get_allow_preview_flag());
+    _model->get_dshow_rec()->AttachDShowWindow(_ui->get_dshow_wnd());
+
+    /* Add devices to list */
+    auto _add_devices_to_list_func = [](Device *device, SmtObj<ComboBox> &combo_box)->void {
+        wchar_t **device_names = nullptr;
+        unsigned int names_num = 0u;
+        device->GetDeviceList(&device_names, &names_num);
+        if (device_names && names_num) {
+            for (unsigned int i = 0u; i < names_num; ++i) {
+                /* wchar_t support */
+                combo_box->SendMsg(CB_ADDSTRING, NULL, (LPARAM)device_names[i]);;
+                free(device_names[i]);
+            }
+            free(device_names);
+            device_names = nullptr;
+        }
+        };
+
+    /* Add VideoRec module */
     _ui->get_video_sources_list()->AddItem("Capture a window");
+    /* Add DShow module */
+    _add_devices_to_list_func(_model->get_dshow_rec()->GetVideoDevice(), _ui->get_video_sources_list());
+    _add_devices_to_list_func(_model->get_dshow_rec()->GetVideoCodec(), _ui->get_video_codecs_list());
+    _add_devices_to_list_func(_model->get_dshow_rec()->GetAudioDevice(), _ui->get_audio_sources_list());
+    _add_devices_to_list_func(_model->get_dshow_rec()->GetAudioCodec(), _ui->get_audio_codecs_list());
 
     /* Add async loop callback for main window */
     _ui->get_wnd()->AddCallback("AsyncLoopCallback", [this](void *ptr)->void {
@@ -49,7 +74,7 @@ App::App(const char *app_name, const char *app_version)
 
         /* Reset controls' state */
         _ui->ResetVideoRecordingRelatedControls();
-        _model->ResetAll();
+        _model->ResetAllVideo();
 
         if (list->GetItemId() == 1/* "Capture a window" */)
         {
@@ -106,22 +131,96 @@ App::App(const char *app_name, const char *app_version)
             /* Set context for preview */
             _ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
         }
+        else if (list->GetItemId() != 0/* "Capture DShow" */)
+        {
+            /* Show needed controls and preview window if allows */
+            _ui->get_video_codec_label()->ShowWnd(true);
+            _ui->get_video_codecs_list()->ShowWnd(true);
 
+            /* Set device */
+            /* DShow always initialazed */
+            _model->get_dshow_rec()->SelectDevice(list->GetItemId() - 2, _model->get_dshow_rec()->GetVideoDevice());
+
+            // Check filter settings access
+            if (_model->get_dshow_rec()->HasFilterSettings(_model->get_dshow_rec()->GetVideoDevice()))
+            {
+                // Set state for ui
+                _ui->get_video_source_menu_point()->SetState(true);
+            }
+
+            // Check pin settings access
+            if (_model->get_dshow_rec()->HasPinSettings(_model->get_dshow_rec()->GetVideoDevice()))
+            {
+                // Set state for ui
+                _ui->get_video_capture_pin_menu_point()->SetState(true);
+            }
+
+            /* Show codec controls */
+            _ui->get_video_codecs_list()->operator()("MainCallback", (void *)_ui->get_video_codecs_list());
+        }
         });
 
     _ui->get_video_codecs_list()->AddCallback("MainCallback", [this](void *ptr)->void {
         ComboBox *list = GetControl(ComboBox, ptr);
 
+        // Disable recording (if need)
+        _ui->get_stop_recording_menu_point()->operator()("MainCallback", (void *)_ui->get_stop_recording_menu_point());
+
+        _model->get_dshow_rec()->GetVideoCodec()->ReleaseDevice();
+        _model->get_dshow_rec()->SelectDevice(list->GetItemId() - 1, _model->get_dshow_rec()->GetVideoCodec());
+
+        double default_cuality = _model->get_dshow_rec()->GetDefaultVideoCodecQuality();
+        if (default_cuality >= 0.0) {
+            _ui->get_video_quality_edit()->SetWndText(std::to_string((int)round(default_cuality * 100.0)).c_str());
+            _ui->get_video_quality_label()->ShowWnd(true);
+            _ui->get_video_quality_percent_label()->ShowWnd(true);
+            _ui->get_video_quality_edit()->ShowWnd(true);
+        }
+        else {
+            _ui->get_video_quality_label()->ShowWnd(false);
+            _ui->get_video_quality_percent_label()->ShowWnd(false);
+            _ui->get_video_quality_edit()->ShowWnd(false);
+        }        
         });
 
     _ui->get_audio_sources_list()->AddCallback("MainCallback", [this](void *ptr)->void {
         ComboBox *list = GetControl(ComboBox, ptr);
 
+        // Disable recording (if need)
+        _ui->get_stop_recording_menu_point()->operator()("MainCallback", (void *)_ui->get_stop_recording_menu_point());
+        _model->get_dshow_rec()->GetAudioDevice()->ReleaseDevice();
+
+        /* Reset audio UI */
+        _ui->get_audio_source_menu_point()->SetState(false);
+        _ui->get_audio_capture_pin_menu_point()->SetState(false);
+
+        /* Set device */
+        /* DShow always initialazed */
+        _model->get_dshow_rec()->SelectDevice(list->GetItemId() - 1, _model->get_dshow_rec()->GetAudioDevice());
+
+        // Check filter settings access
+        if (_model->get_dshow_rec()->HasFilterSettings(_model->get_dshow_rec()->GetAudioDevice()))
+        {
+            // Set state for ui
+            _ui->get_audio_source_menu_point()->SetState(true);
+        }
+
+        // Check pin settings access
+        if (_model->get_dshow_rec()->HasPinSettings(_model->get_dshow_rec()->GetAudioDevice()))
+        {
+            // Set state for ui
+            _ui->get_audio_capture_pin_menu_point()->SetState(true);
+        }        
         });
 
     _ui->get_audio_codecs_list()->AddCallback("MainCallback", [this](void *ptr)->void {
         ComboBox *list = GetControl(ComboBox, ptr);
 
+        // Disable recording (if need)
+        _ui->get_stop_recording_menu_point()->operator()("MainCallback", (void *)_ui->get_stop_recording_menu_point());
+
+        _model->get_dshow_rec()->GetAudioCodec()->ReleaseDevice();
+        _model->get_dshow_rec()->SelectDevice(list->GetItemId() - 1, _model->get_dshow_rec()->GetAudioCodec());
         });
 
     /* Menu points' callbacks */
@@ -131,8 +230,49 @@ App::App(const char *app_name, const char *app_version)
         _model->get_allow_preview_flag() = !_model->get_allow_preview_flag();
         menu_point->SetState(_model->get_allow_preview_flag());
 
-        /* Call select source callback to reload preview flag for modules */
-        _ui->get_video_sources_list()->operator()("MainCallback", (void *)_ui->get_video_sources_list());
+        /* Call select source callback to reload preview flag for VideoRec module */
+        if (_model->get_video_rec())
+        {
+            _ui->get_video_sources_list()->operator()("MainCallback", (void *)_ui->get_video_sources_list());
+        }
+        /* For DShow enougt just restart graph */
+        _model->get_dshow_rec()->StopRecording();
+        });
+
+    _ui->get_video_source_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
+        //MenuPoint *menu_point = GetControl(MenuPoint, ptr);
+
+        // Disable recording (if need)
+        _model->get_dshow_rec()->StopRecording();/* if it is executing, VideoRec = nullptr */
+
+        _model->get_dshow_rec()->ShowVideoFilterSettings();
+        });
+
+    _ui->get_video_capture_pin_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
+        //MenuPoint *menu_point = GetControl(MenuPoint, ptr);
+
+        // Disable recording (if need)
+        _model->get_dshow_rec()->StopRecording();/* if it is executing, VideoRec = nullptr */
+
+        _model->get_dshow_rec()->ShowVideoPinSettings();
+        });
+
+    _ui->get_audio_source_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
+        //MenuPoint *menu_point = GetControl(MenuPoint, ptr);
+
+        // Disable recording (if need)
+        _model->get_dshow_rec()->StopRecording();/* if it is executing, VideoRec = nullptr */
+
+        _model->get_dshow_rec()->ShowAudioFilterSettings();
+        });
+
+    _ui->get_audio_capture_pin_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
+        //MenuPoint *menu_point = GetControl(MenuPoint, ptr);
+
+        // Disable recording (if need)
+        _model->get_dshow_rec()->StopRecording();/* if it is executing, VideoRec = nullptr */
+
+        _model->get_dshow_rec()->ShowAudioPinSettings();
         });
 
     _ui->get_start_recording_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
@@ -154,9 +294,25 @@ App::App(const char *app_name, const char *app_version)
                 }
 
                 _model->get_video_rec()->StartRecording((const char *)_model->get_file_name_generator()->CreateFileName(), atoi(video_fps));
-
             }
 
+            /* Also try recording DShow video / audio */
+            char video_quality[4] = { 0 };
+            _ui->get_video_quality_edit()->GetWndText(video_quality, 3);
+            if (video_quality[0] == '\0')
+            {
+                throw std::string("Video quality is not set!");
+            }
+            else if (atoi(video_quality) == 0 && video_quality[0] != '0')
+            {
+                throw std::string("Video quality must be a number [1% - 100%]!");
+            }
+
+            _model->get_dshow_rec()->GetVideoCodec()->SetCodecQuality((double)atoi(video_quality) / 100.0);
+
+            _model->get_dshow_rec()->StartRecording();
+
+            
             menu_point->SetState(false);
             _ui->get_stop_recording_menu_point()->SetState(true);
         }
@@ -167,17 +323,31 @@ App::App(const char *app_name, const char *app_version)
             MultiByteToWideChar(CP_UTF8, 0, error.c_str(), str_size, w_error, str_size);
 
             MessageBoxW(NULL, w_error, L"Error", MB_OK);
+
+            // Disable recording (if need)
+            _ui->get_stop_recording_menu_point()->operator()("MainCallback", (void *)_ui->get_stop_recording_menu_point());
+        }
+        catch (const std::wstring &message)
+        {
+            MessageBox(NULL, message.c_str(), L"Attention", MB_OK);
+
+            // Disable recording (if need)
+            _ui->get_stop_recording_menu_point()->operator()("MainCallback", (void *)_ui->get_stop_recording_menu_point());
         }
         });
 
     _ui->get_stop_recording_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
         MenuPoint *menu_point = GetControl(MenuPoint, ptr);
 
+        /* VideoRec module */
         if (_model->get_video_rec())
         {
             _model->get_video_rec()->StopRecording();
         }
 
+        /* DShow */
+        _model->get_dshow_rec()->StopRecording();
+        
         menu_point->SetState(false);
         _ui->get_start_recording_menu_point()->SetState(true);
         });
