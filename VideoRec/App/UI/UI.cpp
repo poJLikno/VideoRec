@@ -12,7 +12,11 @@ UI::UI(const char *app_name, const char *app_version)
 
     /* Create a preview window */
     _preview_wnd = new PreviewWindow(_wnd, WndPairValue{ 10, 10 }, WndPairValue{ 500, 281 });
-    _preview_wnd->ShowWnd(false);
+    _dshow_wnd = new DShowWindow();
+    _dshow_wnd->PutOwner(_wnd->GetHwnd());
+    _dshow_wnd->PutStyle(WS_VISIBLE | WS_CHILD);
+    _dshow_wnd->PutSize(500u, 281u);
+    _dshow_wnd->PutPos(10u, 10u);
     
     /* Create window controls */
     /* Labels */
@@ -163,6 +167,9 @@ UI::UI(const char *app_name, const char *app_version)
     _audio_sources_list->SelectItem(0);
     _audio_codecs_list->SelectItem(0);
 
+    _preview_wnd->ShowWnd(false);
+
+
     _video_source_wnd_label->ShowWnd(false);
     _video_source_wnd_edit->ShowWnd(false);
     _video_resolution_label->ShowWnd(false);
@@ -201,6 +208,14 @@ UI::UI(const char *app_name, const char *app_version)
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
 
         _preview_wnd->SetWndSize(WndPairValue{ (long)new_preview_width, (long)round(9.f / 16.f * (float)new_preview_width) });
+        };
+
+    auto dshow_wnd_resize_callback = [this](void *ptr)->void {
+        GetMiscForParentResize(ptr);
+
+        int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
+
+        _dshow_wnd->PutSize((long)new_preview_width, (long)round(9.f / 16.f * (float)new_preview_width));
         };
 
     /* Labels */
@@ -277,12 +292,15 @@ UI::UI(const char *app_name, const char *app_version)
         label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 135 });
         });
 
-    _audio_codec_label->AddCallback("ParentResizeCallback", [this, main_wnd_sides_callback, preview_wnd_resize_callback](void *ptr)->void {
+    _audio_codec_label->AddCallback("ParentResizeCallback", [this, main_wnd_sides_callback, preview_wnd_resize_callback, dshow_wnd_resize_callback](void *ptr)->void {
         Label *label = GetControlForParentResize(Label, ptr);
         GetMiscForParentResize(ptr);
 
         int new_preview_width = (int)round((float)new_parent_size.first * _preview_width_coeff);
         label->SetWndPos(WndPairValue{ new_preview_width + 20, _start_pos_y + 185 });
+
+        /* DShow preview window resize */
+        dshow_wnd_resize_callback(ptr);
 
         /* Preview window resize */
         preview_wnd_resize_callback(ptr);

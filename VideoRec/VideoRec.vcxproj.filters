@@ -84,6 +84,15 @@
     <ClCompile Include="App\Model\FileNameGenerator\FileNameGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="App\Model\DShowRecorder\BaseFilterDevices.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Model\DShowRecorder\DShowRecorder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\DShowWindow\DShowWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.h">
@@ -162,6 +171,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\DShowRecorder\BaseFilterDevices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\DShowRecorder\DShowRecorder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\DShowWindow\DShowWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\DShowRecorder\DSSafePtr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

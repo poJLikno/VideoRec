@@ -5,6 +5,7 @@
 #include "WindowLib/Window.h"
 #include "WindowLib/NormalFont.h"
 #include "PreviewWindow/PreviewWindow.h"
+#include "DShowWindow/DShowWindow.h"
 
 #include "../../resource.h"
 
@@ -25,7 +26,7 @@ private:
     SmtObj<NormalFont> _normal_font;
 
     SmtObj<PreviewWindow> _preview_wnd;
-
+    SmtObj<DShowWindow> _dshow_wnd;
 
     SmtObj<Label> _video_source_label;
 
@@ -73,6 +74,7 @@ public:
     GETTER(_wnd)
 
     GETTER(_preview_wnd)
+    GETTER(_dshow_wnd)
 
     GETTER(_video_source_label)
 
