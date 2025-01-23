@@ -1,7 +1,6 @@
 #define APP_NAME "VideoRec"
-#define APP_VERSION "2.1 Alfa"
+#define APP_VERSION "2.2 (video-only) Release"
 
-//#define WINDOWLIB_NO_MANIFEST
 #define WINDOWLIB_NO_CONSOLE
 
 #include <iostream>

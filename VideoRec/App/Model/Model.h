@@ -21,8 +21,6 @@ public:
     Model(const Model &) = delete;
     ~Model() = default;
 
-    void ResetAll();
-
     GETTER(_file_name_generator)
     GETTER(_video_rec)
     GETTER(_allow_preview_flag)

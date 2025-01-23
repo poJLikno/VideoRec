@@ -50,6 +50,13 @@ LRESULT Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
                 SetBkMode((HDC)wParam, TRANSPARENT);
                 result = 0;
             }
+            /*else if (uMsg == WM_MOUSEMOVE)
+            {
+                int x = LOWORD(lParam);
+                int y = HIWORD(lParam);
+
+                std::cout << x << " : " << y << "\n";
+            }*/
             else if (uMsg == WM_MOVE) {
                 WndPos->first = LOWORD(lParam);
                 WndPos->second = HIWORD(lParam);
@@ -59,6 +66,7 @@ LRESULT Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
                 ParentResizeCallbackParams params = { nullptr, *WndSize };
                 WndSize->first = LOWORD(lParam);
                 WndSize->second = HIWORD(lParam);
+                //std::cout << WndSize->first << " x " << WndSize->second << "\n";
 
                 // Run parent resize controls callbacks
                 ParentResizeCallbacksCaller(Wnd->GetButtonsList(), &params);
