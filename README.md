@@ -22,7 +22,9 @@
 3. Select "Options" -> "Start recording" or press hotkey (Alt + K)
 
 ## How to build from sources ##
-...
+For successful app compilation you need install OpenCL and FFmpeg libs.
+Visual Studio supply vcpkg manager and this solution have vcpkg dependencies, so you need just run `vcpkg install --triplet=x64-windows` on VS powrshell to install libraries.
+Now you are ready to build the app.
 
 ## More information ##
 You can find more information in russian language in my *[school project .docx file](https://docs.google.com/document/d/1Acz6KpHh8o7UEKdiUX9S0lwbHd2BfUYzEftklc-Ur8o/edit?usp=sharing)*.
