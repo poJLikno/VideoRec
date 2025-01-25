@@ -84,12 +84,6 @@ void DoubleBuffer::UnlockFrame()
         throw std::string("Frame has already been unlocked!");
     }
 
-
-    if (_has_new_frame)
-    {
-        _curr_safe_frame_idx = (!_curr_safe_frame_idx ? 1u : 0u);
-    }
-
     _frame_is_locked = false;
 }
 
@@ -100,12 +94,15 @@ AVFrame *DoubleBuffer::GetFrame()
 
 void DoubleBuffer::WriteFrame()
 {
-    bool frame_is_locked = _frame_is_locked;
+    if (_has_new_frame)
+    {
+        _curr_safe_frame_idx = (!_curr_safe_frame_idx ? 1u : 0u);
+    }
 
     AVFrame *current_frame = _frames[!_curr_safe_frame_idx];
     _hw_accel_cl.Run(current_frame->data[0]/*Y*/, current_frame->data[1]/*U*/, current_frame->data[2])/*V*/;
 
-    if (frame_is_locked)
+    if (_frame_is_locked)
     {
         _has_new_frame = true;
     }
