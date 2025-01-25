@@ -73,7 +73,9 @@ App::App(const char *app_name, const char *app_version)
 
         /* Stop recording */
         _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
-    
+
+        _ui->get_preview_wnd()->SetSrc(nullptr, 0, 0);
+
         try
         {
             /* Set source window and video resolution */
@@ -114,7 +116,7 @@ App::App(const char *app_name, const char *app_version)
             /* Set preview context */
             _ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
             /* Stop recording (need restart for idle mode activation for preview) */
-            _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
+            //_ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
         }
 
         button->ShowWnd(false);

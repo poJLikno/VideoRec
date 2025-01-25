@@ -46,6 +46,10 @@ LRESULT PreviewWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                 {
                     StretchBlt(hdc, 0, 0, wnd_width, wnd_height, Wnd->_src_hdc, 0, 0, Wnd->_src_width, Wnd->_src_height, SRCCOPY);
                 }
+                else
+                {
+                    SelectObject(hdc, GetStockObject(WHITE_BRUSH));
+                }
                 Rectangle(hdc, 0, 0, wnd_width, wnd_height);
 
                 /**/
