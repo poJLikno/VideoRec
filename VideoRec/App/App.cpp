@@ -71,8 +71,6 @@ App::App(const char *app_name, const char *app_version)
     _ui->get_video_settings_apply_button()->AddCallback("MainCallback", [this](void *ptr)->void {
         Button *button = GetControl(Button, ptr);
 
-        button->ShowWnd(false);
-
         /* Stop recording */
         _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
     
@@ -113,11 +111,13 @@ App::App(const char *app_name, const char *app_version)
     
         if (_model->get_allow_preview_flag())
         {
-            /* Stop recording (need restart for idle mode activation for preview) */
+            /* Set preview context */
             _ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
+            /* Stop recording (need restart for idle mode activation for preview) */
             _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
         }
 
+        button->ShowWnd(false);
         });
 
 
