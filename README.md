@@ -23,7 +23,7 @@
 
 ## How to build from sources ##
 For successful app compilation you need install OpenCL and FFmpeg libs.
-Visual Studio supply vcpkg manager and this solution has vcpkg dependencies, so you need just run `vcpkg install --triplet=x64-windows` on VS powrshell to install libraries.
+Visual Studio supply vcpkg manager and this solution has vcpkg dependencies, so you need just run `vcpkg install --triplet=x64-windows` in VS powrshell to install libraries.
 Now you are ready to build the app.
 
 ## More information ##
