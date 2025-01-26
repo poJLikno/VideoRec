@@ -2,7 +2,7 @@
 
 #include <string>
 
-ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, const int &dst_height)
+ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_only, const int &dst_width, const int &dst_height)
 {
     /* Get window */
     if (window_name)
@@ -44,7 +44,7 @@ ScreenCapture::ScreenCapture(const char *window_name, const int &dst_width, cons
     _dst_height = (dst_height == -1 ? _src_height : dst_height);
 
     /* Get window device context */
-    _wnd_dev_ctx = GetDCEx(_hwnd, nullptr, DCX_WINDOW | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
+    _wnd_dev_ctx = GetDCEx(_hwnd, nullptr, (client_rect_only ? 0 : DCX_WINDOW) | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
     if (!_wnd_dev_ctx)
     {
         throw std::string("Couldn't get window's DC!");
@@ -122,9 +122,9 @@ const int &ScreenCapture::GetDstHeight()
     return _dst_height;
 }
 
-DoubleBuffer &ScreenCapture::FramesBuffer()
+DoubleBuffer *ScreenCapture::GetFramesBuffer()
 {
-    return *_frames_buffer;
+    return _frames_buffer;
 }
 
 HDC ScreenCapture::GetBitmapContextForPreview()

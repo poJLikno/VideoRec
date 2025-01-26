@@ -51,21 +51,35 @@ App::App(const char *app_name, const char *app_version)
     _ui->get_video_source_wnd_edit()->AddCallback("MainCallback", [this](void *ptr)->void {
         //Edit *edit = GetControl(Edit, ptr);
 
-        _ui->get_video_settings_apply_button()->ShowWnd(true);
+        _ui->get_video_settings_apply_button()->SetInputState(true);
         });
 
     _ui->get_video_width_edit()->AddCallback("MainCallback", [this](void *ptr)->void {
         //Edit *edit = GetControl(Edit, ptr);
 
-        _ui->get_video_settings_apply_button()->ShowWnd(true);
+        _ui->get_video_settings_apply_button()->SetInputState(true);
         });
 
     _ui->get_video_height_edit()->AddCallback("MainCallback", [this](void *ptr)->void {
         //Edit *edit = GetControl(Edit, ptr);
 
-        _ui->get_video_settings_apply_button()->ShowWnd(true);
+        _ui->get_video_settings_apply_button()->SetInputState(true);
         });
 
+    /* Radio Buttons' callbacks */
+    _ui->get_video_capture_entire_screen_radio_btn()->AddCallback("MainCallback", [this](void *ptr)->void {
+        //RadioButton *button = GetControl(RadioButton, ptr);
+
+        _model->get_capture_client_rect_only_flag() = false;
+        _ui->get_video_settings_apply_button()->SetInputState(true);
+        });
+
+    _ui->get_video_capture_client_rect_only_radio_btn()->AddCallback("MainCallback", [this](void *ptr)->void {
+        //RadioButton *button = GetControl(RadioButton, ptr);
+
+        _model->get_capture_client_rect_only_flag() = true;
+        _ui->get_video_settings_apply_button()->SetInputState(true);
+        });
 
     /* Buttons' callbacks */
     _ui->get_video_settings_apply_button()->AddCallback("MainCallback", [this](void *ptr)->void {
@@ -119,7 +133,7 @@ App::App(const char *app_name, const char *app_version)
             //_ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
         }
 
-        button->ShowWnd(false);
+        button->SetInputState(false);
         });
 
 

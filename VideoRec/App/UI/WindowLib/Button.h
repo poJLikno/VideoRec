@@ -5,13 +5,13 @@
 #include "CallbackManager.h"
 
 class Button : public WndBase, public CallbackManager {
-private:
+protected:
     const char *_text;
 
 public:
     Button(const char *text,
-        WndPairValue pos = { 0, 0 },
-        WndPairValue size = { 20, 20 });
+        const WndPairValue &pos = { 0, 0 },
+        const WndPairValue &size = { 20, 20 });
 
     virtual void SetWndParent(WndBase *wnd) override;
 };

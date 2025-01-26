@@ -1,10 +1,12 @@
 #ifndef WINDOWLIB_WINDOW_H
 #define WINDOWLIB_WINDOW_H
 
-#define WINDOWLIB_VERSION "v1.1"
+#define WINDOWLIB_VERSION "v1.3"
 
 #include "WndList.h"
 #include "Button.h"
+#include "RadioButton.h"
+#include "CheckBox.h"
 #include "ComboBox.h"
 #include "Edit.h"
 #include "Label.h"
@@ -55,10 +57,10 @@ private:
 public:
     Window(
         const char *name,
-        WndPairValue pos = { CW_USEDEFAULT, CW_USEDEFAULT },
-        WndPairValue size = { CW_USEDEFAULT, CW_USEDEFAULT },
-        int icon_id = -1,
-        unsigned long wnd_style = WS_OVERLAPPEDWINDOW);
+        const WndPairValue &pos = { CW_USEDEFAULT, CW_USEDEFAULT },
+        const WndPairValue &size = { CW_USEDEFAULT, CW_USEDEFAULT },
+        const int &icon_id = -1,
+        const unsigned long &wnd_style = WS_OVERLAPPEDWINDOW);
     ~Window();
 
     void AttachChildControl(WndBase *wnd);

@@ -10,9 +10,9 @@ template<class T>
 static void ParentResizeCallbacksCaller(WndList<T> &ctrls_list, ParentResizeCallbackParams *params);
 
 template<class T>
-static void MainCallbacksCaller(WndList<T> &ctrls_list, LPARAM &lParam, bool &ctrl_was_found_flag);
+static void MainCallbacksCaller(WndList<T> &ctrls_list, LPARAM &lParam);//, bool &ctrl_was_found_flag);
 
-static bool MenuMainCallbacksCaller(MenuBase *menu, WPARAM &wParam, bool &ctrl_was_found_flag);
+static bool MenuMainCallbacksCaller(MenuBase *menu, WPARAM &wParam);//, bool &ctrl_was_found_flag);
 
 LRESULT Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     LRESULT result = 0;
@@ -79,21 +79,27 @@ LRESULT Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
                 result = 0;
             }
             else if (uMsg == WM_COMMAND) {
-                bool ctrl_was_found_flag = false;				
+                //bool ctrl_was_found_flag = false;				
 
                 // Run main controls callbacks
-                MainCallbacksCaller(Wnd->GetButtonsList(), lParam, ctrl_was_found_flag);
-
-                if (HIWORD(wParam) == CBN_SELCHANGE)
-                    MainCallbacksCaller(Wnd->GetComboBoxesList(), lParam, ctrl_was_found_flag);
+                if (HIWORD(wParam) == BN_CLICKED)
+                {
+                    MainCallbacksCaller(Wnd->GetButtonsList(), lParam);//, ctrl_was_found_flag);
+                }
+                else if (HIWORD(wParam) == CBN_SELCHANGE)
+                {
+                    MainCallbacksCaller(Wnd->GetComboBoxesList(), lParam);//, ctrl_was_found_flag);
+                }
                 else if (HIWORD(wParam) == EN_UPDATE)
-                    MainCallbacksCaller(Wnd->GetEditsList(), lParam, ctrl_was_found_flag);
+                {
+                    MainCallbacksCaller(Wnd->GetEditsList(), lParam);//, ctrl_was_found_flag);
+                }
                 /*else if (HIWORD(wParam) == EN_CHANGE) { // Also edit message
                     std::wcout << L"EN_CHANGE\r\n";
                 }*/
 
                 // Run menu points main callbacks
-                MenuMainCallbacksCaller(Wnd->_menu, wParam, ctrl_was_found_flag);
+                MenuMainCallbacksCaller(Wnd->_menu, wParam);//, ctrl_was_found_flag);
 
                 result = 0;
             }
@@ -134,32 +140,34 @@ static void ParentResizeCallbacksCaller(WndList<T> &ctrls_list, ParentResizeCall
 }
 
 template<class T>
-static void MainCallbacksCaller(WndList<T> &ctrls_list, LPARAM &lParam, bool &ctrl_was_found_flag) {
-    if (ctrl_was_found_flag) return;
+static void MainCallbacksCaller(WndList<T> &ctrls_list, LPARAM &lParam)//, bool &ctrl_was_found_flag) {
+{
+    //if (ctrl_was_found_flag) return;
     for (int i = 0; i < ctrls_list.GetCount(); ++i) {
         T *ctrl = ctrls_list[i];
         if (lParam == (LPARAM)ctrl->GetHwnd()) {
             ctrl->operator()("MainCallback", ctrl);
-            ctrl_was_found_flag = true;
+            //ctrl_was_found_flag = true;
             break;
         }
     }
 }
 
-static bool MenuMainCallbacksCaller(MenuBase *menu, WPARAM &wParam, bool &ctrl_was_found_flag) {
-    if (ctrl_was_found_flag || menu == nullptr) return false;
+static bool MenuMainCallbacksCaller(MenuBase *menu, WPARAM &wParam)//, bool &ctrl_was_found_flag) {
+{
+    if (/*ctrl_was_found_flag || */menu == nullptr) return false;
     for (int i = 0; i < menu->GetMenuPointsList().GetCount(); ++i) {
         MenuPoint *menu_point = menu->GetMenuPointsList()[i];
         if (LOWORD(wParam) == menu_point->GetId()) {
             menu_point->operator()("MainCallback", menu_point);
-            ctrl_was_found_flag = true;
+            //ctrl_was_found_flag = true;
             return true;
         }
     }
     for (int i = 0; i < menu->GetPopupMenusList().GetCount(); ++i) {
         MenuBase *popup_menu = menu->GetPopupMenusList()[i];
         if (popup_menu)
-            if (MenuMainCallbacksCaller(popup_menu, wParam, ctrl_was_found_flag)) break;
+            if (MenuMainCallbacksCaller(popup_menu, wParam/*, ctrl_was_found_flag*/)) break;
     }
     return false;
 }

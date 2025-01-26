@@ -160,12 +160,14 @@
     <ClCompile Include="App\UI\PreviewWindow\PreviewWindow.cpp" />
     <ClCompile Include="App\UI\UI.cpp" />
     <ClCompile Include="App\UI\WindowLib\Button.cpp" />
+    <ClCompile Include="App\UI\WindowLib\CheckBox.cpp" />
     <ClCompile Include="App\UI\WindowLib\ComboBox.cpp" />
     <ClCompile Include="App\UI\WindowLib\Edit.cpp" />
     <ClCompile Include="App\UI\WindowLib\Label.cpp" />
     <ClCompile Include="App\UI\WindowLib\MenuBase.cpp" />
     <ClCompile Include="App\UI\WindowLib\MenuPoint.cpp" />
     <ClCompile Include="App\UI\WindowLib\NormalFont.cpp" />
+    <ClCompile Include="App\UI\WindowLib\RadioButton.cpp" />
     <ClCompile Include="App\UI\WindowLib\Window.cpp" />
     <ClCompile Include="App\UI\WindowLib\WndBase.cpp" />
     <ClCompile Include="App\UI\WindowLib\WndProc.cpp" />
@@ -183,6 +185,8 @@
     <ClInclude Include="App\Model\FileNameGenerator\FileNameGenerator.h" />
     <ClInclude Include="App\Model\Model.h" />
     <ClInclude Include="App\UI\PreviewWindow\PreviewWindow.h" />
+    <ClInclude Include="App\UI\WindowLib\CheckBox.h" />
+    <ClInclude Include="App\UI\WindowLib\RadioButton.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SmtObj.h" />
     <ClInclude Include="App\UI\UI.h" />

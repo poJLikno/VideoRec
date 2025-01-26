@@ -3,7 +3,7 @@
 #include <thread>
 #include <chrono>
 
-Window::Window(const char *name, WndPairValue pos, WndPairValue size, int icon_id, unsigned long wnd_style)
+Window::Window(const char *name, const WndPairValue &pos, const WndPairValue &size, const int &icon_id, const unsigned long &wnd_style)
     : WndBase(pos, size) {
     // Register window class
     //_class_name = std::string(name + std::string("_class"));

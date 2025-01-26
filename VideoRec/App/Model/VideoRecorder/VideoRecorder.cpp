@@ -9,13 +9,13 @@ void VideoRecorder::_ScreenCaptureLoop(void *this_class)
 
 void VideoRecorder::_FileWriterLoop(void *this_class)
 {
-    ((VideoRecorder *)this_class)->_screen->FramesBuffer().LockFrame();
-    ((VideoRecorder *)this_class)->_file->WriteFrame(((VideoRecorder *)this_class)->_screen->FramesBuffer().GetFrame());
-    ((VideoRecorder *)this_class)->_screen->FramesBuffer().UnlockFrame();
+    ((VideoRecorder *)this_class)->_screen->GetFramesBuffer()->LockFrame();
+    ((VideoRecorder *)this_class)->_file->WriteFrame(((VideoRecorder *)this_class)->_screen->GetFramesBuffer()->GetFrame());
+    ((VideoRecorder *)this_class)->_screen->GetFramesBuffer()->UnlockFrame();
 }
 
-VideoRecorder::VideoRecorder(bool &preview_flag)
-    : _preview_flag(preview_flag)
+VideoRecorder::VideoRecorder(bool &client_rect_only_flag, bool &preview_flag)
+    : _client_rect_only_flag(client_rect_only_flag), _preview_flag(preview_flag)
 {
 }
 
@@ -99,7 +99,7 @@ void VideoRecorder::SetNewSource(const char *wnd_name, const int &dst_width, con
     }
 
     /* Capture the screen or window */
-    _screen = new ScreenCapture(wnd_name, dst_width, dst_height);
+    _screen = new ScreenCapture(wnd_name, _client_rect_only_flag, dst_width, dst_height);
 
     /* Init screen capture timer */
     if (_preview_flag)

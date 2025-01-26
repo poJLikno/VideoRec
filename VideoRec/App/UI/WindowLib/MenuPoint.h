@@ -21,7 +21,7 @@ private:
     unsigned int  _type = 0;
 
 public:
-    MenuPoint(const char *text, MenuPointType menu_point_type = MenuPointType::Enabled);
+    MenuPoint(const char *text, const MenuPointType &menu_point_type = MenuPointType::Enabled);
 
     void SetMenuParent(const HMENU &hmenu);
 

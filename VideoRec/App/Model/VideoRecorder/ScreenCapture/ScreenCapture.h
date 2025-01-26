@@ -26,7 +26,7 @@ private:
     SmtObj<DoubleBuffer> _frames_buffer;
 
 public:
-    ScreenCapture(const char *window_name, const int &dst_width = -1, const int &dst_height = -1);
+    ScreenCapture(const char *window_name, const bool &client_rect_only, const int &dst_width = -1, const int &dst_height = -1);
     ScreenCapture(const ScreenCapture &) = delete;
     ~ScreenCapture();
 
@@ -38,7 +38,7 @@ public:
     const int &GetDstWidth();
     const int &GetDstHeight();
 
-    DoubleBuffer &FramesBuffer();
+    DoubleBuffer *GetFramesBuffer();
 
     HDC GetBitmapContextForPreview();
 };

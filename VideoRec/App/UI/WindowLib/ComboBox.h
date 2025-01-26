@@ -10,7 +10,7 @@ private:
     using WndBase::SetWndText;
 
 public:
-    ComboBox(WndPairValue pos = { 0, 0 }, WndPairValue size = { 20, 20 });
+    ComboBox(const WndPairValue &pos = { 0, 0 }, const WndPairValue &size = { 20, 20 });
 
     virtual void SetWndParent(WndBase *wnd) override;
 
@@ -25,7 +25,7 @@ public:
 
     void GetItem(char *buffer, const int &count);
 
-    void GetOldItem(char *buffer, int buffer_size);
+    void GetOldItem(char *buffer, const int &buffer_size);
 };
 
 #endif

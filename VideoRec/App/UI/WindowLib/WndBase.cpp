@@ -10,12 +10,23 @@ void WndBase::ShowWnd(const bool &flag) {
     if (flag) UpdateWindow(this->_hwnd);
 }
 
-LRESULT WndBase::SendMsg(const UINT &msg, const WPARAM &wparam, const LPARAM &lparam) {
+const LRESULT &WndBase::SendMsg(const UINT &msg, const WPARAM &wparam, const LPARAM &lparam) {
     return SendMessageW(this->_hwnd, msg, wparam, lparam);
 }
 
 HWND WndBase::GetHwnd() {
     return this->_hwnd;
+}
+
+const bool &WndBase::GetInputState() const
+{
+    return _input_state;
+}
+
+void WndBase::SetInputState(const bool &flag)
+{
+    _input_state = flag;
+    EnableWindow(_hwnd, _input_state);
 }
 
 void WndBase::GetWndText(char *buffer, const int &count) {
@@ -49,7 +60,7 @@ void WndBase::SetWndText(const char *text) {
     w_buffer = nullptr;
 }
 
-LONG_PTR WndBase::GetWndStyle() {
+const LONG_PTR &WndBase::GetWndStyle() {
     return GetWindowLongPtrW(this->_hwnd, GWL_STYLE);
 }
 
@@ -86,7 +97,7 @@ void WndBase::SetWndParent(WndBase *wnd) {
         throw std::string("Can't set parent window -> Error code: " + std::to_string(GetLastError()));
 }
 
-WndPairValue WndBase::GetWndPos() {
+const WndPairValue &WndBase::GetWndPos() {
     return _pos;
 }
 
@@ -98,7 +109,7 @@ void WndBase::SetWndPos(const WndPairValue &pos) {
         throw std::string("Can't set window position -> Error code: " + std::to_string(GetLastError()));
 }
 
-WndPairValue WndBase::GetWndSize() {
+const WndPairValue &WndBase::GetWndSize() {
     return _size;
 }
 

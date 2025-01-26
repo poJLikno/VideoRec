@@ -6,7 +6,7 @@
 
 class Edit : public WndBase, public CallbackManager {
 public:
-    Edit(WndPairValue pos = WndPairValue{ 0, 0 }, WndPairValue size = WndPairValue{ 60, 20 });
+    Edit(const WndPairValue &pos = { 0, 0 }, const WndPairValue &size = { 60, 20 });
 
     virtual void SetWndParent(WndBase *wnd) override;
 };

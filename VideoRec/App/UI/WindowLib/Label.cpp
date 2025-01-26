@@ -1,6 +1,6 @@
 #include "Label.h"
 
-Label::Label(const char *text, WndPairValue pos, WndPairValue size)
+Label::Label(const char *text, const WndPairValue &pos, const WndPairValue &size)
     : WndBase(pos, size), _text(text) {}
 
 void Label::SetWndParent(WndBase *wnd) {

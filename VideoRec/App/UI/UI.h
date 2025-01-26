@@ -30,6 +30,9 @@ private:
     SmtObj<Edit> _video_height_edit;
     SmtObj<Edit> _video_fps_edit;
 
+    SmtObj<RadioButton> _video_capture_entire_screen_radio_btn;
+    SmtObj<RadioButton> _video_capture_client_rect_only_radio_btn;
+
     SmtObj<Button> _video_settings_apply_button;
 
     SmtObj<MenuPoint> _preview_chekced_menu_point;
@@ -57,6 +60,9 @@ public:
     GETTER(_video_width_edit)
     GETTER(_video_height_edit)
     GETTER(_video_fps_edit)
+
+    GETTER(_video_capture_entire_screen_radio_btn)
+    GETTER(_video_capture_client_rect_only_radio_btn)
 
     GETTER(_video_settings_apply_button)
 

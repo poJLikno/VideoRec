@@ -15,6 +15,7 @@ private:
 
     SmtObj<VideoRecorder> _video_rec;
     bool _allow_preview_flag = true;
+    bool _capture_client_rect_only_flag = false;
 
 public:
     Model();
@@ -24,6 +25,7 @@ public:
     GETTER(_file_name_generator)
     GETTER(_video_rec)
     GETTER(_allow_preview_flag)
+    GETTER(_capture_client_rect_only_flag)
 };
 
 #endif /* MODEL_H_ */

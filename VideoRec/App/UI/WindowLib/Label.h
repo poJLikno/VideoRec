@@ -9,7 +9,7 @@ private:
     const char *_text;
 
 public:
-    Label(const char *text, WndPairValue pos = { 0, 0 }, WndPairValue size = { 20, 20 });
+    Label(const char *text, const WndPairValue &pos = { 0, 0 }, const WndPairValue &size = { 20, 20 });
 
     virtual void SetWndParent(WndBase *wnd) override;
 };

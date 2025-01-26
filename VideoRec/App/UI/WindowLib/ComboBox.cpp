@@ -1,6 +1,6 @@
 #include "ComboBox.h"
 
-ComboBox::ComboBox(WndPairValue pos, WndPairValue size)
+ComboBox::ComboBox(const WndPairValue &pos, const WndPairValue &size)
     : WndBase(pos, size) {}
 
 void ComboBox::SetWndParent(WndBase *wnd) {
@@ -51,7 +51,7 @@ void ComboBox::GetItem(char *buffer, const int &count) {
     w_buffer = nullptr;
 }
 
-void ComboBox::GetOldItem(char *buffer, int buffer_size) {
+void ComboBox::GetOldItem(char *buffer, const int &buffer_size) {
     wchar_t *w_buffer = new wchar_t[buffer_size] { 0 };
 
     GetWindowTextW(_hwnd, w_buffer, buffer_size);

@@ -84,6 +84,12 @@
     <ClCompile Include="App\Model\FileNameGenerator\FileNameGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\CheckBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\RadioButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffer\DoubleBuffer.h">
@@ -162,6 +168,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\CheckBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\RadioButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

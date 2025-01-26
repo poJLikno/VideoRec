@@ -1,6 +1,6 @@
 #include "Button.h"
 
-Button::Button(const char *text, WndPairValue pos, WndPairValue size)
+Button::Button(const char *text, const WndPairValue &pos, const WndPairValue &size)
     : WndBase(pos, size), _text(text) {}
 
 void Button::SetWndParent(WndBase *wnd) {

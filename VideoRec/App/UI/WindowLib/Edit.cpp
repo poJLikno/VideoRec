@@ -1,6 +1,6 @@
 #include "Edit.h"
 
-Edit::Edit(WndPairValue pos, WndPairValue size)
+Edit::Edit(const WndPairValue &pos, const WndPairValue &size)
     : WndBase(pos, size) {}
 
 void Edit::SetWndParent(WndBase *wnd) {

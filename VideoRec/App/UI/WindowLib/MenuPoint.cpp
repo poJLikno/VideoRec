@@ -2,7 +2,7 @@
 
 unsigned __int32 MenuPoint::ID_COUNTER = WM_USER + 1;
 
-MenuPoint::MenuPoint(const char *text, MenuPointType menu_point_type)
+MenuPoint::MenuPoint(const char *text, const MenuPointType &menu_point_type)
     : _text(text), _id(ID_COUNTER++), _type(menu_point_type) {}
 
 void MenuPoint::SetMenuParent(const HMENU &hmenu) {
