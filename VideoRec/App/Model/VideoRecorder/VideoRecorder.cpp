@@ -57,7 +57,7 @@ void VideoRecorder::StartRecording(const char *file_name, const int &fps)
 
     /* Start recording */
     _screen_capture_timer->Start();
-    //_file_writer_timer->Start();
+    _file_writer_timer->Start();
 }
 
 void VideoRecorder::StopRecording()

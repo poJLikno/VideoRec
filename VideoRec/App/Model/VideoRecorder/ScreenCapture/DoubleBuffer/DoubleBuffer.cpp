@@ -67,46 +67,44 @@ DoubleBuffer::~DoubleBuffer()
 
 void DoubleBuffer::LockFrame()
 {
-    if (_frame_is_locked)
+    int local_newest_index = _newest_index;
+    if (_mutexs[local_newest_index].try_lock())
     {
-        throw std::string("Frame has already been locked!");
+        _lock_index = local_newest_index;
     }
-
-    _frame_is_locked = true;
-    _has_new_frame = false;
+    else
+    {
+        _mutexs[!local_newest_index].lock();
+        _lock_index = (local_newest_index ? 0 : 1);
+    }
 }
 
 void DoubleBuffer::UnlockFrame()
 {
-    if (!_frame_is_locked)
-    {
-        throw std::string("Frame has already been unlocked!");
-    }
-
-    _frame_is_locked = false;
+    _mutexs[_lock_index].unlock();
 }
 
 AVFrame *DoubleBuffer::GetFrame()
 {
-    return _frames[_curr_safe_frame_idx];
+    return _frames[_lock_index];
 }
 
 void DoubleBuffer::WriteFrame(uint8_t *src_buffer)
 {
-    if (_has_new_frame)
+    if (_mutexs[!_newest_index].try_lock())
     {
-        _curr_safe_frame_idx = (!_curr_safe_frame_idx ? 1u : 0u);
-    }
+        _hw_accel_cl.Run(_frames[!_newest_index]->data[0]/*Y*/, _frames[!_newest_index]->data[1]/*U*/, _frames[!_newest_index]->data[2], src_buffer)/*V*/;
 
-    AVFrame *current_frame = _frames[!_curr_safe_frame_idx];
-    _hw_accel_cl.Run(current_frame->data[0]/*Y*/, current_frame->data[1]/*U*/, current_frame->data[2], src_buffer)/*V*/;
-
-    if (_frame_is_locked)
-    {
-        _has_new_frame = true;
+        _newest_index = (_newest_index ? 0 : 1);
+        _mutexs[_newest_index].unlock();
     }
     else
     {
-        _curr_safe_frame_idx = (!_curr_safe_frame_idx ? 1u : 0u);
+        _mutexs[_newest_index].lock();
+
+        _hw_accel_cl.Run(_frames[_newest_index]->data[0]/*Y*/, _frames[_newest_index]->data[1]/*U*/, _frames[_newest_index]->data[2], src_buffer)/*V*/;
+
+        _newest_index = (_newest_index ? 0 : 1);
+        _mutexs[!_newest_index].unlock();
     }
 }
