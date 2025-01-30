@@ -3,12 +3,11 @@
 #include <string>
 
 DoubleBuffer::DoubleBuffer(
-    uint8_t *src_buffer,
     const int &src_width,
     const int &src_height,
     const int &dst_width,
     const int &dst_height)
-    : _hw_accel_cl("gpu_prog.cl", "image_resample", dst_width, dst_height, src_buffer, src_width, src_height)
+    : _hw_accel_cl("gpu_prog.cl", "image_resample", dst_width, dst_height, src_width, src_height)
 {
     _frames = new AVFrame *[2] { nullptr };/* Allocate frames */
     if (!_frames)
@@ -92,7 +91,7 @@ AVFrame *DoubleBuffer::GetFrame()
     return _frames[_curr_safe_frame_idx];
 }
 
-void DoubleBuffer::WriteFrame()
+void DoubleBuffer::WriteFrame(uint8_t *src_buffer)
 {
     if (_has_new_frame)
     {
@@ -100,7 +99,7 @@ void DoubleBuffer::WriteFrame()
     }
 
     AVFrame *current_frame = _frames[!_curr_safe_frame_idx];
-    _hw_accel_cl.Run(current_frame->data[0]/*Y*/, current_frame->data[1]/*U*/, current_frame->data[2])/*V*/;
+    _hw_accel_cl.Run(current_frame->data[0]/*Y*/, current_frame->data[1]/*U*/, current_frame->data[2], src_buffer)/*V*/;
 
     if (_frame_is_locked)
     {

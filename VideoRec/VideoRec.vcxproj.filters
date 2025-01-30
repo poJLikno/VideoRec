@@ -180,6 +180,7 @@
   <ItemGroup>
     <None Include="gpu_prog.cl" />
     <None Include="gpu_test.cl" />
+    <None Include="VideoRec.exe.mainfest" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VideoRec.rc">

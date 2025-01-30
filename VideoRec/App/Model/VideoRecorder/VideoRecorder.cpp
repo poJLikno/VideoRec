@@ -14,8 +14,8 @@ void VideoRecorder::_FileWriterLoop(void *this_class)
     ((VideoRecorder *)this_class)->_screen->GetFramesBuffer()->UnlockFrame();
 }
 
-VideoRecorder::VideoRecorder(bool &client_rect_only_flag, bool &preview_flag)
-    : _client_rect_only_flag(client_rect_only_flag), _preview_flag(preview_flag)
+VideoRecorder::VideoRecorder(bool &preview_flag)
+    : _preview_flag(preview_flag)
 {
 }
 
@@ -57,7 +57,7 @@ void VideoRecorder::StartRecording(const char *file_name, const int &fps)
 
     /* Start recording */
     _screen_capture_timer->Start();
-    _file_writer_timer->Start();
+    //_file_writer_timer->Start();
 }
 
 void VideoRecorder::StopRecording()
@@ -73,7 +73,7 @@ void VideoRecorder::StopRecording()
         _file.reset();
     }
     
-    if (_preview_flag)
+    if (_preview_flag && _screen)
     {
         _screen_capture_timer = new StableTimer(10/*Base value*/, _ScreenCaptureLoop, this);
         _screen_capture_timer->Start();
@@ -84,7 +84,7 @@ void VideoRecorder::StopRecording()
     }
 }
 
-void VideoRecorder::SetNewSource(const char *wnd_name, const int &dst_width, const int &dst_height)
+void VideoRecorder::SetNewSource(const int &dst_width, const int &dst_height)
 {
     if (_file)
     {
@@ -99,7 +99,7 @@ void VideoRecorder::SetNewSource(const char *wnd_name, const int &dst_width, con
     }
 
     /* Capture the screen or window */
-    _screen = new ScreenCapture(wnd_name, _client_rect_only_flag, dst_width, dst_height);
+    _screen = new ScreenCapture(dst_width, dst_height);
 
     /* Init screen capture timer */
     if (_preview_flag)
@@ -127,14 +127,4 @@ const int &VideoRecorder::GetSrcHeight()
     }
 
     return (const int &)0;
-}
-
-HDC VideoRecorder::GetPreviewContext()
-{
-    if (_screen)
-    {
-        return _screen->GetBitmapContextForPreview();
-    }
-
-    return nullptr;
 }

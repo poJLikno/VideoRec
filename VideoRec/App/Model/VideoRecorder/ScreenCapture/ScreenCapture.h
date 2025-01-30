@@ -1,22 +1,28 @@
 #ifndef SCREEN_CAPTURE_H_
 #define SCREEN_CAPTURE_H_
 
+#include <SDKDDKVer.h>
+
 #include <stdint.h>
+
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
+#include <d3d11.h>
+#include <dxgi1_2.h>
 
 #include "DoubleBuffer/DoubleBuffer.h"
 
 class ScreenCapture
 {
 private:
-    HWND _hwnd = { 0 };
-    HDC _wnd_dev_ctx = { 0 };
-    BITMAPINFO _bitmap_info = { 0 };
-    HDC _bitmap_ctx = { 0 };
-    HBITMAP _bitmap = { 0 };
-    HGDIOBJ _old_obj = { 0 };
+    HRESULT _hr = S_OK;
 
-    uint8_t *_buffer = nullptr;
+    ID3D11Device *_d3d11_device = nullptr;
+    ID3D11DeviceContext *_d3d11_device_context = nullptr;
+    IDXGIOutputDuplication *_desktop_dupl = nullptr;
+    DXGI_OUTPUT_DESC _output_desc;
+    bool _has_frame_lock = false;
 
     int _src_width = 0;
     int _src_height = 0;
@@ -26,7 +32,7 @@ private:
     SmtObj<DoubleBuffer> _frames_buffer;
 
 public:
-    ScreenCapture(const char *window_name, const bool &client_rect_only, const int &dst_width = -1, const int &dst_height = -1);
+    ScreenCapture(const int &dst_width = -1, const int &dst_height = -1);
     ScreenCapture(const ScreenCapture &) = delete;
     ~ScreenCapture();
 
@@ -39,8 +45,6 @@ public:
     const int &GetDstHeight();
 
     DoubleBuffer *GetFramesBuffer();
-
-    HDC GetBitmapContextForPreview();
 };
 
 #endif /* SCREEN_CAPTURE_H_ */

@@ -4,11 +4,11 @@ App::App(const char *app_name, const char *app_version)
 {
     /* Create app model & UI */
     _model = new Model();
+    _model->get_video_rec()->SetNewSource();
     _ui = new UI(app_name, app_version);
 
     /* Set source */
-    _model->get_video_rec()->SetNewSource(nullptr);
-    _ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
+    //_ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
     _ui->get_preview_wnd()->ShowWnd(true);
 
     /* Add async loop callback for main window */
@@ -95,7 +95,7 @@ App::App(const char *app_name, const char *app_version)
             /* Set source window and video resolution */
             char wnd_name[65] = { 0 };
             _ui->get_video_source_wnd_edit()->GetWndText(wnd_name, 64);
-        
+
             char video_width[6] = { 0 };
             char video_height[6] = { 0 };
             _ui->get_video_width_edit()->GetWndText(video_width, 5);
@@ -108,9 +108,8 @@ App::App(const char *app_name, const char *app_version)
             {
                 throw std::string("Video height must be a number!");
             }
-        
+
             _model->get_video_rec()->SetNewSource(
-                (wnd_name[0] == '\0' ? nullptr : wnd_name),
                 (video_width[0] == '\0' ? -1 : atoi(video_width)),
                 (video_height[0] == '\0' ? -1 : atoi(video_height)));
         }
@@ -119,16 +118,16 @@ App::App(const char *app_name, const char *app_version)
             int str_size = (int)error.length() + 1;
             SmtObj<wchar_t[]> w_error = new wchar_t[str_size] { 0 };
             MultiByteToWideChar(CP_UTF8, 0, error.c_str(), str_size, w_error, str_size);
-        
+
             MessageBoxW(NULL, w_error, L"Error", MB_OK);
-        
+
             return;
         }
-    
+
         if (_model->get_allow_preview_flag())
         {
             /* Set preview context */
-            _ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
+            //_ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
             /* Stop recording (need restart for idle mode activation for preview) */
             //_ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
         }
@@ -146,7 +145,7 @@ App::App(const char *app_name, const char *app_version)
 
         if (_model->get_allow_preview_flag())
         {
-            _ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
+            //_ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
             _ui->get_preview_wnd()->ShowWnd(true);
             /* Stop recording (need restart for idle mode activation for preview) */
             _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
@@ -199,7 +198,6 @@ App::App(const char *app_name, const char *app_version)
         menu_point->SetState(false);
         _ui->get_start_recording_menu_point()->SetState(true);
         });
-
 }
 
 int App::Run()

@@ -1,7 +1,8 @@
 #define APP_NAME "VideoRec"
-#define APP_VERSION "2.4 (video-only) Release"
+#define APP_VERSION "2.5 (video-only) Release"
 
-#define WINDOWLIB_NO_CONSOLE
+#define WINDOWLIB_USE_MANIFEST
+//#define WINDOWLIB_NO_CONSOLE
 
 #include <iostream>
 #include <string>
@@ -9,6 +10,9 @@
 #include "App/App.h"
 
 /*
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dxgi.lib")
+
 #pragma comment(lib, "avcodec.lib")
 #pragma comment(lib, "avutil.lib")
 #pragma comment(lib, "avdevice.lib")
@@ -20,6 +24,14 @@
 #pragma comment(lib, "OpenCL.lib")
 */
 
+/* Very important */
+void SetupDpiAwareness()
+{
+    //if (!SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2))
+    if (!SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED))
+        throw std::string("SetThreadDpiAwarenessContext failed!");
+}
+
 int main(int argc, const char **argv)
 {
     SetConsoleCP(65001);
@@ -29,6 +41,8 @@ int main(int argc, const char **argv)
 
     try
     {
+        SetupDpiAwareness();
+
         App app(APP_NAME, APP_VERSION);
         result = app.Run();
     }
