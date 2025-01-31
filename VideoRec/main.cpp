@@ -2,11 +2,11 @@
 #define APP_VERSION "2.5 (video-only) Release"
 
 #define WINDOWLIB_USE_MANIFEST
-//#define WINDOWLIB_NO_CONSOLE
+#define WINDOWLIB_NO_CONSOLE
 
 #include <iostream>
 #include <string>
-#include <mutex>
+//#include <mutex>
 //#include <threads.h>
 
 #include "App/App.h"
@@ -45,7 +45,7 @@ int main(int argc, const char **argv)
     {
         SetupDpiAwareness();
 
-        App app(APP_NAME, APP_VERSION);
+        App app(APP_NAME, APP_VERSION, argc, argv);
         result = app.Run();
     }
     catch (const std::string &error)

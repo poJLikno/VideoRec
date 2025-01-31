@@ -1,11 +1,44 @@
 #include "App.h"
 
-App::App(const char *app_name, const char *app_version)
+App::App(const char *app_name, const char *app_version, const int &argc, const char **argv)
 {
+    int dst_video_width = -1;
+    int dst_video_height = -1;
+
+    /* Get dst viedeo resolution */
+    if (argc > 1)
+    {
+        if (atoi(argv[1]) == 0)
+        {
+            throw std::string("Failed to get dst video width!");
+        }
+
+        dst_video_width = atoi(argv[1]);
+
+        if (argc > 2)
+        {
+            if (atoi(argv[2]) == 0)
+            {
+                throw std::string("Failed to get dst video height!");
+            }
+
+            dst_video_height = atoi(argv[2]);
+        }
+    }
+
     /* Create app model & UI */
     _model = new Model();
-    _model->get_video_rec()->SetNewSource();
+    _model->get_video_rec()->SetNewSource(dst_video_width, dst_video_height);
     _ui = new UI(app_name, app_version);
+
+    if (dst_video_width != -1)
+    {
+        _ui->get_video_width_edit()->SetWndText(std::to_string(dst_video_width).c_str());
+    }
+    if (dst_video_height != -1)
+    {
+        _ui->get_video_height_edit()->SetWndText(std::to_string(dst_video_height).c_str());
+    }
 
     /* Add async loop callback for main window */
     _ui->get_wnd()->AddCallback("AsyncLoopCallback", [this](void *ptr)->void {
@@ -57,7 +90,7 @@ App::App(const char *app_name, const char *app_version)
         });
 
     /* Buttons' callbacks */
-    _ui->get_video_settings_apply_button()->AddCallback("MainCallback", [this](void *ptr)->void {
+    _ui->get_video_settings_apply_button()->AddCallback("MainCallback", [this, argv](void *ptr)->void {
         Button *button = GetControl(Button, ptr);
 
         /* Stop recording */
@@ -79,9 +112,23 @@ App::App(const char *app_name, const char *app_version)
                 throw std::string("Video height must be a number!");
             }
 
-            _model->get_video_rec()->SetNewSource(
-                (video_width[0] == '\0' ? -1 : atoi(video_width)),
-                (video_height[0] == '\0' ? -1 : atoi(video_height)));
+            /* Start new instance */
+            STARTUPINFOA si = { 0 };
+            PROCESS_INFORMATION pi = { 0 };
+            si.cb = sizeof(si);
+
+            if (!CreateProcessA(argv[0], (LPSTR)std::string(argv[0] + std::string(" ") + (video_width[0] == '\0' ? "-1" : video_width) + " " + (video_height[0] == '\0' ? "-1" : video_height)).c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+            {
+                throw std::string("Failed to create a new process!");
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            DestroyWindow(_ui->get_wnd()->GetHwnd());
+
+            // Wait until child process exits.
+            //WaitForSingleObject(pi.hProcess, INFINITE);
+            CloseHandle(pi.hThread);
+            CloseHandle(pi.hProcess);
         }
         catch (std::string error)
         {
