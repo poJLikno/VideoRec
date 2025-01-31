@@ -2,6 +2,7 @@
 
 App::App(const char *app_name, const char *app_version, const int &argc, const char **argv)
 {
+    int dst_video_fps = 30;
     int dst_video_width = -1;
     int dst_video_height = -1;
 
@@ -10,19 +11,29 @@ App::App(const char *app_name, const char *app_version, const int &argc, const c
     {
         if (atoi(argv[1]) == 0)
         {
-            throw std::string("Failed to get dst video width!");
+            throw std::string("Failed to get dst video FPS!");
         }
 
-        dst_video_width = atoi(argv[1]);
+        dst_video_fps = atoi(argv[1]);
 
         if (argc > 2)
         {
             if (atoi(argv[2]) == 0)
             {
+                throw std::string("Failed to get dst video width!");
+            }
+
+            dst_video_width = atoi(argv[2]);
+        }
+
+        if (argc > 3)
+        {
+            if (atoi(argv[3]) == 0)
+            {
                 throw std::string("Failed to get dst video height!");
             }
 
-            dst_video_height = atoi(argv[2]);
+            dst_video_height = atoi(argv[3]);
         }
     }
 
@@ -30,6 +41,9 @@ App::App(const char *app_name, const char *app_version, const int &argc, const c
     _model = new Model();
     _model->get_video_rec()->SetNewSource(dst_video_width, dst_video_height);
     _ui = new UI(app_name, app_version);
+
+    /* Set default settings */
+    _ui->get_video_fps_edit()->SetWndText(std::to_string(dst_video_fps).c_str());
 
     if (dst_video_width != -1)
     {
@@ -98,11 +112,27 @@ App::App(const char *app_name, const char *app_version, const int &argc, const c
 
         try
         {
-            /* Set source window and video resolution */
+            /* Set fps and resolution */
+            char video_fps[6] = { 0 };
             char video_width[6] = { 0 };
             char video_height[6] = { 0 };
+
+            _ui->get_video_fps_edit()->GetWndText(video_fps, 5);
+
             _ui->get_video_width_edit()->GetWndText(video_width, 5);
             _ui->get_video_height_edit()->GetWndText(video_height, 5);
+
+            /* Fps */
+            if (video_fps[0] == '\0')
+            {
+                throw std::string("FPS is not set!");
+            }
+            else if (atoi(video_fps) == 0 && video_fps[0] != '0')
+            {
+                throw std::string("Video FPS must be a number!");
+            }
+
+            /* Resolution */
             if (atoi(video_width) == 0 && video_width[0] != '0' && video_width[0] != '\0')
             {
                 throw std::string("Video width must be a number!");
@@ -116,8 +146,9 @@ App::App(const char *app_name, const char *app_version, const int &argc, const c
             STARTUPINFOA si = { 0 };
             PROCESS_INFORMATION pi = { 0 };
             si.cb = sizeof(si);
-
-            if (!CreateProcessA(argv[0], (LPSTR)std::string(argv[0] + std::string(" ") + (video_width[0] == '\0' ? "-1" : video_width) + " " + (video_height[0] == '\0' ? "-1" : video_height)).c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+            //std::string test = std::string('\"' + std::string(argv[0]) + '\"' + std::string(" ") + (video_width[0] == '\0' ? "-1" : video_width) + " " + (video_height[0] == '\0' ? "-1" : video_height)).c_str();
+            //std::cout << test << '\n';
+            if (!CreateProcessA(argv[0], (LPSTR)std::string('\"' + std::string(argv[0]) + '\"' + std::string(" ") + (video_fps) + " " + (video_width[0] == '\0' ? "-1" : video_width) + " " + (video_height[0] == '\0' ? "-1" : video_height)).c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
             {
                 throw std::string("Failed to create a new process!");
             }
