@@ -83,16 +83,4 @@ public:
     WndPairValue old_size;
 };
 
-//class WndSizeParams {
-//public:
-//	Window &_wnd;
-//	WndPairValue _old_size;
-//	void **_data = nullptr;
-//
-//	WndSizeParams(Window &wnd, const WndPairValue &old_size)
-//		: _wnd(wnd), _old_size(old_size) {}
-//
-//	~WndSizeParams() = default;
-//};
-
 #endif

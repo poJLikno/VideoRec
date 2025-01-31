@@ -16,13 +16,11 @@ private:
     SmtObj<StableTimer> _screen_capture_timer;
     SmtObj<StableTimer> _file_writer_timer;
 
-    bool &_preview_flag;
-
     static void _ScreenCaptureLoop(void *this_class);
     static void _FileWriterLoop(void *this_class);
 
 public:
-    VideoRecorder(bool &preview_flag);
+    VideoRecorder() = default;
     VideoRecorder(const VideoRecorder &) = delete;
     ~VideoRecorder();
 
