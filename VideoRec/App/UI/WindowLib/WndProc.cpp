@@ -23,7 +23,11 @@ LRESULT Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         WndPairValue *WndPos = nullptr;
         WndPairValue *WndSize = nullptr;
         for (int i = 0; i < _wnd_list.GetCount(); ++i) {
-            if (hwnd == _wnd_list[i]->GetHwnd()) {
+            if (!_wnd_list[i])
+            {
+                continue;
+            }
+            else if (hwnd == _wnd_list[i]->GetHwnd()) {
                 Wnd = _wnd_list[i];
                 WndPos = _wnd_pos_list[i];
                 WndSize = _wnd_size_list[i];

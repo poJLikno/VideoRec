@@ -13,7 +13,7 @@ private:
     SmtObj<Model> _model;
 
 public:
-    App(const char *app_name, const char *app_version);
+    App(const char *app_name, const char *app_version, const int &argc, const char **argv);
     App(const App &) = delete;
     ~App() = default;
 

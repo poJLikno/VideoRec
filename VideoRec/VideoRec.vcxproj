@@ -70,6 +70,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <GenerateManifest>true</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <GenerateManifest>true</GenerateManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -117,14 +123,16 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\lib;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <Manifest />
+    <Manifest />
     <Manifest>
-      <EnableDpiAwareness>false</EnableDpiAwareness>
+      <InputResourceManifests>RT_MANIFEST</InputResourceManifests>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,12 +154,17 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\lib;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <Manifest />
+    <Manifest />
+    <Manifest>
+      <InputResourceManifests>RT_MANIFEST</InputResourceManifests>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\App.cpp" />
@@ -213,6 +226,7 @@
   <ItemGroup>
     <None Include="gpu_prog.cl" />
     <None Include="gpu_test.cl" />
+    <None Include="VideoRec.exe.mainfest" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VideoRec.rc" />

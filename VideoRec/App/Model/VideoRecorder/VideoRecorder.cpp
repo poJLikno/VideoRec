@@ -14,11 +14,6 @@ void VideoRecorder::_FileWriterLoop(void *this_class)
     ((VideoRecorder *)this_class)->_screen->GetFramesBuffer()->UnlockFrame();
 }
 
-VideoRecorder::VideoRecorder(bool &client_rect_only_flag, bool &preview_flag)
-    : _client_rect_only_flag(client_rect_only_flag), _preview_flag(preview_flag)
-{
-}
-
 VideoRecorder::~VideoRecorder()
 {
     if (_file)
@@ -62,51 +57,21 @@ void VideoRecorder::StartRecording(const char *file_name, const int &fps)
 
 void VideoRecorder::StopRecording()
 {
-    if (_file_writer_timer)
-    {
-        _file_writer_timer->Stop();
-    }
-    
-    if (_file)
-    {
-        _file->CloseFile();
-        _file.reset();
-    }
-    
-    if (_preview_flag)
-    {
-        _screen_capture_timer = new StableTimer(10/*Base value*/, _ScreenCaptureLoop, this);
-        _screen_capture_timer->Start();
-    }
-    else
-    {
-        _screen_capture_timer.reset();
-    }
+    /* Stop & release modules */
+    _file_writer_timer.reset();
+    _file.reset();
+    _screen_capture_timer.reset();
 }
 
-void VideoRecorder::SetNewSource(const char *wnd_name, const int &dst_width, const int &dst_height)
+void VideoRecorder::SetNewSource(const int &dst_width, const int &dst_height)
 {
     if (_file)
     {
         throw std::string("Couldn't change captured screen!");
     }
-    else if (_screen_capture_timer)
-    {
-        if (_screen_capture_timer->IsRunning())
-        {
-            _screen_capture_timer->Stop();
-        }
-    }
 
     /* Capture the screen or window */
-    _screen = new ScreenCapture(wnd_name, _client_rect_only_flag, dst_width, dst_height);
-
-    /* Init screen capture timer */
-    if (_preview_flag)
-    {
-        _screen_capture_timer = new StableTimer(10/*Base value*/, _ScreenCaptureLoop, this);
-        _screen_capture_timer->Start();
-    }
+    _screen = new ScreenCapture(dst_width, dst_height);
 }
 
 const int &VideoRecorder::GetSrcWidth()
@@ -127,14 +92,4 @@ const int &VideoRecorder::GetSrcHeight()
     }
 
     return (const int &)0;
-}
-
-HDC VideoRecorder::GetPreviewContext()
-{
-    if (_screen)
-    {
-        return _screen->GetBitmapContextForPreview();
-    }
-
-    return nullptr;
 }
