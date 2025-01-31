@@ -13,8 +13,8 @@ class DoubleBuffer
 {
 private:
     std::mutex _mutexs[2] = {};
-    int _lock_index = 0;
-    int _newest_index = 1;
+    uint8_t _lock_index = 0;
+    uint8_t _newest_index = 1;
 
     AVFrame **_frames = nullptr;
 

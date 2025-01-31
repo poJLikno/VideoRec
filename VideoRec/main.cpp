@@ -60,8 +60,8 @@ int main(int argc, const char **argv)
 //{
 //private:
 //    std::mutex _mutexs[2] = {};
-//    int lock_index = 0;
-//    int newest_index = 1;
+//    uint8_t lock_index = 0;
+//    uint8_t newest_index = 1;
 //    SmtObj<int[]> _buff;
 //
 //public:
@@ -74,28 +74,27 @@ int main(int argc, const char **argv)
 //
 //    void Set(const int &data)
 //    {
-//        if (_mutexs[!newest_index].try_lock())
+//        if (_mutexs[(newest_index ^ (1<<0))].try_lock())
 //        {
-//            _buff[!newest_index] = data;
-//            std::cout << "SSSSet to " << !newest_index << "\n";
-//            newest_index = (newest_index ? 0 : 1);
+//            _buff[(newest_index ^ (1<<0))] = data;
+//            std::cout << "SSSSet to " << (int)(newest_index ^ (1<<0)) << "\n";
 //
+//            newest_index ^= (1<<0);
 //            _mutexs[newest_index].unlock();
 //        }
 //        else
 //        {
 //            _mutexs[newest_index].lock();
 //            _buff[newest_index] = data;
-//            std::cout << "SSSSSSSSet to " << newest_index << "\n";
-//            newest_index = (newest_index ? 0 : 1);
-//            _mutexs[!newest_index].unlock();
+//            std::cout << "SSSSSSSSet to " << (int)newest_index << "\n";
+//            _mutexs[newest_index].unlock();
 //        }
 //
 //    }
 //
 //    void Lock()
 //    {
-//        int local_newest_index = newest_index;
+//        uint8_t local_newest_index = newest_index;
 //        if (_mutexs[local_newest_index].try_lock())
 //        {
 //            lock_index = local_newest_index;
@@ -103,8 +102,8 @@ int main(int argc, const char **argv)
 //        }
 //        else
 //        {
-//            _mutexs[!local_newest_index].lock();
-//            lock_index = (local_newest_index ? 0 : 1);
+//            _mutexs[(local_newest_index ^ (1<<0))].lock();
+//            lock_index = local_newest_index ^ (1<<0);
 //            std::cout << "-- ";
 //            //_mutex_1.unlock();
 //        }
@@ -144,7 +143,7 @@ int main(int argc, const char **argv)
 //            while (flag)
 //            {
 //                buff.Set(1);
-//                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+//                std::this_thread::sleep_for(std::chrono::microseconds(1));
 //            }
 //            });
 //
@@ -154,7 +153,7 @@ int main(int argc, const char **argv)
 //                buff.Lock();
 //                std::cout << "Get from " << buff.GetFrom() << "\n";
 //                buff.Unlock();
-//                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+//                std::this_thread::sleep_for(std::chrono::microseconds(1));
 //            }
 //            });
 //

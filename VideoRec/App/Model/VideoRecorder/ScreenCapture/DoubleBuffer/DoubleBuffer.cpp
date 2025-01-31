@@ -67,15 +67,15 @@ DoubleBuffer::~DoubleBuffer()
 
 void DoubleBuffer::LockFrame()
 {
-    int local_newest_index = _newest_index;
+    uint8_t local_newest_index = _newest_index;
     if (_mutexs[local_newest_index].try_lock())
     {
         _lock_index = local_newest_index;
     }
     else
     {
-        _mutexs[!local_newest_index].lock();
-        _lock_index = (local_newest_index ? 0 : 1);
+        _mutexs[(local_newest_index ^ (1<<0))].lock();
+        _lock_index = local_newest_index ^ (1<<0);
     }
 }
 
@@ -91,11 +91,11 @@ AVFrame *DoubleBuffer::GetFrame()
 
 void DoubleBuffer::WriteFrame(uint8_t *src_buffer)
 {
-    if (_mutexs[!_newest_index].try_lock())
+    if (_mutexs[(_newest_index ^ (1<<0))].try_lock())
     {
-        _hw_accel_cl.Run(_frames[!_newest_index]->data[0]/*Y*/, _frames[!_newest_index]->data[1]/*U*/, _frames[!_newest_index]->data[2], src_buffer)/*V*/;
+        _hw_accel_cl.Run(_frames[(_newest_index ^ (1<<0))]->data[0]/*Y*/, _frames[(_newest_index ^ (1<<0))]->data[1]/*U*/, _frames[(_newest_index ^ (1<<0))]->data[2], src_buffer)/*V*/;
 
-        _newest_index = (_newest_index ? 0 : 1);
+        _newest_index ^= (1<<0);
         _mutexs[_newest_index].unlock();
     }
     else
@@ -104,7 +104,6 @@ void DoubleBuffer::WriteFrame(uint8_t *src_buffer)
 
         _hw_accel_cl.Run(_frames[_newest_index]->data[0]/*Y*/, _frames[_newest_index]->data[1]/*U*/, _frames[_newest_index]->data[2], src_buffer)/*V*/;
 
-        _newest_index = (_newest_index ? 0 : 1);
-        _mutexs[!_newest_index].unlock();
+        _mutexs[_newest_index].unlock();
     }
 }
