@@ -65,7 +65,8 @@ void StableTimer::_TimerLoop(StableTimer *stable_timer)
     }
     catch (const std::string &error)/* Exeption termintion */
     {
-        std::cout << "!!!-- " << error << " --!!!\n";
+        MessageBoxA(NULL, error.c_str(), "Error!", MB_OK);
+        //std::cout << "!!!-- " << error << " --!!!\n";
         stable_timer->Stop();
     }
 }
@@ -101,13 +102,19 @@ void StableTimer::Start()
 
 void StableTimer::Stop()
 {
-    if (_timer_loop && _run_flag == true)
+    if (_run_flag)
     {
         _run_flag = false;
-        _timer_loop->join();
     }
 
-    _timer_loop.reset();
+    if (_timer_loop)
+    {
+        if (std::this_thread::get_id() != _timer_loop->get_id())
+        {
+            _timer_loop->join();
+            _timer_loop.reset();
+        }
+    }
 }
 
 const bool &StableTimer::IsRunning()

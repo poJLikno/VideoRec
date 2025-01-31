@@ -6,7 +6,7 @@ WndBase::~WndBase() {
 
 void WndBase::ShowWnd(const bool &flag) {
     _is_visible = flag;
-    ShowWindow(this->_hwnd, (flag ? SW_SHOWNORMAL : SW_HIDE));
+    ShowWindow(this->_hwnd, (flag ? SW_RESTORE : SW_HIDE));
     if (flag) UpdateWindow(this->_hwnd);
 }
 

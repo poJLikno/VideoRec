@@ -1,5 +1,5 @@
 #define APP_NAME "VideoRec"
-#define APP_VERSION "2.5 (video-only) Release"
+#define APP_VERSION "2.6 (video-only) Release"
 
 #define WINDOWLIB_USE_MANIFEST
 #define WINDOWLIB_NO_CONSOLE

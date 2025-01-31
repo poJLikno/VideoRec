@@ -9,7 +9,7 @@ UI::UI(const char *app_name, const char *app_version)
     _wnd = new Window(app_name,
         WndPairValue{ CW_USEDEFAULT, CW_USEDEFAULT },
         WndPairValue{ 360 + 16/* 752 - client rect */, 70 + 59/* 301 - client rect */ }, IDI_ICON1,
-        WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME);
+        WS_OVERLAPPEDWINDOW & ~(WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX));
     /* Setup the main window */
     _wnd->SetWndText(std::string(app_name + std::string(" ") + app_version).c_str());
     _wnd->EnableControlsDialogMessages(true);
