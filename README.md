@@ -4,8 +4,7 @@
 
 ### This app supplies opportunity to record high quality and perfomace videos of screen or windows. ###
 
-![VideoRec_original picture](https://github.com/user-attachments/assets/3c6d9ffd-81d3-499d-88a9-1b28b22ed050)
-![VideoRec_dshow picture](https://github.com/user-attachments/assets/ce137c98-661b-4f88-ac86-6ceaaf3aafa2)
+![VideoRec_GDI-video](https://github.com/user-attachments/assets/900ab64b-be7a-464b-8bce-aa230f89f63d)
 
 ## Features ##
 * Video recording
@@ -14,12 +13,15 @@
 * H264 codec 
 * MP4 output file format
 * Hotkey support
-* DirectShow API support from old *"ScreenRecorder"* app
+* Double buffer async file write
+* DPI unaware
 
 ## How to use ##
-1. Select source window for capture or capture desktop
+1. Select ___source window___ for capture or capture desktop
 2. Setup settings for video (resolution, fps)
-3. Select "Options" -> "Start recording" or press hotkey (Alt + K)
+3. Choose a method of caption
+4. Press "___Apply___"
+5. Select "Options" -> "___Start recording___" or press hotkey (Alt + K)
 
 ## How to build from sources ##
 For successful app compilation you need install OpenCL and FFmpeg libs.
