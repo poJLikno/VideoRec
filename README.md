@@ -17,6 +17,9 @@
 1. Setup settings for video (resolution, fps)
 2. Select "Options" -> "Start recording" or press hotkey (Alt + K)
 
+## Possible problems ##
+If you have a laptop, you'll need to choose an integrated GPU for running the app.
+
 ## How to build from sources ##
 For successful app compilation you need install OpenCL and FFmpeg libs.
 Visual Studio supply vcpkg manager and this solution has vcpkg dependencies, so you need just run `vcpkg install --triplet=x64-windows` in VS powrshell to install libraries.
