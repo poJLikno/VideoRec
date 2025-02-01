@@ -47,10 +47,10 @@ UI::UI(const char *app_name, const char *app_version)
         WndPairValue{ CTRL_BLOCK_POS_X + 110, CTRL_BLOCK_POS_Y + 40 }, WndPairValue{ 30, 17 });
 
     /* Radio Buttons */
-    _video_capture_entire_screen_radio_btn = new RadioButton("Capture entire window", true,
+    _video_capture_client_rect_only_radio_btn = new RadioButton("Capture client region only", false,
         WndPairValue{ CTRL_BLOCK_POS_X + 246, CTRL_BLOCK_POS_Y }, WndPairValue{ 160, 17 });
 
-    _video_capture_client_rect_only_radio_btn = new RadioButton("Capture client region only", false,
+    _video_capture_entire_screen_radio_btn = new RadioButton("Capture entire window", true,
         WndPairValue{ CTRL_BLOCK_POS_X + 246, CTRL_BLOCK_POS_Y + 20 }, WndPairValue{ 160, 17 });
 
     /* Buttons */
@@ -84,8 +84,8 @@ UI::UI(const char *app_name, const char *app_version)
     _wnd->AttachChildControl(_video_height_edit);
     _wnd->AttachChildControl(_video_fps_edit);
 
-    _wnd->AttachChildControl(_video_capture_entire_screen_radio_btn);
     _wnd->AttachChildControl(_video_capture_client_rect_only_radio_btn);
+    _wnd->AttachChildControl(_video_capture_entire_screen_radio_btn);
 
     _wnd->AttachChildControl(_video_settings_apply_button);
 
@@ -103,17 +103,10 @@ UI::UI(const char *app_name, const char *app_version)
     _normal_font->SetFont(_video_height_edit);
     _normal_font->SetFont(_video_fps_edit);
 
-    _normal_font->SetFont(_video_capture_entire_screen_radio_btn);
     _normal_font->SetFont(_video_capture_client_rect_only_radio_btn);
+    _normal_font->SetFont(_video_capture_entire_screen_radio_btn);
 
     _normal_font->SetFont(_video_settings_apply_button);
-
-    /* Default controls' settings */
-    _video_fps_edit->SetWndText("30");
-    _video_capture_entire_screen_radio_btn->SetState(true);
-    _video_settings_apply_button->SetInputState(false);
-
-    _stop_recording_menu_point->SetState(false);
 
     /* Transform callbacks */
 #undef NEW_PREVIEW_WIDTH
@@ -203,18 +196,18 @@ UI::UI(const char *app_name, const char *app_version)
         });
 
     /* Radio Buttons */
-    _video_capture_entire_screen_radio_btn->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
-        Button *button = GetControlForParentResize(Button, ptr);
-        GetMiscForParentResize(ptr);
-
-        button->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110 + /* Captured wnd name edit size */(NEW_PREVIEW_WIDTH * 96 / 500 + 20) + 20, CTRL_BLOCK_POS_Y });
-        });
-
     _video_capture_client_rect_only_radio_btn->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         Button *button = GetControlForParentResize(Button, ptr);
         GetMiscForParentResize(ptr);
 
-        button->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110 + /* Captured wnd name edit size */(NEW_PREVIEW_WIDTH * 96 / 500 + 20) + 20, CTRL_BLOCK_POS_Y + 20});
+        button->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110 + /* Captured wnd name edit size */(NEW_PREVIEW_WIDTH * 96 / 500 + 20) + 20, CTRL_BLOCK_POS_Y});
+        });
+
+    _video_capture_entire_screen_radio_btn->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+        Button *button = GetControlForParentResize(Button, ptr);
+        GetMiscForParentResize(ptr);
+
+        button->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110 + /* Captured wnd name edit size */(NEW_PREVIEW_WIDTH * 96 / 500 + 20) + 20, CTRL_BLOCK_POS_Y + 20 });
         });
 
     /* Buttons */

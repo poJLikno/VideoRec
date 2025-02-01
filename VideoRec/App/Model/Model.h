@@ -15,7 +15,7 @@ private:
 
     SmtObj<VideoRecorder> _video_rec;
     bool _allow_preview_flag = true;
-    bool _capture_client_rect_only_flag = false;
+    bool _capture_client_rect_only_flag = true;
 
 public:
     Model();

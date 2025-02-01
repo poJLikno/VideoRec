@@ -6,6 +6,12 @@ App::App(const char *app_name, const char *app_version)
     _model = new Model();
     _ui = new UI(app_name, app_version);
 
+    /* Default controls' settings */
+    _ui->get_video_fps_edit()->SetWndText("30");
+    _ui->get_video_capture_client_rect_only_radio_btn()->SetState(true);
+    _ui->get_video_settings_apply_button()->SetInputState(false);
+    _ui->get_stop_recording_menu_point()->SetState(false);
+
     /* Set source */
     _model->get_video_rec()->SetNewSource(nullptr);
     _ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
@@ -67,17 +73,17 @@ App::App(const char *app_name, const char *app_version)
         });
 
     /* Radio Buttons' callbacks */
-    _ui->get_video_capture_entire_screen_radio_btn()->AddCallback("MainCallback", [this](void *ptr)->void {
-        //RadioButton *button = GetControl(RadioButton, ptr);
-
-        _model->get_capture_client_rect_only_flag() = false;
-        _ui->get_video_settings_apply_button()->SetInputState(true);
-        });
-
     _ui->get_video_capture_client_rect_only_radio_btn()->AddCallback("MainCallback", [this](void *ptr)->void {
         //RadioButton *button = GetControl(RadioButton, ptr);
 
         _model->get_capture_client_rect_only_flag() = true;
+        _ui->get_video_settings_apply_button()->SetInputState(true);
+        });
+
+    _ui->get_video_capture_entire_screen_radio_btn()->AddCallback("MainCallback", [this](void *ptr)->void {
+        //RadioButton *button = GetControl(RadioButton, ptr);
+
+        _model->get_capture_client_rect_only_flag() = false;
         _ui->get_video_settings_apply_button()->SetInputState(true);
         });
 

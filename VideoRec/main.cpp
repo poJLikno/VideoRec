@@ -1,7 +1,15 @@
 #define APP_NAME "VideoRec"
-#define APP_VERSION "2.4 (video-only) Release"
 
+#ifdef _DEBUG
+#define APP_VERSION "3.0 (GDI-video) Debug"
+#else
+#define APP_VERSION "3.0 (GDI-video) Release"
+#endif
+
+#define WINDOWLIB_USE_MANIFEST
 #define WINDOWLIB_NO_CONSOLE
+
+#define WIN32_LEAN_AND_MEAN
 
 #include <iostream>
 #include <string>
@@ -20,6 +28,15 @@
 #pragma comment(lib, "OpenCL.lib")
 */
 
+/* Very important */
+void SetupDpiAwareness()
+{
+    if (!SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED))
+    {
+        throw std::string("SetThreadDpiAwarenessContext failed!");
+    }
+}
+
 int main(int argc, const char **argv)
 {
     SetConsoleCP(65001);
@@ -29,12 +46,18 @@ int main(int argc, const char **argv)
 
     try
     {
+        SetupDpiAwareness();
+
         App app(APP_NAME, APP_VERSION);
         result = app.Run();
     }
     catch (const std::string &error)
     {
-        MessageBoxA(NULL, error.c_str(), "Error!", MB_OK);
+        int str_size = (int)error.length() + 1;
+        SmtObj<wchar_t[]> w_error = new wchar_t[str_size] { 0 };
+        MultiByteToWideChar(CP_UTF8, 0, error.c_str(), str_size, w_error, str_size);
+
+        MessageBoxW(NULL, w_error, L"Error", MB_OK);
     }
     
     return result;

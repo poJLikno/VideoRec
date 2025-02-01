@@ -75,7 +75,7 @@ void VideoRecorder::StopRecording()
     
     if (_preview_flag)
     {
-        _screen_capture_timer = new StableTimer(10/*Base value*/, _ScreenCaptureLoop, this);
+        _screen_capture_timer = new StableTimer(30/*Base value*/, _ScreenCaptureLoop, this);
         _screen_capture_timer->Start();
     }
     else
@@ -104,7 +104,7 @@ void VideoRecorder::SetNewSource(const char *wnd_name, const int &dst_width, con
     /* Init screen capture timer */
     if (_preview_flag)
     {
-        _screen_capture_timer = new StableTimer(10/*Base value*/, _ScreenCaptureLoop, this);
+        _screen_capture_timer = new StableTimer(30/*Base value*/, _ScreenCaptureLoop, this);
         _screen_capture_timer->Start();
     }
 }

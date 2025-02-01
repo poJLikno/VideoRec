@@ -1,6 +1,7 @@
 #ifndef DOUBLE_BUFFER_H_
 #define DOUBLE_BUFFER_H_
 
+#include <mutex>
 #include "HWAccelCL.h"
 
 extern "C"
@@ -11,13 +12,13 @@ extern "C"
 class DoubleBuffer
 {
 private:
+    std::mutex _mutexs[2] = {};
+    uint8_t _lock_index = 0;
+    uint8_t _newest_index = 1;
+
     AVFrame **_frames = nullptr;
-    uint8_t _curr_safe_frame_idx = 0;
 
     HWAccelCL _hw_accel_cl;
-
-    bool _frame_is_locked = false;
-    bool _has_new_frame = false;
 
 public:
     DoubleBuffer(uint8_t *src_buffer, const int &src_width, const int &src_height, const int &dst_width, const int &dst_height);

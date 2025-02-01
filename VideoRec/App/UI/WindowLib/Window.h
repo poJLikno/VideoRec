@@ -1,7 +1,7 @@
 #ifndef WINDOWLIB_WINDOW_H
 #define WINDOWLIB_WINDOW_H
 
-#define WINDOWLIB_VERSION "v1.3"
+#define WINDOWLIB_VERSION "v1.4"
 
 #include "WndList.h"
 #include "Button.h"
@@ -17,7 +17,7 @@
 #endif
 #pragma comment(linker, "/entry:mainCRTStartup")
 
-#ifndef WINDOWLIB_NO_MANIFEST
+#ifdef WINDOWLIB_USE_MANIFEST
 #pragma comment(linker,"\"/manifestdependency:type='win32' \
 name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
 processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -82,17 +82,5 @@ public:
     WndBase *wnd;
     WndPairValue old_size;
 };
-
-//class WndSizeParams {
-//public:
-//	Window &_wnd;
-//	WndPairValue _old_size;
-//	void **_data = nullptr;
-//
-//	WndSizeParams(Window &wnd, const WndPairValue &old_size)
-//		: _wnd(wnd), _old_size(old_size) {}
-//
-//	~WndSizeParams() = default;
-//};
 
 #endif

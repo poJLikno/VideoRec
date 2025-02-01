@@ -129,8 +129,8 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
 
         while (_timer_flag)
         {
-            /* Draw window ~10 times per second */
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - millis_timer).count() >= 100)
+            /* Draw window ~24 times per second */
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - millis_timer).count() >= 42)
             {
                 millis_timer = std::chrono::steady_clock::now();
                 InvalidateRect(_hwnd, NULL, FALSE);
