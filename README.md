@@ -1,25 +1,21 @@
 # **VideoRec** *(a school project)* #
 
-[![WinAPI: C++](https://img.shields.io/badge/WinAPI-C++-blue)](https://learn.microsoft.com/ru-ru/windows/win32/api/)  [![Lib: FFmpeg](https://img.shields.io/badge/Lib-FFmpeg-green)](https://www.ffmpeg.org/)  [![Lib: OpenCL](https://img.shields.io/badge/Lib-OpenCL-orange)](https://www.khronos.org/opencl/)  [![Lib: WindowLib](https://img.shields.io/badge/Lib-WindowLib-aqua)](https://github.com/poJLikno/WindowLib)  [![Developer: poJLikno](https://img.shields.io/badge/Developer-poJLikno-red)](https://github.com/poJLikno)  [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-purple)](https://www.gnu.org/licenses/gpl-3.0)
+[![WinAPI: C++](https://img.shields.io/badge/WinAPI-C++-blue)](https://learn.microsoft.com/ru-ru/windows/win32/api/)  [![API: Desktop Duplication](https://img.shields.io/badge/API-Desktop_Duplication-25C2A0)](https://learn.microsoft.com/en-us/windows/win32/direct3ddxgi/desktop-dup-api)  [![Lib: FFmpeg](https://img.shields.io/badge/Lib-FFmpeg-green)](https://www.ffmpeg.org/)  [![Lib: OpenCL](https://img.shields.io/badge/Lib-OpenCL-orange)](https://www.khronos.org/opencl/)  [![Lib: WindowLib](https://img.shields.io/badge/Lib-WindowLib-aqua)](https://github.com/poJLikno/WindowLib)  [![Developer: poJLikno](https://img.shields.io/badge/Developer-poJLikno-red)](https://github.com/poJLikno)  [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-purple)](https://www.gnu.org/licenses/gpl-3.0)
 
 ### This app supplies opportunity to record high quality and perfomace videos of screen or windows. ###
 
-![VideoRec_original picture](https://github.com/user-attachments/assets/3c6d9ffd-81d3-499d-88a9-1b28b22ed050)
-![VideoRec_dshow picture](https://github.com/user-attachments/assets/ce137c98-661b-4f88-ac86-6ceaaf3aafa2)
+![VideoRec_desk-dup](https://github.com/user-attachments/assets/65e404a2-9d6f-44c5-b169-dff85477878f)
 
 ## Features ##
 * Video recording
-* Capture windows
-* Preview captured video
 * H264 codec 
 * MP4 output file format
 * Hotkey support
-* DirectShow API support from old *"ScreenRecorder"* app
+* Desktop Duplication API
 
 ## How to use ##
-1. Select source window for capture or capture desktop
-2. Setup settings for video (resolution, fps)
-3. Select "Options" -> "Start recording" or press hotkey (Alt + K)
+1. Setup settings for video (resolution, fps)
+2. Select "Options" -> "Start recording" or press hotkey (Alt + K)
 
 ## How to build from sources ##
 For successful app compilation you need install OpenCL and FFmpeg libs.
