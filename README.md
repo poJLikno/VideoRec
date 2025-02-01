@@ -4,7 +4,6 @@
 
 ### This app supplies opportunity to record high quality and perfomace videos of screen or windows. ###
 
-![VideoRec_original picture](https://github.com/user-attachments/assets/3c6d9ffd-81d3-499d-88a9-1b28b22ed050)
 ![VideoRec_dshow picture](https://github.com/user-attachments/assets/ce137c98-661b-4f88-ac86-6ceaaf3aafa2)
 
 ## Features ##
