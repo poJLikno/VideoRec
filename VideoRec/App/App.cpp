@@ -74,17 +74,25 @@ App::App(const char *app_name, const char *app_version)
 
     /* Radio Buttons' callbacks */
     _ui->get_video_capture_client_rect_only_radio_btn()->AddCallback("MainCallback", [this](void *ptr)->void {
-        //RadioButton *button = GetControl(RadioButton, ptr);
+        RadioButton *button = GetControl(RadioButton, ptr);
 
-        _model->get_capture_client_rect_only_flag() = true;
-        _ui->get_video_settings_apply_button()->SetInputState(true);
+        /* Prevent false activation */
+        if (button->GetState())
+        {
+            _model->get_capture_client_rect_only_flag() = true;
+            _ui->get_video_settings_apply_button()->SetInputState(true);
+        }
         });
 
     _ui->get_video_capture_entire_screen_radio_btn()->AddCallback("MainCallback", [this](void *ptr)->void {
-        //RadioButton *button = GetControl(RadioButton, ptr);
+        RadioButton *button = GetControl(RadioButton, ptr);
 
-        _model->get_capture_client_rect_only_flag() = false;
-        _ui->get_video_settings_apply_button()->SetInputState(true);
+        /* Prevent false activation */
+        if (button->GetState())
+        {
+            _model->get_capture_client_rect_only_flag() = false;
+            _ui->get_video_settings_apply_button()->SetInputState(true);
+        }
         });
 
     /* Buttons' callbacks */

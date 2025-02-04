@@ -27,14 +27,22 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
     POINT upper_left = { 0 };
 
     /* check iconic (minimized) twice, ABA is very unlikely (OBS code segment) */
-    bool window_available = !IsIconic(_hwnd) && GetClientRect(_hwnd, &rect) && !IsIconic(_hwnd) &&
+    bool window_available = !IsIconic(_hwnd) && (client_rect_only ? GetClientRect(_hwnd, &rect) : GetWindowRect(_hwnd, &rect)) && !IsIconic(_hwnd) &&
         (rect.right > 0) && (rect.bottom > 0) && ClientToScreen(_hwnd, &upper_left);
 
     if (!window_available)
     {
         /* Make window opened */
         ShowWindow(_hwnd, SW_RESTORE);
-        GetClientRect(_hwnd, &rect);
+
+        if (client_rect_only)
+        {
+            GetClientRect(_hwnd, &rect);
+        }
+        else
+        {
+            GetWindowRect(_hwnd, &rect);
+        }
     }
     int dpi = GetDpiForWindow(_hwnd);
     _src_width = (rect.right - rect.left) * dpi / USER_DEFAULT_SCREEN_DPI;
@@ -85,7 +93,7 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
 ScreenCapture::~ScreenCapture()
 {
     /* Release resources */
-    GdiFlush();/* Flushes the calling thread's current batch *//* ??? */
+    //GdiFlush();/* Flushes the calling thread's current batch *//* ??? */
 
     SelectObject(_bitmap_ctx, _old_obj);
     DeleteDC(_bitmap_ctx);
@@ -98,7 +106,7 @@ ScreenCapture::~ScreenCapture()
 void ScreenCapture::TakeShot()
 {
     BitBlt(_bitmap_ctx, 0, 0, _src_width, _src_height, _wnd_dev_ctx, 0, 0, SRCCOPY);
-    GdiFlush();/* Flushes the calling thread's current batch *//* ??? */
+    //GdiFlush();/* Flushes the calling thread's current batch *//* ??? */
     _frames_buffer->WriteFrame();
 }
 
