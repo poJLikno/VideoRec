@@ -4,11 +4,11 @@
 
 ### This app supplies opportunity to record high quality and perfomace videos of screen or windows. ###
 
-![VideoRec_GDI-video](https://github.com/user-attachments/assets/900ab64b-be7a-464b-8bce-aa230f89f63d)
+![VideoRec_3_2_GDI-video](https://github.com/user-attachments/assets/54f9efb5-8936-427a-b151-4643f69b9cc2)
 
 ## Features ##
 * Video recording
-* Capture windows
+* Capture windows (support layered windows)
 * Preview captured video
 * H264 codec 
 * MP4 output file format
@@ -18,10 +18,11 @@
 
 ## How to use ##
 1. Select ___source window___ for capture or capture desktop
-2. Setup settings for video (resolution, fps)
-3. Choose a method of caption
-4. Press "___Apply___"
-5. Select "Options" -> "___Start recording___" or press hotkey (Alt + K)
+2. Check/Uncheck optimization setting in __entire window__ capture mode
+3. Setup settings for video (resolution, fps)
+4. Choose a method of caption
+5. Press "___Apply___"
+6. Select "Options" -> "___Start recording___" or press hotkey (Alt + K)
 
 ## How to build from sources ##
 For successful app compilation you need install OpenCL and FFmpeg libs.
