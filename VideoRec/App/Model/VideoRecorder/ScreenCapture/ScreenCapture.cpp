@@ -2,7 +2,8 @@
 
 #include <string>
 
-ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_only, const int &dst_width, const int &dst_height)
+ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_only, bool &use_optimization, const int &dst_width, const int &dst_height)
+    : _use_optimization_flag(use_optimization)
 {
     /* Get window */
     if (window_name)
@@ -105,7 +106,14 @@ ScreenCapture::~ScreenCapture()
 
 void ScreenCapture::TakeShot()
 {
-    BitBlt(_bitmap_ctx, 0, 0, _src_width, _src_height, _wnd_dev_ctx, 0, 0, SRCCOPY);
+    if (_use_optimization_flag)
+    {
+        BitBlt(_bitmap_ctx, 0, 0, _src_width, _src_height, _wnd_dev_ctx, 0, 0, SRCCOPY);
+    }
+    else
+    {
+        PrintWindow(_hwnd, _bitmap_ctx, PW_RENDERFULLCONTENT);
+    }
     //GdiFlush();/* Flushes the calling thread's current batch *//* ??? */
     _frames_buffer->WriteFrame();
 }

@@ -7,6 +7,8 @@ App::App(const char *app_name, const char *app_version)
     _ui = new UI(app_name, app_version);
 
     /* Default controls' settings */
+    _ui->get_video_capture_optimization_checkbox()->SetState(true);
+    _ui->get_video_capture_optimization_checkbox()->SetInputState(false);
     _ui->get_video_fps_edit()->SetWndText("30");
     _ui->get_video_capture_client_rect_only_radio_btn()->SetState(true);
     _ui->get_video_settings_apply_button()->SetInputState(false);
@@ -72,6 +74,15 @@ App::App(const char *app_name, const char *app_version)
         _ui->get_video_settings_apply_button()->SetInputState(true);
         });
 
+    /* Checkboxes' callbacks */
+    _ui->get_video_capture_optimization_checkbox()->AddCallback("MainCallback", [this](void *ptr)->void {
+        CheckBox *button = GetControl(CheckBox, ptr);
+
+        _model->get_capture_optimization_flag() = !_model->get_capture_optimization_flag();
+
+        button->SetState(_model->get_capture_optimization_flag());
+        });
+
     /* Radio Buttons' callbacks */
     _ui->get_video_capture_client_rect_only_radio_btn()->AddCallback("MainCallback", [this](void *ptr)->void {
         RadioButton *button = GetControl(RadioButton, ptr);
@@ -103,6 +114,20 @@ App::App(const char *app_name, const char *app_version)
         _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
 
         _ui->get_preview_wnd()->SetSrc(nullptr, 0, 0);
+
+        /* Reset optimization (iff need) */
+        if (_ui->get_video_capture_client_rect_only_radio_btn()->GetState())
+        {
+            if (!_ui->get_video_capture_optimization_checkbox()->GetState())
+            {
+                _ui->get_video_capture_optimization_checkbox()->operator()("MainCallback", (void *)_ui->get_video_capture_optimization_checkbox());
+            }
+            _ui->get_video_capture_optimization_checkbox()->SetInputState(false);
+        }
+        else
+        {
+            _ui->get_video_capture_optimization_checkbox()->SetInputState(true);
+        }
 
         try
         {
@@ -143,9 +168,11 @@ App::App(const char *app_name, const char *app_version)
         {
             /* Set preview context */
             _ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
-            /* Stop recording (need restart for idle mode activation for preview) */
+            /* Stop recording (need restart for idle mode activation for preview) [NO NEED HERE] */
             //_ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
         }
+
+        
 
         button->SetInputState(false);
         });

@@ -7,7 +7,7 @@
 			</requestedPrivileges>
 		</security>
 	</trustInfo>
-	<dependency>
+	<!--<dependency>
 		<dependentAssembly>
 			<assemblyIdentity 
 			type='win32' 
@@ -18,7 +18,7 @@
 			language='*' 
 			/>
 		</dependentAssembly>
-	</dependency>
+	</dependency>-->
     <asmv3:application>
         <asmv3:windowsSettings xmlns="http://schemas.microsoft.com/SMI/2024/WindowsSettings">
             <dpiAware>false</dpiAware>

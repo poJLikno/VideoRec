@@ -16,6 +16,8 @@ private:
     HBITMAP _bitmap = { 0 };
     HGDIOBJ _old_obj = { 0 };
 
+    bool &_use_optimization_flag;
+
     uint8_t *_buffer = nullptr;
 
     int _src_width = 0;
@@ -26,7 +28,7 @@ private:
     SmtObj<DoubleBuffer> _frames_buffer;
 
 public:
-    ScreenCapture(const char *window_name, const bool &client_rect_only, const int &dst_width = -1, const int &dst_height = -1);
+    ScreenCapture(const char *window_name, const bool &client_rect_only, bool &use_optimization, const int &dst_width = -1, const int &dst_height = -1);
     ScreenCapture(const ScreenCapture &) = delete;
     ~ScreenCapture();
 
