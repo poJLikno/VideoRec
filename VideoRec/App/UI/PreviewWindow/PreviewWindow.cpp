@@ -50,7 +50,7 @@ LRESULT PreviewWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                 {
                     SelectObject(hdc, GetStockObject(WHITE_BRUSH));
                 }
-                Rectangle(hdc, 0, 0, wnd_width, wnd_height);
+                //Rectangle(hdc, 0, 0, wnd_width, wnd_height);
 
                 /**/
 

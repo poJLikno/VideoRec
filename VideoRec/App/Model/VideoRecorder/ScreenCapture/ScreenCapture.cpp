@@ -2,8 +2,44 @@
 
 #include <string>
 
-ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_only, bool &use_optimization, const int &dst_width, const int &dst_height)
-    : _use_optimization_flag(use_optimization)
+void ScreenCapture::_DrawCursor()
+{
+    CURSORINFO cursor_info = { 0 };
+    cursor_info.cbSize = sizeof(CURSORINFO);
+    GetCursorInfo(&cursor_info);
+    if (cursor_info.flags & CURSOR_SHOWING)
+    {
+        ICONINFO icon_info = { 0 };
+        GetIconInfo(cursor_info.hCursor, &icon_info);
+
+        BITMAP bmp = { 0 };
+        GetObject(icon_info.hbmColor, sizeof(BITMAP), (void *)&bmp);
+
+        RECT rect = { 0 };
+        if (_client_rect_only_flag)
+        {
+            ClientToScreen(_hwnd, (POINT *)&rect);
+        }
+        else
+        {
+            GetWindowRect(_hwnd, &rect);
+        }
+
+        DrawIconEx(
+            _bitmap_ctx,/* dst */
+            (cursor_info.ptScreenPos.x - (int)icon_info.xHotspot - rect.left) * _dpi / USER_DEFAULT_SCREEN_DPI,/* x */
+            (cursor_info.ptScreenPos.y - (int)icon_info.yHotspot - rect.top) * _dpi / USER_DEFAULT_SCREEN_DPI,/* y */
+            cursor_info.hCursor, bmp.bmWidth * _dpi / USER_DEFAULT_SCREEN_DPI,/* width */
+            bmp.bmHeight * _dpi / USER_DEFAULT_SCREEN_DPI,/* height */
+            0, NULL, DI_NORMAL);
+
+        DeleteObject(icon_info.hbmColor);
+        DeleteObject(icon_info.hbmMask);
+    }
+}
+
+ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_only, bool &use_optimization, bool &capture_cursor, const int &dst_width, const int &dst_height)
+    : _client_rect_only_flag(client_rect_only), _use_optimization_flag(use_optimization), _capture_cursor_flag(capture_cursor)
 {
     /* Get window */
     if (window_name)
@@ -23,19 +59,33 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
         _hwnd = GetDesktopWindow();
     }
 
+    /* Get window device context */
+    _wnd_dev_ctx = GetDCEx(_hwnd, nullptr, (client_rect_only ? 0 : DCX_WINDOW) | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
+    if (!_wnd_dev_ctx)
+    {
+        throw std::string("Couldn't get window's DC!");
+    }
+
     /* Get window size */
     RECT rect = { 0 };
     POINT upper_left = { 0 };
 
     /* check iconic (minimized) twice, ABA is very unlikely (OBS code segment) */
-    bool window_available = !IsIconic(_hwnd) && (client_rect_only ? GetClientRect(_hwnd, &rect) : GetWindowRect(_hwnd, &rect)) && !IsIconic(_hwnd) &&
-        (rect.right > 0) && (rect.bottom > 0) && ClientToScreen(_hwnd, &upper_left);
+    bool window_available =
+        !IsIconic(_hwnd)
+        && (client_rect_only ? GetClientRect(_hwnd, &rect) : GetWindowRect(_hwnd, &rect))
+        && (rect.right > 0) && (rect.bottom > 0)
+        && (client_rect_only ? ClientToScreen(_hwnd, &upper_left) : 1);
 
     if (!window_available)
     {
         /* Make window opened */
         ShowWindow(_hwnd, SW_RESTORE);
 
+        /* Prepare structures */
+        memset(&rect, 0, sizeof(RECT));
+
+        /* Get size */
         if (client_rect_only)
         {
             GetClientRect(_hwnd, &rect);
@@ -45,37 +95,33 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
             GetWindowRect(_hwnd, &rect);
         }
     }
-    int dpi = GetDpiForWindow(_hwnd);
-    _src_width = (rect.right - rect.left) * dpi / USER_DEFAULT_SCREEN_DPI;
-    _src_height = (rect.bottom - rect.top) * dpi / USER_DEFAULT_SCREEN_DPI;
 
+    /* Get screen DPI */
+    _dpi = (window_name ? GetDpiForWindow(_hwnd) : GetSystemDpiForProcess(NULL));
+
+    /* Get source frame resolution */
+    _src_width = (rect.right - rect.left) * _dpi / USER_DEFAULT_SCREEN_DPI;
+    _src_height = (rect.bottom - rect.top) * _dpi / USER_DEFAULT_SCREEN_DPI;
+
+    /* Set destination frame resolution */
     _dst_width = (dst_width == -1 ? _src_width : dst_width);
     _dst_height = (dst_height == -1 ? _src_height : dst_height);
 
-    /* Get window device context */
-    _wnd_dev_ctx = GetDCEx(_hwnd, nullptr, (client_rect_only ? 0 : DCX_WINDOW) | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
-    if (!_wnd_dev_ctx)
-    {
-        throw std::string("Couldn't get window's DC!");
-    }
-
     /* Fill bitmap information */
-    {
-        _bitmap_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        _bitmap_info.bmiHeader.biWidth = _src_width;
-        _bitmap_info.bmiHeader.biHeight = -(_src_height);/* Make top-down DIB (upper-left corner) */
-        _bitmap_info.bmiHeader.biBitCount = 32u;
-        _bitmap_info.bmiHeader.biSizeImage = _src_width * _src_height * 4;
-        _bitmap_info.bmiHeader.biPlanes = 1u;
-        _bitmap_info.bmiHeader.biCompression = BI_RGB;
-        _bitmap_info.bmiHeader.biClrUsed = 0u;
-        _bitmap_info.bmiHeader.biClrImportant = 0u;
-        _bitmap_info.bmiHeader.biXPelsPerMeter = 0;
-        _bitmap_info.bmiHeader.biYPelsPerMeter = 0;
-    }
+    _bitmap_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    _bitmap_info.bmiHeader.biWidth = _src_width;
+    _bitmap_info.bmiHeader.biHeight = -(_src_height);/* Make top-down DIB (upper-left corner) */
+    _bitmap_info.bmiHeader.biBitCount = 32u;
+    _bitmap_info.bmiHeader.biSizeImage = _src_width * _src_height * 4;
+    _bitmap_info.bmiHeader.biPlanes = 1u;
+    _bitmap_info.bmiHeader.biCompression = BI_RGB;
+    _bitmap_info.bmiHeader.biClrUsed = 0u;
+    _bitmap_info.bmiHeader.biClrImportant = 0u;
+    _bitmap_info.bmiHeader.biXPelsPerMeter = 0;
+    _bitmap_info.bmiHeader.biYPelsPerMeter = 0;
 
     /* Create bitmap */
-    _bitmap_ctx = CreateCompatibleDC(_wnd_dev_ctx);
+    _bitmap_ctx = CreateCompatibleDC(nullptr/*_wnd_dev_ctx*/);/* Set arg to null like in OBS code */
 
     //_bitmap = CreateCompatibleBitmap(_wnd_dev_ctx, _src_width, _src_height);
     //GetDIBits()
@@ -114,7 +160,13 @@ void ScreenCapture::TakeShot()
     {
         PrintWindow(_hwnd, _bitmap_ctx, PW_RENDERFULLCONTENT);
     }
-    //GdiFlush();/* Flushes the calling thread's current batch *//* ??? */
+
+    /* Draw a cursor */
+    if (_capture_cursor_flag)
+    {
+        _DrawCursor();
+    }
+
     _frames_buffer->WriteFrame();
 }
 

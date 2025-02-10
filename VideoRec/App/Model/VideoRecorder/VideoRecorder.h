@@ -19,12 +19,13 @@ private:
     bool &_preview_flag;
     bool &_client_rect_only_flag;
     bool &_optimization_flag;
+    bool &_capture_cursor_flag;
 
     static void _ScreenCaptureLoop(void *this_class);
     static void _FileWriterLoop(void *this_class);
 
 public:
-    VideoRecorder(bool &client_rect_only_flag, bool &preview_flag, bool &optimization_flag);
+    VideoRecorder(bool &client_rect_only_flag, bool &preview_flag, bool &optimization_flag, bool &capture_cursor_flag);
     VideoRecorder(const VideoRecorder &) = delete;
     ~VideoRecorder();
 

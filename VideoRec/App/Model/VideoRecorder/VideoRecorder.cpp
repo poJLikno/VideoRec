@@ -14,8 +14,8 @@ void VideoRecorder::_FileWriterLoop(void *this_class)
     ((VideoRecorder *)this_class)->_screen->GetFramesBuffer()->UnlockFrame();
 }
 
-VideoRecorder::VideoRecorder(bool &client_rect_only_flag, bool &preview_flag, bool &optimization_flag)
-    : _client_rect_only_flag(client_rect_only_flag), _preview_flag(preview_flag), _optimization_flag(optimization_flag)
+VideoRecorder::VideoRecorder(bool &client_rect_only_flag, bool &preview_flag, bool &optimization_flag, bool &capture_cursor_flag)
+    : _client_rect_only_flag(client_rect_only_flag), _preview_flag(preview_flag), _optimization_flag(optimization_flag), _capture_cursor_flag(capture_cursor_flag)
 {
 }
 
@@ -99,7 +99,7 @@ void VideoRecorder::SetNewSource(const char *wnd_name, const int &dst_width, con
     }
 
     /* Capture the screen or window */
-    _screen = new ScreenCapture(wnd_name, _client_rect_only_flag, _optimization_flag, dst_width, dst_height);
+    _screen = new ScreenCapture(wnd_name, _client_rect_only_flag, _optimization_flag, _capture_cursor_flag, dst_width, dst_height);
 
     /* Init screen capture timer */
     if (_preview_flag)

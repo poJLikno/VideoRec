@@ -31,6 +31,7 @@ private:
     SmtObj<Edit> _video_fps_edit;
 
     SmtObj<CheckBox> _video_capture_optimization_checkbox;
+    SmtObj<CheckBox> _video_capture_cursor_checkbox;
 
     SmtObj<RadioButton> _video_capture_client_rect_only_radio_btn;
     SmtObj<RadioButton> _video_capture_entire_screen_radio_btn;
@@ -64,6 +65,7 @@ public:
     GETTER(_video_fps_edit)
 
     GETTER(_video_capture_optimization_checkbox)
+    GETTER(_video_capture_cursor_checkbox)
 
     GETTER(_video_capture_client_rect_only_radio_btn)
     GETTER(_video_capture_entire_screen_radio_btn)

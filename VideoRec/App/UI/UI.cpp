@@ -50,6 +50,9 @@ UI::UI(const char *app_name, const char *app_version)
     _video_capture_optimization_checkbox = new CheckBox("Optimization",
         WndPairValue{ CTRL_BLOCK_POS_X + 150, CTRL_BLOCK_POS_Y + 40 }, WndPairValue{ 90, 17 });
 
+    _video_capture_cursor_checkbox = new CheckBox("Capture cursor",
+        WndPairValue{ CTRL_BLOCK_POS_X + 250, CTRL_BLOCK_POS_Y + 40 }, WndPairValue{ 100, 17 });
+
     /* Radio Buttons */
     _video_capture_client_rect_only_radio_btn = new RadioButton("Capture client region only", false,
         WndPairValue{ CTRL_BLOCK_POS_X + 246, CTRL_BLOCK_POS_Y }, WndPairValue{ 160, 17 });
@@ -89,6 +92,7 @@ UI::UI(const char *app_name, const char *app_version)
     _wnd->AttachChildControl(_video_fps_edit);
 
     _wnd->AttachChildControl(_video_capture_optimization_checkbox);
+    _wnd->AttachChildControl(_video_capture_cursor_checkbox);
 
     _wnd->AttachChildControl(_video_capture_client_rect_only_radio_btn);
     _wnd->AttachChildControl(_video_capture_entire_screen_radio_btn);
@@ -110,6 +114,7 @@ UI::UI(const char *app_name, const char *app_version)
     _normal_font->SetFont(_video_fps_edit);
 
     _normal_font->SetFont(_video_capture_optimization_checkbox);
+    _normal_font->SetFont(_video_capture_cursor_checkbox);
 
     _normal_font->SetFont(_video_capture_client_rect_only_radio_btn);
     _normal_font->SetFont(_video_capture_entire_screen_radio_btn);
@@ -209,6 +214,13 @@ UI::UI(const char *app_name, const char *app_version)
         GetMiscForParentResize(ptr);
 
         button->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 150, CTRL_BLOCK_POS_Y + 40 });
+        });
+
+    _video_capture_cursor_checkbox->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+        CheckBox *button = GetControlForParentResize(CheckBox, ptr);
+        GetMiscForParentResize(ptr);
+
+        button->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 250, CTRL_BLOCK_POS_Y + 40 });
         });
 
     /* Radio Buttons */

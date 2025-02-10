@@ -17,6 +17,7 @@ private:
     bool _allow_preview_flag = true;
     bool _capture_client_rect_only_flag = true;
     bool _capture_optimization_flag = true;
+    bool _capture_cursor_flag = false;
 
 public:
     Model();
@@ -28,6 +29,7 @@ public:
     GETTER(_allow_preview_flag)
     GETTER(_capture_client_rect_only_flag)
     GETTER(_capture_optimization_flag)
+    GETTER(_capture_cursor_flag)
 };
 
 #endif /* MODEL_H_ */

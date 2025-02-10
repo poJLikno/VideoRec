@@ -83,6 +83,14 @@ App::App(const char *app_name, const char *app_version)
         button->SetState(_model->get_capture_optimization_flag());
         });
 
+    _ui->get_video_capture_cursor_checkbox()->AddCallback("MainCallback", [this](void *ptr)->void {
+        CheckBox *button = GetControl(CheckBox, ptr);
+
+        _model->get_capture_cursor_flag() = !_model->get_capture_cursor_flag();
+
+        button->SetState(_model->get_capture_cursor_flag());
+        });
+
     /* Radio Buttons' callbacks */
     _ui->get_video_capture_client_rect_only_radio_btn()->AddCallback("MainCallback", [this](void *ptr)->void {
         RadioButton *button = GetControl(RadioButton, ptr);
