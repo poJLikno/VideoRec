@@ -7,7 +7,7 @@ void ScreenCapture::_DrawCursor()
     CURSORINFO cursor_info = { 0 };
     cursor_info.cbSize = sizeof(CURSORINFO);
     GetCursorInfo(&cursor_info);
-    if (cursor_info.flags & CURSOR_SHOWING)
+    if ((_window_name ? GetForegroundWindow() == _hwnd : 1) && (cursor_info.flags & CURSOR_SHOWING))
     {
         ICONINFO icon_info = { 0 };
         GetIconInfo(cursor_info.hCursor, &icon_info);
@@ -39,7 +39,7 @@ void ScreenCapture::_DrawCursor()
 }
 
 ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_only, bool &use_optimization, bool &capture_cursor, const int &dst_width, const int &dst_height)
-    : _client_rect_only_flag(client_rect_only), _use_optimization_flag(use_optimization), _capture_cursor_flag(capture_cursor)
+    : _window_name(window_name), _client_rect_only_flag(client_rect_only), _use_optimization_flag(use_optimization), _capture_cursor_flag(capture_cursor)
 {
     /* Get window */
     if (window_name)
@@ -97,7 +97,10 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
     }
 
     /* Get screen DPI */
+#pragma warning(push)/* Suppress this warning only here */
+#pragma warning(disable : 6387)
     _dpi = (window_name ? GetDpiForWindow(_hwnd) : GetSystemDpiForProcess(NULL));
+#pragma warning(pop)
 
     /* Get source frame resolution */
     _src_width = (rect.right - rect.left) * _dpi / USER_DEFAULT_SCREEN_DPI;

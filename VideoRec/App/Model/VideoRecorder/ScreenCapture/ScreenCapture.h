@@ -16,6 +16,8 @@ private:
     HBITMAP _bitmap = nullptr;
     HGDIOBJ _old_obj = nullptr;
 
+    const char *_window_name;
+
     const bool &_client_rect_only_flag;
     bool &_use_optimization_flag;
     bool &_capture_cursor_flag;

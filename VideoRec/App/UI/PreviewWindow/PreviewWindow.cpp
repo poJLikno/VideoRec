@@ -50,7 +50,7 @@ LRESULT PreviewWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
                 {
                     SelectObject(hdc, GetStockObject(WHITE_BRUSH));
                 }
-                //Rectangle(hdc, 0, 0, wnd_width, wnd_height);
+                Rectangle(hdc, 0, 0, wnd_width, wnd_height);
 
                 /**/
 
@@ -129,8 +129,8 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
 
         while (_timer_flag)
         {
-            /* Draw window ~24 times per second */
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - millis_timer).count() >= 42)
+            /* Draw window ~60 times per second */
+            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - millis_timer).count() >= 16)
             {
                 millis_timer = std::chrono::steady_clock::now();
                 InvalidateRect(_hwnd, NULL, FALSE);
