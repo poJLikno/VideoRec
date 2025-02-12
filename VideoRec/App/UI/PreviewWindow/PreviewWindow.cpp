@@ -42,9 +42,15 @@ LRESULT PreviewWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
                 /* Paint */
                 auto [wnd_width, wnd_height] = Wnd->GetWndSize();
-                if (Wnd->_src_hdc)
+                if (Wnd->_frames_dbl_buff)
                 {
-                    StretchBlt(hdc, 0, 0, wnd_width, wnd_height, Wnd->_src_hdc, 0, 0, Wnd->_src_width, Wnd->_src_height, SRCCOPY);
+                    SmtObj<FramesDblBuff> &frames_dbl_buff = *Wnd->_frames_dbl_buff;
+                    frames_dbl_buff->Lock();
+                    StretchBlt(
+                        hdc, 0, 0, wnd_width, wnd_height,
+                        frames_dbl_buff->GetFrameContext(), 0, 0, frames_dbl_buff->GetSrcWidth(), frames_dbl_buff->GetSrcHeight(),
+                        SRCCOPY);
+                    frames_dbl_buff->Unlock();
                 }
                 else
                 {
@@ -155,9 +161,12 @@ PreviewWindow::~PreviewWindow()
     _wnd_size_list[_wnd_list_index] = nullptr;
 }
 
-void PreviewWindow::SetSrc(HDC src_hdc, const int &src_width, const int &src_height)
+void PreviewWindow::SetPreview(SmtObj<FramesDblBuff> &frames_dbl_buff)
 {
-    _src_hdc = src_hdc;
-    _src_width = src_width;
-    _src_height = src_height;
+    _frames_dbl_buff = &frames_dbl_buff;
+}
+
+void PreviewWindow::DeletePreview()
+{
+    _frames_dbl_buff = nullptr;
 }

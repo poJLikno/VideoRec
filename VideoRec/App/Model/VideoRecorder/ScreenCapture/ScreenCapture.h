@@ -4,25 +4,19 @@
 #include <stdint.h>
 #include <windows.h>
 
-#include "DoubleBuffer/DoubleBuffer.h"
+#include "../../../../SmtObj.h"
+#include "DoubleBuffers/FramesDblBuff/FramesDblBuff.h"
+#include "DoubleBuffers/CursorsDblBuff/CursorsDblBuff.h"
 
 class ScreenCapture
 {
 private:
     HWND _hwnd = nullptr;
     HDC _wnd_dev_ctx = nullptr;
-    BITMAPINFO _bitmap_info = { 0 };
-    HDC _bitmap_ctx = nullptr;
-    HBITMAP _bitmap = nullptr;
-    HGDIOBJ _old_obj = nullptr;
 
     const char *_window_name;
 
-    const bool &_client_rect_only_flag;
-    bool &_use_optimization_flag;
-    bool &_capture_cursor_flag;
-
-    uint8_t *_buffer = nullptr;
+    const bool _client_rect_only_flag;
 
     int _dpi = 0;
 
@@ -32,16 +26,16 @@ private:
     int _dst_width = 0;
     int _dst_height = 0;
 
-    SmtObj<DoubleBuffer> _frames_buffer;
-
-    void _DrawCursor();
+    SmtObj<FramesDblBuff> _frames_dbl_buff;
+    SmtObj<CursorsDblBuff> _cursors_dbl_buff;
 
 public:
-    ScreenCapture(const char *window_name, const bool &client_rect_only, bool &use_optimization, bool &capture_cursor, const int &dst_width = -1, const int &dst_height = -1);
+    ScreenCapture(const char *window_name, const bool &client_rect_only, const bool &use_optimization, const bool &capture_cursor, const int &dst_width = -1, const int &dst_height = -1);
     ScreenCapture(const ScreenCapture &) = delete;
     ~ScreenCapture();
 
     void TakeShot();
+    void CaptureCursorState();
 
     const int &GetSrcWidth();
     const int &GetSrcHeight();
@@ -49,9 +43,7 @@ public:
     const int &GetDstWidth();
     const int &GetDstHeight();
 
-    DoubleBuffer *GetFramesBuffer();
-
-    HDC GetBitmapContextForPreview();
+    SmtObj<FramesDblBuff> &GetFramesDblBuff();
 };
 
 #endif /* SCREEN_CAPTURE_H_ */

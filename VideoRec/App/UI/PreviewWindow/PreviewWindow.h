@@ -9,6 +9,8 @@
 #include "../WindowLib/WndBase.h"
 #include "../WindowLib/WndList.h"
 
+#include "../../Model/VideoRecorder/ScreenCapture/DoubleBuffers/FramesDblBuff/FramesDblBuff.h"
+
 class PreviewWindow : public WndBase
 {
 private:
@@ -20,9 +22,7 @@ private:
     /* the Window index in lists */
     int _wnd_list_index = 0;
 
-    HDC _src_hdc = nullptr;
-    int _src_width = 0;
-    int _src_height = 0;
+    SmtObj<FramesDblBuff> *_frames_dbl_buff = nullptr;
 
     SmtObj<std::thread> _paint_timer;
     bool _timer_flag = true;
@@ -34,7 +34,8 @@ public:
     PreviewWindow(const PreviewWindow &) = delete;
     ~PreviewWindow();
 
-    void SetSrc(HDC src_hdc, const int &src_width, const int &src_height);
+    void SetPreview(SmtObj<FramesDblBuff> &frames_dbl_buff);
+    void DeletePreview();
 };
 
 #endif /* PREVIEW_WINDOW_H_ */

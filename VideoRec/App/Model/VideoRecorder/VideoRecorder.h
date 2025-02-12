@@ -14,18 +14,20 @@ private:
     SmtObj<FileMP4> _file;
 
     SmtObj<StableTimer> _screen_capture_timer;
+    SmtObj<StableTimer> _cursor_capture_timer;
     SmtObj<StableTimer> _file_writer_timer;
 
-    bool &_preview_flag;
-    bool &_client_rect_only_flag;
-    bool &_optimization_flag;
-    bool &_capture_cursor_flag;
+    const bool &_preview_flag;
+    const bool &_client_rect_only_flag;
+    const bool &_optimization_flag;
+    const bool &_capture_cursor_flag;
 
     static void _ScreenCaptureLoop(void *this_class);
+    static void _CursorCaptureLoop(void *this_class);
     static void _FileWriterLoop(void *this_class);
 
 public:
-    VideoRecorder(bool &client_rect_only_flag, bool &preview_flag, bool &optimization_flag, bool &capture_cursor_flag);
+    VideoRecorder(const bool &client_rect_only_flag, const bool &preview_flag, const bool &optimization_flag, const bool &capture_cursor_flag);
     VideoRecorder(const VideoRecorder &) = delete;
     ~VideoRecorder();
 
@@ -37,7 +39,7 @@ public:
     const int &GetSrcWidth();
     const int &GetSrcHeight();
 
-    HDC GetPreviewContext();
+    SmtObj<FramesDblBuff> &GetPreview();
 };
 
 #endif

@@ -16,7 +16,7 @@ App::App(const char *app_name, const char *app_version)
 
     /* Set source */
     _model->get_video_rec()->SetNewSource(nullptr);
-    _ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
+    _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
     _ui->get_preview_wnd()->ShowWnd(true);
 
     /* Add async loop callback for main window */
@@ -81,6 +81,7 @@ App::App(const char *app_name, const char *app_version)
         _model->get_capture_optimization_flag() = !_model->get_capture_optimization_flag();
 
         button->SetState(_model->get_capture_optimization_flag());
+        _ui->get_video_settings_apply_button()->SetInputState(true);
         });
 
     _ui->get_video_capture_cursor_checkbox()->AddCallback("MainCallback", [this](void *ptr)->void {
@@ -89,6 +90,7 @@ App::App(const char *app_name, const char *app_version)
         _model->get_capture_cursor_flag() = !_model->get_capture_cursor_flag();
 
         button->SetState(_model->get_capture_cursor_flag());
+        _ui->get_video_settings_apply_button()->SetInputState(true);
         });
 
     /* Radio Buttons' callbacks */
@@ -98,6 +100,13 @@ App::App(const char *app_name, const char *app_version)
         /* Prevent false activation */
         if (button->GetState())
         {
+            /* Reset optimization checkbox */
+            if (!_ui->get_video_capture_optimization_checkbox()->GetState())
+            {
+                _ui->get_video_capture_optimization_checkbox()->operator()("MainCallback", (void *)_ui->get_video_capture_optimization_checkbox());
+            }
+            _ui->get_video_capture_optimization_checkbox()->SetInputState(false);
+
             _model->get_capture_client_rect_only_flag() = true;
             _ui->get_video_settings_apply_button()->SetInputState(true);
         }
@@ -109,6 +118,9 @@ App::App(const char *app_name, const char *app_version)
         /* Prevent false activation */
         if (button->GetState())
         {
+            /* Allow change optimization checkbox */
+            _ui->get_video_capture_optimization_checkbox()->SetInputState(true);
+
             _model->get_capture_client_rect_only_flag() = false;
             _ui->get_video_settings_apply_button()->SetInputState(true);
         }
@@ -121,21 +133,7 @@ App::App(const char *app_name, const char *app_version)
         /* Stop recording */
         _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
 
-        _ui->get_preview_wnd()->SetSrc(nullptr, 0, 0);
-
-        /* Reset optimization (iff need) */
-        if (_ui->get_video_capture_client_rect_only_radio_btn()->GetState())
-        {
-            if (!_ui->get_video_capture_optimization_checkbox()->GetState())
-            {
-                _ui->get_video_capture_optimization_checkbox()->operator()("MainCallback", (void *)_ui->get_video_capture_optimization_checkbox());
-            }
-            _ui->get_video_capture_optimization_checkbox()->SetInputState(false);
-        }
-        else
-        {
-            _ui->get_video_capture_optimization_checkbox()->SetInputState(true);
-        }
+        _ui->get_preview_wnd()->DeletePreview();
 
         try
         {
@@ -175,7 +173,7 @@ App::App(const char *app_name, const char *app_version)
         if (_model->get_allow_preview_flag())
         {
             /* Set preview context */
-            _ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
+            _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
             /* Stop recording (need restart for idle mode activation for preview) [NO NEED HERE] */
             //_ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
         }
@@ -195,14 +193,14 @@ App::App(const char *app_name, const char *app_version)
 
         if (_model->get_allow_preview_flag())
         {
-            _ui->get_preview_wnd()->SetSrc(_model->get_video_rec()->GetPreviewContext(), _model->get_video_rec()->GetSrcWidth(), _model->get_video_rec()->GetSrcHeight());
+            _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
             _ui->get_preview_wnd()->ShowWnd(true);
             /* Stop recording (need restart for idle mode activation for preview) */
             _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
         }
         else if (!_model->get_allow_preview_flag())
         {
-            _ui->get_preview_wnd()->SetSrc(nullptr, 0, 0);
+            _ui->get_preview_wnd()->DeletePreview();
             _ui->get_preview_wnd()->ShowWnd(false);
             /* Stop recording (need restart for idle mode deactivation for preview) */
             _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
@@ -211,6 +209,14 @@ App::App(const char *app_name, const char *app_version)
 
     _ui->get_start_recording_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
         MenuPoint *menu_point = GetControl(MenuPoint, ptr);
+
+        if (_model->get_allow_preview_flag())
+        {
+            _ui->get_preview_wnd()->DeletePreview();
+            _ui->get_preview_wnd()->ShowWnd(false);
+            /* Stop recording (need restart for idle mode deactivation for preview) */
+            _model->get_video_rec()->StopRecording();
+        }
 
         try
         {
@@ -237,11 +243,19 @@ App::App(const char *app_name, const char *app_version)
             MultiByteToWideChar(CP_UTF8, 0, error.c_str(), str_size, w_error, str_size);
 
             MessageBoxW(NULL, w_error, L"Error", MB_OK);
+
+            _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
         }
         });
 
     _ui->get_stop_recording_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
         MenuPoint *menu_point = GetControl(MenuPoint, ptr);
+
+        if (_model->get_allow_preview_flag())
+        {
+            _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
+            _ui->get_preview_wnd()->ShowWnd(true);
+        }
 
         _model->get_video_rec()->StopRecording();
 

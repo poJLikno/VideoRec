@@ -2,44 +2,8 @@
 
 #include <string>
 
-void ScreenCapture::_DrawCursor()
-{
-    CURSORINFO cursor_info = { 0 };
-    cursor_info.cbSize = sizeof(CURSORINFO);
-    GetCursorInfo(&cursor_info);
-    if ((_window_name ? GetForegroundWindow() == _hwnd : 1) && (cursor_info.flags & CURSOR_SHOWING))
-    {
-        ICONINFO icon_info = { 0 };
-        GetIconInfo(cursor_info.hCursor, &icon_info);
-
-        BITMAP bmp = { 0 };
-        GetObject(icon_info.hbmColor, sizeof(BITMAP), (void *)&bmp);
-
-        RECT rect = { 0 };
-        if (_client_rect_only_flag)
-        {
-            ClientToScreen(_hwnd, (POINT *)&rect);
-        }
-        else
-        {
-            GetWindowRect(_hwnd, &rect);
-        }
-
-        DrawIconEx(
-            _bitmap_ctx,/* dst */
-            (cursor_info.ptScreenPos.x - (int)icon_info.xHotspot - rect.left) * _dpi / USER_DEFAULT_SCREEN_DPI,/* x */
-            (cursor_info.ptScreenPos.y - (int)icon_info.yHotspot - rect.top) * _dpi / USER_DEFAULT_SCREEN_DPI,/* y */
-            cursor_info.hCursor, bmp.bmWidth * _dpi / USER_DEFAULT_SCREEN_DPI,/* width */
-            bmp.bmHeight * _dpi / USER_DEFAULT_SCREEN_DPI,/* height */
-            0, NULL, DI_NORMAL);
-
-        DeleteObject(icon_info.hbmColor);
-        DeleteObject(icon_info.hbmMask);
-    }
-}
-
-ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_only, bool &use_optimization, bool &capture_cursor, const int &dst_width, const int &dst_height)
-    : _window_name(window_name), _client_rect_only_flag(client_rect_only), _use_optimization_flag(use_optimization), _capture_cursor_flag(capture_cursor)
+ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_only, const bool &use_optimization, const bool &capture_cursor, const int &dst_width, const int &dst_height)
+    : _window_name(window_name), _client_rect_only_flag(client_rect_only)
 {
     /* Get window */
     if (window_name)
@@ -60,7 +24,7 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
     }
 
     /* Get window device context */
-    _wnd_dev_ctx = GetDCEx(_hwnd, nullptr, (client_rect_only ? 0 : DCX_WINDOW) | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
+    _wnd_dev_ctx = GetDCEx(_hwnd, nullptr, (_client_rect_only_flag ? 0 : DCX_WINDOW) | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
     if (!_wnd_dev_ctx)
     {
         throw std::string("Couldn't get window's DC!");
@@ -73,9 +37,9 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
     /* check iconic (minimized) twice, ABA is very unlikely (OBS code segment) */
     bool window_available =
         !IsIconic(_hwnd)
-        && (client_rect_only ? GetClientRect(_hwnd, &rect) : GetWindowRect(_hwnd, &rect))
+        && (_client_rect_only_flag ? GetClientRect(_hwnd, &rect) : GetWindowRect(_hwnd, &rect))
         && (rect.right > 0) && (rect.bottom > 0)
-        && (client_rect_only ? ClientToScreen(_hwnd, &upper_left) : 1);
+        && (_client_rect_only_flag ? ClientToScreen(_hwnd, &upper_left) : 1);
 
     if (!window_available)
     {
@@ -86,7 +50,7 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
         memset(&rect, 0, sizeof(RECT));
 
         /* Get size */
-        if (client_rect_only)
+        if (_client_rect_only_flag)
         {
             GetClientRect(_hwnd, &rect);
         }
@@ -110,34 +74,19 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
     _dst_width = (dst_width == -1 ? _src_width : dst_width);
     _dst_height = (dst_height == -1 ? _src_height : dst_height);
 
-    /* Fill bitmap information */
-    _bitmap_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    _bitmap_info.bmiHeader.biWidth = _src_width;
-    _bitmap_info.bmiHeader.biHeight = -(_src_height);/* Make top-down DIB (upper-left corner) */
-    _bitmap_info.bmiHeader.biBitCount = 32u;
-    _bitmap_info.bmiHeader.biSizeImage = _src_width * _src_height * 4;
-    _bitmap_info.bmiHeader.biPlanes = 1u;
-    _bitmap_info.bmiHeader.biCompression = BI_RGB;
-    _bitmap_info.bmiHeader.biClrUsed = 0u;
-    _bitmap_info.bmiHeader.biClrImportant = 0u;
-    _bitmap_info.bmiHeader.biXPelsPerMeter = 0;
-    _bitmap_info.bmiHeader.biYPelsPerMeter = 0;
-
-    /* Create bitmap */
-    _bitmap_ctx = CreateCompatibleDC(nullptr/*_wnd_dev_ctx*/);/* Set arg to null like in OBS code */
-
-    //_bitmap = CreateCompatibleBitmap(_wnd_dev_ctx, _src_width, _src_height);
-    //GetDIBits()
-
-    _bitmap = CreateDIBSection(_wnd_dev_ctx, (const BITMAPINFO *)&_bitmap_info, DIB_RGB_COLORS, (void **)&_buffer, nullptr, 0);
-    if (_bitmap == nullptr) {
-        throw std::string("Couldn't allocate frame buffer!");
+    /* Create cursors double buffer */
+    if (capture_cursor)
+    {
+        _cursors_dbl_buff = new CursorsDblBuff();
     }
 
-    _old_obj = SelectObject(_bitmap_ctx, (HGDIOBJ)_bitmap);
-
-    /* Create double buffer */
-    _frames_buffer = new DoubleBuffer(_buffer, _src_width, _src_height, _dst_width, _dst_height);
+    /* Create frames double buffer */
+    _frames_dbl_buff = new FramesDblBuff(
+        _hwnd, _wnd_dev_ctx,
+        _src_width, _src_height,
+        _dst_width, _dst_height,
+        _cursors_dbl_buff,
+        use_optimization, capture_cursor);
 }
 
 ScreenCapture::~ScreenCapture()
@@ -145,32 +94,60 @@ ScreenCapture::~ScreenCapture()
     /* Release resources */
     //GdiFlush();/* Flushes the calling thread's current batch *//* ??? */
 
-    SelectObject(_bitmap_ctx, _old_obj);
-    DeleteDC(_bitmap_ctx);
-    DeleteObject((HGDIOBJ)_bitmap);/* Also release memory for buffer */
-    ReleaseDC(_hwnd, _wnd_dev_ctx);
+    _frames_dbl_buff.reset();
 
-    _buffer = nullptr;/* GDI will release bitmap buffer */
+    ReleaseDC(_hwnd, _wnd_dev_ctx);
 }
 
 void ScreenCapture::TakeShot()
 {
-    if (_use_optimization_flag)
-    {
-        BitBlt(_bitmap_ctx, 0, 0, _src_width, _src_height, _wnd_dev_ctx, 0, 0, SRCCOPY);
-    }
-    else
-    {
-        PrintWindow(_hwnd, _bitmap_ctx, PW_RENDERFULLCONTENT);
-    }
+    _frames_dbl_buff->Write();
+}
 
-    /* Draw a cursor */
-    if (_capture_cursor_flag)
+void ScreenCapture::CaptureCursorState()
+{
+    if (!_cursors_dbl_buff)
     {
-        _DrawCursor();
+        throw std::string("Cursors double buffer ins null!");
     }
+    else if (_window_name ? GetForegroundWindow() == _hwnd : 1)
+    {
+        CURSORINFO cursor_info = { 0 };
+        cursor_info.cbSize = sizeof(CURSORINFO);
+        GetCursorInfo(&cursor_info);
 
-    _frames_buffer->WriteFrame();
+        if (cursor_info.flags & CURSOR_SHOWING)
+        {
+            ICONINFO icon_info = { 0 };
+            GetIconInfo(cursor_info.hCursor, &icon_info);
+
+            BITMAP bmp = { 0 };
+            GetObject(icon_info.hbmColor, sizeof(BITMAP), (void *)&bmp);
+
+            RECT rect = { 0 };
+            if (_client_rect_only_flag)
+            {
+                ClientToScreen(_hwnd, (POINT *)&rect);
+            }
+            else
+            {
+                GetWindowRect(_hwnd, &rect);
+            }
+
+            Cursor cursor = { 0 };
+            cursor.h_cursor = cursor_info.hCursor;
+            cursor.relative_pos_x = (cursor_info.ptScreenPos.x - (int)icon_info.xHotspot - rect.left) * _dpi / USER_DEFAULT_SCREEN_DPI;
+            cursor.relative_pos_y = (cursor_info.ptScreenPos.y - (int)icon_info.yHotspot - rect.top) * _dpi / USER_DEFAULT_SCREEN_DPI;
+            cursor.width = bmp.bmWidth * _dpi / USER_DEFAULT_SCREEN_DPI;
+            cursor.height = bmp.bmHeight * _dpi / USER_DEFAULT_SCREEN_DPI;
+
+            _cursors_dbl_buff->SetCursor(cursor);
+            _cursors_dbl_buff->Write();
+
+            DeleteObject(icon_info.hbmColor);
+            DeleteObject(icon_info.hbmMask);
+        }
+    }
 }
 
 const int &ScreenCapture::GetSrcWidth()
@@ -193,12 +170,7 @@ const int &ScreenCapture::GetDstHeight()
     return _dst_height;
 }
 
-DoubleBuffer *ScreenCapture::GetFramesBuffer()
+SmtObj<FramesDblBuff> &ScreenCapture::GetFramesDblBuff()
 {
-    return _frames_buffer;
-}
-
-HDC ScreenCapture::GetBitmapContextForPreview()
-{
-    return _bitmap_ctx;
+    return _frames_dbl_buff;
 }

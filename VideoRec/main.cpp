@@ -1,9 +1,9 @@
 #define APP_NAME "VideoRec"
 
 #ifdef _DEBUG
-#define APP_VERSION "3.31 (GDI-video) Debug"
+#define APP_VERSION "3.4 (GDI-video) Debug"
 #else
-#define APP_VERSION "3.31 (GDI-video) Release"
+#define APP_VERSION "3.4 (GDI-video) Release"
 #endif
 
 #define WINDOWLIB_USE_MANIFEST

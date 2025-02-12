@@ -33,8 +33,8 @@ size_t HWAccelCL::_GetKernelCode(const char *file_name, SmtObj<char[]> *kernel_c
     return file_size;
 }
 
-HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &dst_width, const int &dst_height, uint8_t *src_rgb, const int &src_width, const int &src_height)
-    : _src_rgb(src_rgb), _src_width(src_width), _src_height(src_height), _dst_width(dst_width), _dst_height(dst_height),
+HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &dst_width, const int &dst_height, const int &src_width, const int &src_height)
+    : _src_width(src_width), _src_height(src_height), _dst_width(dst_width), _dst_height(dst_height),
     _src_rgb_buffer_size(src_width * src_height * 4), _dst_y_buffer_size(dst_width * dst_height), _dst_uv_buffer_size(dst_width * dst_height / 4)
 {
     /* Get a default OpenCL platform */
@@ -168,8 +168,6 @@ HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &
 HWAccelCL::~HWAccelCL()
 {
     /* Clean up */
-    _src_rgb = nullptr;
-
     clReleaseMemObject(_cl_src_rgb);
     clReleaseMemObject(_cl_dst_y);
     clReleaseMemObject(_cl_dst_u);
@@ -195,10 +193,10 @@ HWAccelCL::~HWAccelCL()
     _platform_id = nullptr;
 }
 
-void HWAccelCL::Run(uint8_t *y, uint8_t *u, uint8_t *v)
+void HWAccelCL::Run(uint8_t *y, uint8_t *u, uint8_t *v, uint8_t *src_rgb)
 {
     /* Write data to buffer */
-    _result = clEnqueueWriteBuffer(_command_queue, _cl_src_rgb, CL_TRUE, 0, _src_rgb_buffer_size * sizeof(cl_uchar), _src_rgb, 0, NULL, NULL);
+    _result = clEnqueueWriteBuffer(_command_queue, _cl_src_rgb, CL_TRUE, 0, _src_rgb_buffer_size * sizeof(cl_uchar), src_rgb, 0, NULL, NULL);
     if (_result)
     {
         throw std::string("Couldn't write src_rgb to buffer! : " + std::to_string(_result));

@@ -9,7 +9,7 @@ extern "C"
 #include <CL/opencl.h>
 }
 
-#include "../../../../../SmtObj.h"
+#include "../../../../../../SmtObj.h"
 
 class HWAccelCL
 {
@@ -25,8 +25,6 @@ private:
     SmtObj<char[]> _kernel_code;
     cl_program _program = nullptr;
     cl_kernel _kernel = nullptr;
-
-    uint8_t *_src_rgb = nullptr;
 
     int _src_width = 0;
     int _src_height = 0;
@@ -45,12 +43,12 @@ private:
     size_t _GetKernelCode(const char *file_name, SmtObj<char[]> *kernel_code);
 
 public:
-    HWAccelCL(const char *file_name, const char *kernel_name, const int &dst_width, const int &dst_height, uint8_t *src_rgb, const int &src_width, const int &src_height);
+    HWAccelCL(const char *file_name, const char *kernel_name, const int &dst_width, const int &dst_height, const int &src_width, const int &src_height);
     HWAccelCL(const HWAccelCL &) = delete;
 
     ~HWAccelCL();
 
-    void Run(uint8_t *y, uint8_t *u, uint8_t *v);
+    void Run(uint8_t *y, uint8_t *u, uint8_t *v, uint8_t *src_rgb);
 
     static void ShowOpenCLDevices();
 };
