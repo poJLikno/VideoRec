@@ -5,7 +5,7 @@ void CursorsDblBuff::_OnWrite(const uint8_t &index)
     _cursors_buffers[index] = _staged_cursor;
 }
 
-Cursor *CursorsDblBuff::Get()
+Cursor *CursorsDblBuff::GetCursor()
 {
     return &_cursors_buffers[_lock_index];
 }

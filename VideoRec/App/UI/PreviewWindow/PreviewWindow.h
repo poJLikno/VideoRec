@@ -9,7 +9,7 @@
 #include "../WindowLib/WndBase.h"
 #include "../WindowLib/WndList.h"
 
-#include "../../Model/VideoRecorder/ScreenCapture/DoubleBuffers/FramesDblBuff/FramesDblBuff.h"
+#include "../../Model/VideoRecorder/ScreenCapture/DoubleBuffers/BitmapsDblBuff/BitmapsDblBuff.h"
 
 class PreviewWindow : public WndBase
 {
@@ -22,7 +22,7 @@ private:
     /* the Window index in lists */
     int _wnd_list_index = 0;
 
-    SmtObj<FramesDblBuff> *_frames_dbl_buff = nullptr;
+    SmtObj<BitmapsDblBuff> *_bitmaps_dbl_buff = nullptr;
 
     SmtObj<std::thread> _paint_timer;
     bool _timer_flag = true;
@@ -34,7 +34,7 @@ public:
     PreviewWindow(const PreviewWindow &) = delete;
     ~PreviewWindow();
 
-    void SetPreview(SmtObj<FramesDblBuff> &frames_dbl_buff);
+    void SetPreview(SmtObj<BitmapsDblBuff> &bitmaps_dbl_buff);
     void DeletePreview();
 };
 

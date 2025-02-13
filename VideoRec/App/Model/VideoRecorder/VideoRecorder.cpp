@@ -170,11 +170,11 @@ const int &VideoRecorder::GetSrcHeight()
     throw std::string("Couldn't get src height!");
 }
 
-SmtObj<FramesDblBuff> &VideoRecorder::GetPreview()
+SmtObj<BitmapsDblBuff> &VideoRecorder::GetPreview()
 {
     if (_screen)
     {
-        return _screen->GetFramesDblBuff();
+        return _screen->GetBitmapsDblBuff();
     }
 
     //return nullptr;

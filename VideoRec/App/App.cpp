@@ -210,13 +210,13 @@ App::App(const char *app_name, const char *app_version)
     _ui->get_start_recording_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
         MenuPoint *menu_point = GetControl(MenuPoint, ptr);
 
-        if (_model->get_allow_preview_flag())
-        {
-            _ui->get_preview_wnd()->DeletePreview();
-            _ui->get_preview_wnd()->ShowWnd(false);
-            /* Stop recording (need restart for idle mode deactivation for preview) */
-            _model->get_video_rec()->StopRecording();
-        }
+        //if (_model->get_allow_preview_flag())
+        //{
+        //    _ui->get_preview_wnd()->DeletePreview();
+        //    _ui->get_preview_wnd()->ShowWnd(false);
+        //    /* Stop recording (need restart for idle mode deactivation for preview) */
+        //    _model->get_video_rec()->StopRecording();
+        //}
 
         try
         {
@@ -251,11 +251,11 @@ App::App(const char *app_name, const char *app_version)
     _ui->get_stop_recording_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
         MenuPoint *menu_point = GetControl(MenuPoint, ptr);
 
-        if (_model->get_allow_preview_flag())
+        /*if (_model->get_allow_preview_flag())
         {
             _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
             _ui->get_preview_wnd()->ShowWnd(true);
-        }
+        }*/
 
         _model->get_video_rec()->StopRecording();
 

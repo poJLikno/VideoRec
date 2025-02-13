@@ -5,6 +5,7 @@
 #include <windows.h>
 
 #include "../../../../SmtObj.h"
+#include "DoubleBuffers/BitmapsDblBuff/BitmapsDblBuff.h"
 #include "DoubleBuffers/FramesDblBuff/FramesDblBuff.h"
 #include "DoubleBuffers/CursorsDblBuff/CursorsDblBuff.h"
 
@@ -26,6 +27,7 @@ private:
     int _dst_width = 0;
     int _dst_height = 0;
 
+    SmtObj<BitmapsDblBuff> _bitmaps_dbl_buff;
     SmtObj<FramesDblBuff> _frames_dbl_buff;
     SmtObj<CursorsDblBuff> _cursors_dbl_buff;
 
@@ -39,10 +41,11 @@ public:
 
     const int &GetSrcWidth();
     const int &GetSrcHeight();
-
+    
     const int &GetDstWidth();
     const int &GetDstHeight();
 
+    SmtObj<BitmapsDblBuff> &GetBitmapsDblBuff();
     SmtObj<FramesDblBuff> &GetFramesDblBuff();
 };
 

@@ -74,17 +74,24 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
     _dst_width = (dst_width == -1 ? _src_width : dst_width);
     _dst_height = (dst_height == -1 ? _src_height : dst_height);
 
+
+    /* Create frames double buffer */
+    _frames_dbl_buff = new FramesDblBuff(
+        _src_width, _src_height,
+        _dst_width, _dst_height);
+
     /* Create cursors double buffer */
     if (capture_cursor)
     {
         _cursors_dbl_buff = new CursorsDblBuff();
     }
 
-    /* Create frames double buffer */
-    _frames_dbl_buff = new FramesDblBuff(
+    /* Create bitmaps double buffer */
+    _bitmaps_dbl_buff = new BitmapsDblBuff(
         _hwnd, _wnd_dev_ctx,
         _src_width, _src_height,
         _dst_width, _dst_height,
+        _frames_dbl_buff,
         _cursors_dbl_buff,
         use_optimization, capture_cursor);
 }
@@ -94,18 +101,22 @@ ScreenCapture::~ScreenCapture()
     /* Release resources */
     //GdiFlush();/* Flushes the calling thread's current batch *//* ??? */
 
+    _bitmaps_dbl_buff.reset();
     _frames_dbl_buff.reset();
+    _cursors_dbl_buff.reset();
 
     ReleaseDC(_hwnd, _wnd_dev_ctx);
 }
 
 void ScreenCapture::TakeShot()
 {
-    _frames_dbl_buff->Write();
+    _bitmaps_dbl_buff->Write();
 }
 
 void ScreenCapture::CaptureCursorState()
 {
+    Cursor cursor = { 0 };
+
     if (!_cursors_dbl_buff)
     {
         throw std::string("Cursors double buffer ins null!");
@@ -134,20 +145,20 @@ void ScreenCapture::CaptureCursorState()
                 GetWindowRect(_hwnd, &rect);
             }
 
-            Cursor cursor = { 0 };
+            
             cursor.h_cursor = cursor_info.hCursor;
             cursor.relative_pos_x = (cursor_info.ptScreenPos.x - (int)icon_info.xHotspot - rect.left) * _dpi / USER_DEFAULT_SCREEN_DPI;
             cursor.relative_pos_y = (cursor_info.ptScreenPos.y - (int)icon_info.yHotspot - rect.top) * _dpi / USER_DEFAULT_SCREEN_DPI;
             cursor.width = bmp.bmWidth * _dpi / USER_DEFAULT_SCREEN_DPI;
             cursor.height = bmp.bmHeight * _dpi / USER_DEFAULT_SCREEN_DPI;
 
-            _cursors_dbl_buff->SetCursor(cursor);
-            _cursors_dbl_buff->Write();
-
             DeleteObject(icon_info.hbmColor);
             DeleteObject(icon_info.hbmMask);
-        }
+        }        
     }
+
+    _cursors_dbl_buff->SetCursor(cursor);
+    _cursors_dbl_buff->Write();
 }
 
 const int &ScreenCapture::GetSrcWidth()
@@ -168,6 +179,11 @@ const int &ScreenCapture::GetDstWidth()
 const int &ScreenCapture::GetDstHeight()
 {
     return _dst_height;
+}
+
+SmtObj<BitmapsDblBuff> &ScreenCapture::GetBitmapsDblBuff()
+{
+    return _bitmaps_dbl_buff;
 }
 
 SmtObj<FramesDblBuff> &ScreenCapture::GetFramesDblBuff()

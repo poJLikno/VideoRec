@@ -28,7 +28,7 @@ public:
     CursorsDblBuff(const CursorsDblBuff &) = delete;
     virtual ~CursorsDblBuff() override = default;
 
-    virtual Cursor *Get() final;
+    virtual Cursor *GetCursor() final;
     virtual void SetCursor(const Cursor &cursor) final;
 };
 

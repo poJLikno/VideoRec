@@ -39,7 +39,7 @@ public:
     const int &GetSrcWidth();
     const int &GetSrcHeight();
 
-    SmtObj<FramesDblBuff> &GetPreview();
+    SmtObj<BitmapsDblBuff> &GetPreview();
 };
 
 #endif
