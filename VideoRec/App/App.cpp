@@ -9,6 +9,7 @@ App::App(const char *app_name, const char *app_version)
     /* Default controls' settings */
     _ui->get_video_capture_optimization_checkbox()->SetState(true);
     _ui->get_video_capture_optimization_checkbox()->SetInputState(false);
+    _ui->get_video_capture_cursor_checkbox()->SetState(true);
     _ui->get_video_fps_edit()->SetWndText("30");
     _ui->get_video_capture_client_rect_only_radio_btn()->SetState(true);
     _ui->get_video_settings_apply_button()->SetInputState(false);
@@ -16,6 +17,8 @@ App::App(const char *app_name, const char *app_version)
 
     /* Set source */
     _model->get_video_rec()->SetNewSource(nullptr);
+    _ui->get_video_width_edit()->SetWndText(std::to_string(_model->get_video_rec()->GetSrcWidth()).c_str());
+    _ui->get_video_height_edit()->SetWndText(std::to_string(_model->get_video_rec()->GetSrcHeight()).c_str());
     _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
     _ui->get_preview_wnd()->ShowWnd(true);
 
@@ -59,6 +62,7 @@ App::App(const char *app_name, const char *app_version)
     _ui->get_video_source_wnd_edit()->AddCallback("MainCallback", [this](void *ptr)->void {
         //Edit *edit = GetControl(Edit, ptr);
 
+        _model->get_source_wnd_changed_flag() = true;
         _ui->get_video_settings_apply_button()->SetInputState(true);
         });
 
@@ -153,11 +157,19 @@ App::App(const char *app_name, const char *app_version)
             {
                 throw std::string("Video height must be a number!");
             }
-        
+
             _model->get_video_rec()->SetNewSource(
                 (wnd_name[0] == '\0' ? nullptr : wnd_name),
-                (video_width[0] == '\0' ? -1 : atoi(video_width)),
-                (video_height[0] == '\0' ? -1 : atoi(video_height)));
+                (video_width[0] == '\0' || _model->get_source_wnd_changed_flag() ? -1 : atoi(video_width)),
+                (video_height[0] == '\0' || _model->get_source_wnd_changed_flag() ? -1 : atoi(video_height)));
+
+            if (_model->get_source_wnd_changed_flag() || video_width[0] == '\0' || video_height[0] == '\0')
+            {
+                _ui->get_video_width_edit()->SetWndText(std::to_string(_model->get_video_rec()->GetSrcWidth()).c_str());
+                _ui->get_video_height_edit()->SetWndText(std::to_string(_model->get_video_rec()->GetSrcHeight()).c_str());
+            }
+
+            _model->get_source_wnd_changed_flag() = false;
         }
         catch (std::string error)
         {

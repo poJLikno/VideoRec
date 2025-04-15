@@ -119,7 +119,7 @@ void ScreenCapture::CaptureCursorState()
 
     if (!_cursors_dbl_buff)
     {
-        throw std::string("Cursors double buffer ins null!");
+        throw std::string("Cursors double buffer is null!");
     }
     else if (_window_name ? GetForegroundWindow() == _hwnd : 1)
     {
