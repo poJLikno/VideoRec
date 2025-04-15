@@ -68,7 +68,7 @@ FileMP4::FileMP4(
     /* Prepare codec */
     if (avcodec_open2(_codec_context, _codec, NULL) < 0)
     {
-        throw std::string("Couldn't open codec!");
+        throw std::string("Try using another resolution - (Couldn't open codec!)");
     }
 
     /* Apply codec parametors to stream */
@@ -87,8 +87,8 @@ FileMP4::FileMP4(
     avformat_write_header(_format_context, NULL);/* No check out */
 
     /* Set frame duration */
-    _frame_duration = static_cast<long long>(_codec_context->time_base.den * _codec_context->framerate.den);
-    _frame_duration /= static_cast<long long>(_codec_context->time_base.num * _codec_context->framerate.num);
+    _frame_duration = static_cast<long long>(_codec_context->time_base.den * _codec_context->framerate.den)
+        / static_cast<long long>(_codec_context->time_base.num * _codec_context->framerate.num);
 
     /* Allocate packet for frames */
     _packet = av_packet_alloc();
@@ -144,7 +144,7 @@ void FileMP4::WriteFrame(AVFrame *frame)
     {
         result = avcodec_receive_packet(_codec_context, _packet);
         _packet->pts = _frame_number * _frame_duration;
-        _packet->dts = 0;
+        _packet->dts = _packet->pts;
         _packet->duration = _frame_duration;
 
         /* Write frame */

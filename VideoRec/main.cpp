@@ -1,11 +1,12 @@
 #define APP_NAME "VideoRec"
 
 #ifdef _DEBUG
-#define APP_VERSION "3.4 (GDI-video) Debug"
+#define APP_VERSION "3.5 (GDI-video) Debug"
 #else
-#define APP_VERSION "3.4 (GDI-video) Release"
+#define APP_VERSION "3.5 (GDI-video) Release"
 #endif
 
+/* Also uses external app manifest */
 #define WINDOWLIB_USE_MANIFEST
 #define WINDOWLIB_NO_CONSOLE
 
@@ -28,14 +29,16 @@
 #pragma comment(lib, "OpenCL.lib")
 */
 
+/* No need. DPI preference in external app manifest */
 /* Very important */
-void SetupDpiAwareness()
+/*void SetupDpiAwareness()
 {
     if (!SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED))
     {
         throw std::string("SetThreadDpiAwarenessContext failed!");
     }
 }
+*/
 
 int main(int argc, const char **argv)
 {
@@ -46,7 +49,8 @@ int main(int argc, const char **argv)
 
     try
     {
-        SetupDpiAwareness();
+        /* No need. DPI preference in external app manifest */
+        //SetupDpiAwareness();
 
         App app(APP_NAME, APP_VERSION);
         result = app.Run();

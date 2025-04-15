@@ -17,7 +17,8 @@ private:
     bool _allow_preview_flag = true;
     bool _capture_client_rect_only_flag = true;
     bool _capture_optimization_flag = true;
-    bool _capture_cursor_flag = false;
+    bool _capture_cursor_flag = true;
+    bool _source_wnd_changed_flag = false;
 
 public:
     Model();
@@ -30,6 +31,7 @@ public:
     GETTER(_capture_client_rect_only_flag)
     GETTER(_capture_optimization_flag)
     GETTER(_capture_cursor_flag)
+    GETTER(_source_wnd_changed_flag)
 };
 
 #endif /* MODEL_H_ */
