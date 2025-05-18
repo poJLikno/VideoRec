@@ -2,12 +2,11 @@
 #define DOUBLE_BUFFER_H_
 
 #include <stdint.h>
-#include <mutex>
 
 class DoubleBuffer
 {
 protected:
-    std::mutex _mutexs[2] = {};
+    bool _indexes_busy[2] = {0};
     uint8_t _lock_index = 0;/* For GetBuff method */
     uint8_t _newest_index = 1;
 

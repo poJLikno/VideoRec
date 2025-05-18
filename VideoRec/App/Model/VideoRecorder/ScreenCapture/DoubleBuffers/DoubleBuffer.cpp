@@ -5,37 +5,44 @@
 void DoubleBuffer::Lock()
 {
     uint8_t local_newest_index = _newest_index;
-    if (_mutexs[local_newest_index].try_lock())
+    if (_indexes_busy[local_newest_index] == false)
     {
+        _indexes_busy[local_newest_index] = true;
+
         _lock_index = local_newest_index;
     }
     else
     {
-        _mutexs[(local_newest_index ^ (1 << 0))].lock();
+        while (_indexes_busy[(local_newest_index ^ (1 << 0))] == true);
+        _indexes_busy[(local_newest_index ^ (1 << 0))] = true;
+
         _lock_index = local_newest_index ^ (1 << 0);
     }
 }
 
 void DoubleBuffer::Unlock()
 {
-    _mutexs[_lock_index].unlock();
+    _indexes_busy[_lock_index] = false;
 }
 
 void DoubleBuffer::Write()
 {
-    if (_mutexs[(_newest_index ^ (1 << 0))].try_lock())
+    if (_indexes_busy[(_newest_index ^ (1 << 0))] == false)
     {
+        _indexes_busy[(_newest_index ^ (1 << 0))] = true;
+
         _OnWrite((_newest_index ^ (1 << 0)));
 
         _newest_index ^= (1 << 0);
-        _mutexs[_newest_index].unlock();
+        _indexes_busy[_newest_index] = false;
     }
     else
     {
-        _mutexs[_newest_index].lock();
+        while (_indexes_busy[_newest_index] == true);
+        _indexes_busy[_newest_index] = true;
 
         _OnWrite(_newest_index);
 
-        _mutexs[_newest_index].unlock();
+        _indexes_busy[_newest_index] = false;
     }
 }

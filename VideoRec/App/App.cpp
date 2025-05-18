@@ -50,10 +50,10 @@ App::App(const char *app_name, const char *app_version)
         {
             key_tmp_state_flag = true;
         }
-        else if (GetAsyncKeyState(VK_ESCAPE) != 0 && GetForegroundWindow() == wnd->GetHwnd())
+        /*else if (GetAsyncKeyState(VK_ESCAPE) != 0 && GetForegroundWindow() == wnd->GetHwnd())
         {
             DestroyWindow(wnd->GetHwnd());
-        }
+        }*/
         });
 
     /* Add controls' callbacks */

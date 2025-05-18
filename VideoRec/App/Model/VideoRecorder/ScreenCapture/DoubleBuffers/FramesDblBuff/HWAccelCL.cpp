@@ -300,7 +300,7 @@ void HWAccelCL::ShowOpenCLDevices()
             {
                 throw std::string("Couldn't get device name!");
             }
-            std::cout << "\t[" << i << "] " << (char *)device_name << "\n";/* Output device name */
+            std::cout << "\t[" << j << "] " << (char *)device_name << "\n";/* Output device name */
             memset(device_name, 0, sizeof(device_name));
 
             clReleaseDevice(device_ids_list[j]);
