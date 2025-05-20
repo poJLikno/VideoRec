@@ -22,6 +22,10 @@ private:
     /* the Window index in lists */
     int _wnd_list_index = 0;
 
+    HDC _hdc = nullptr;
+    HPEN _pen = nullptr;
+    HGDIOBJ _old_obj = nullptr;
+
     SmtObj<BitmapsDblBuff> *_bitmaps_dbl_buff = nullptr;
 
     SmtObj<std::thread> _paint_timer;

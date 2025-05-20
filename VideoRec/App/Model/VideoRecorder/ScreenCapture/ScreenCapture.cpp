@@ -64,6 +64,7 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
 #pragma warning(push)/* Suppress this warning only here */
 #pragma warning(disable : 6387)
     _dpi = (window_name ? GetDpiForWindow(_hwnd) : GetSystemDpiForProcess(NULL));
+//#pragma warning(default : 6387) set to default (enable)
 #pragma warning(pop)
 
     /* Get source frame resolution */

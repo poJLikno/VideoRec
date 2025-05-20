@@ -30,44 +30,44 @@ LRESULT PreviewWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
             result = 1;
         }
         else {
-            if (uMsg == WM_PAINT) {
-                /* Get device context */
-                PAINTSTRUCT ps = { 0 };
-                HDC hdc = BeginPaint(hwnd, &ps);
-                /* Configure DC */
-                SetStretchBltMode(hdc, HALFTONE);/* Make normal scale */
-                HPEN pen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
-                HGDIOBJ old_obj = SelectObject(hdc, (HGDIOBJ)pen);
-                SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
+            //if (uMsg == WM_PAINT) { /* Other messages create freezing in this way
+            //    /* Get device context */
+            //    PAINTSTRUCT ps = { 0 };
+            //    HDC hdc = BeginPaint(hwnd, &ps);
+            //    /* Configure DC */
+            //    SetStretchBltMode(hdc, HALFTONE);/* Make normal scale */
+            //    HPEN pen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
+            //    HGDIOBJ old_obj = SelectObject(hdc, (HGDIOBJ)pen);
+            //    SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
 
-                /* Paint */
-                auto [wnd_width, wnd_height] = Wnd->GetWndSize();
-                if (Wnd->_bitmaps_dbl_buff)
-                {
-                    SmtObj<BitmapsDblBuff> &frames_dbl_buff = *Wnd->_bitmaps_dbl_buff;
-                    frames_dbl_buff->Lock();
-                    StretchBlt(
-                        hdc, 0, 0, wnd_width, wnd_height,
-                        frames_dbl_buff->GetBitmapContext(), 0, 0, frames_dbl_buff->GetSrcWidth(), frames_dbl_buff->GetSrcHeight(),
-                        SRCCOPY);
-                    frames_dbl_buff->Unlock();
-                }
-                else
-                {
-                    SelectObject(hdc, GetStockObject(WHITE_BRUSH));
-                }
-                Rectangle(hdc, 0, 0, wnd_width, wnd_height);
+            //    /* Paint */
+            //    auto [wnd_width, wnd_height] = Wnd->GetWndSize();
+            //    if (Wnd->_bitmaps_dbl_buff)
+            //    {
+            //        SmtObj<BitmapsDblBuff> &frames_dbl_buff = *Wnd->_bitmaps_dbl_buff;
+            //        frames_dbl_buff->Lock();
+            //        StretchBlt(
+            //            hdc, 0, 0, wnd_width, wnd_height,
+            //            frames_dbl_buff->GetBitmapContext(), 0, 0, frames_dbl_buff->GetSrcWidth(), frames_dbl_buff->GetSrcHeight(),
+            //            SRCCOPY);
+            //        frames_dbl_buff->Unlock();
+            //    }
+            //    else
+            //    {
+            //        SelectObject(hdc, GetStockObject(WHITE_BRUSH));
+            //    }
+            //    Rectangle(hdc, 0, 0, wnd_width, wnd_height);
 
-                /**/
+            //    /**/
 
-                /* Cleanup */
-                SelectObject(hdc, old_obj);
-                DeleteObject((HGDIOBJ)pen);
+            //    /* Cleanup */
+            //    SelectObject(hdc, old_obj);
+            //    DeleteObject((HGDIOBJ)pen);
 
-                EndPaint(hwnd, &ps);
-                result = 0;
-            }
-            else if (uMsg == WM_CLOSE) {
+            //    EndPaint(hwnd, &ps);
+            //    result = 0;
+            //}
+            /*else */if (uMsg == WM_CLOSE) {
                 DestroyWindow(hwnd);
                 result = 0;
             }
@@ -129,6 +129,13 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
 
     WndBase::SetWndParent(parent_wnd);
 
+    /* Get DC */
+    _hdc = GetDC(_hwnd);
+    /* Configure DC */
+    SetStretchBltMode(_hdc, HALFTONE);/* Make normal scale */
+    _pen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
+    _old_obj = SelectObject(_hdc, (HGDIOBJ)_pen);
+
     /* Create a paint timer loop */
     _paint_timer = new std::thread([this]()->void {
         std::chrono::time_point<std::chrono::steady_clock> millis_timer = std::chrono::steady_clock::now();
@@ -139,7 +146,28 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - millis_timer).count() >= 16)
             {
                 millis_timer = std::chrono::steady_clock::now();
-                InvalidateRect(_hwnd, NULL, FALSE);
+                //InvalidateRect(_hwnd, NULL, FALSE);
+
+                /* Configure DC */
+                SelectObject(_hdc, GetStockObject(HOLLOW_BRUSH));
+
+                /* Paint */
+                auto [wnd_width, wnd_height] = _size;
+                if (this->_bitmaps_dbl_buff)
+                {
+                    SmtObj<BitmapsDblBuff> &frames_dbl_buff = *this->_bitmaps_dbl_buff;
+                    frames_dbl_buff->Lock();
+                    StretchBlt(
+                        _hdc, 0, 0, wnd_width, wnd_height,
+                        frames_dbl_buff->GetBitmapContext(), 0, 0, frames_dbl_buff->GetSrcWidth(), frames_dbl_buff->GetSrcHeight(),
+                        SRCCOPY);
+                    frames_dbl_buff->Unlock();
+                }
+                else
+                {
+                    SelectObject(_hdc, GetStockObject(WHITE_BRUSH));
+                }
+                Rectangle(_hdc, 0, 0, wnd_width, wnd_height);
             }
 
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -149,9 +177,16 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
 
 PreviewWindow::~PreviewWindow()
 {
+    /* Stop preview drawing loop */
     _timer_flag = false;
-    _paint_timer->join();    
+    _paint_timer->join();
 
+    /* Cleanup graphics */
+    SelectObject(_hdc, _old_obj);
+    DeleteObject((HGDIOBJ)_pen);
+    ReleaseDC(_hwnd, _hdc);
+
+    /* Cleanup window stuff */
     if (!UnregisterClassW(L"preview_window_class", NULL))
         MessageBoxW(NULL, std::wstring(L"Can't unregister class -> Error code: " + std::to_wstring(GetLastError())).c_str(), L"Error", MB_OK);
 
