@@ -158,6 +158,10 @@ App::App(const char *app_name, const char *app_version)
                 throw std::string("Video height must be a number!");
             }
 
+            _model->get_video_rec()->ApplyClientRectOnlyFlag();
+            _model->get_video_rec()->ApplyOptimizationFlag();
+            _model->get_video_rec()->ApplyCaptureCursorFlag();
+
             _model->get_video_rec()->SetNewSource(
                 (wnd_name[0] == '\0' ? nullptr : wnd_name),
                 (video_width[0] == '\0' || _model->get_source_wnd_changed_flag() ? -1 : atoi(video_width)),
@@ -206,15 +210,29 @@ App::App(const char *app_name, const char *app_version)
         if (_model->get_allow_preview_flag())
         {
             _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
-            _ui->get_preview_wnd()->ShowWnd(true);
+            /* Update all sizes of the windows */
+            _ui->get_wnd()->SendMsg(WM_SIZE,
+                SIZE_RESTORED,
+                ((0xffff & _ui->get_wnd()->GetWndSize().second) << 16) + (0xffff & _ui->get_wnd()->GetWndSize().first));
             /* Stop recording (need restart for idle mode activation for preview) */
+            _model->get_video_rec()->ApplyPreviewFlag();
             _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+            _ui->get_preview_wnd()->ShowWnd(true);
         }
         else if (!_model->get_allow_preview_flag())
         {
             _ui->get_preview_wnd()->DeletePreview();
             _ui->get_preview_wnd()->ShowWnd(false);
+            /* Update all sizes of the windows */
+            _ui->get_wnd()->SendMsg(WM_SIZE,
+                SIZE_RESTORED,
+                ((0xffff & _ui->get_wnd()->GetWndSize().second) << 16) + (0xffff & _ui->get_wnd()->GetWndSize().first));
+
             /* Stop recording (need restart for idle mode deactivation for preview) */
+            _model->get_video_rec()->ApplyPreviewFlag();
             _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
         }
         });

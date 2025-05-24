@@ -20,8 +20,10 @@ void VideoRecorder::_FileWriterLoop(void *this_class)
 }
 
 VideoRecorder::VideoRecorder(const bool &client_rect_only_flag, const bool &preview_flag, const bool &optimization_flag, const bool &capture_cursor_flag)
-    : _client_rect_only_flag(client_rect_only_flag), _preview_flag(preview_flag), _optimization_flag(optimization_flag), _capture_cursor_flag(capture_cursor_flag)
-{}
+    : _staged_client_rect_only_flag(client_rect_only_flag), _staged_preview_flag(preview_flag), _staged_optimization_flag(optimization_flag), _staged_capture_cursor_flag(capture_cursor_flag)
+{
+    ApplyAllFlags();
+}
 
 VideoRecorder::~VideoRecorder()
 {
@@ -47,6 +49,34 @@ VideoRecorder::~VideoRecorder()
     }
 }
 
+void VideoRecorder::ApplyPreviewFlag()
+{
+    _preview_flag = _staged_preview_flag;
+}
+
+void VideoRecorder::ApplyClientRectOnlyFlag()
+{
+    _client_rect_only_flag = _staged_client_rect_only_flag;
+}
+
+void VideoRecorder::ApplyOptimizationFlag()
+{
+    _optimization_flag = _staged_optimization_flag;
+}
+
+void VideoRecorder::ApplyCaptureCursorFlag()
+{
+    _capture_cursor_flag = _staged_capture_cursor_flag;
+}
+
+void VideoRecorder::ApplyAllFlags()
+{
+    ApplyPreviewFlag();
+    ApplyClientRectOnlyFlag();
+    ApplyOptimizationFlag();
+    ApplyCaptureCursorFlag();
+}
+
 void VideoRecorder::StartRecording(const char *file_name, const int &fps)
 {
     if (!_screen)
@@ -70,6 +100,8 @@ void VideoRecorder::StartRecording(const char *file_name, const int &fps)
 
     _screen_capture_timer = new StableTimer(fps + 5, _ScreenCaptureLoop, this);
     _screen_capture_timer->Start();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     _file_writer_timer = new StableTimer(fps, _FileWriterLoop, this);
     _file_writer_timer->Start();

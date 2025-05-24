@@ -17,10 +17,15 @@ private:
     SmtObj<StableTimer> _cursor_capture_timer;
     SmtObj<StableTimer> _file_writer_timer;
 
-    const bool &_preview_flag;
-    const bool &_client_rect_only_flag;
-    const bool &_optimization_flag;
-    const bool &_capture_cursor_flag;
+    const bool &_staged_preview_flag;
+    const bool &_staged_client_rect_only_flag;
+    const bool &_staged_optimization_flag;
+    const bool &_staged_capture_cursor_flag;
+
+    bool _preview_flag = false;
+    bool _client_rect_only_flag = false;
+    bool _optimization_flag = false;
+    bool _capture_cursor_flag = false;
 
     static void _ScreenCaptureLoop(void *this_class);
     static void _CursorCaptureLoop(void *this_class);
@@ -30,6 +35,12 @@ public:
     VideoRecorder(const bool &client_rect_only_flag, const bool &preview_flag, const bool &optimization_flag, const bool &capture_cursor_flag);
     VideoRecorder(const VideoRecorder &) = delete;
     ~VideoRecorder();
+
+    void ApplyPreviewFlag();
+    void ApplyClientRectOnlyFlag();
+    void ApplyOptimizationFlag();
+    void ApplyCaptureCursorFlag();
+    void ApplyAllFlags();
 
     void StartRecording(const char *file_name, const int &fps);
     void StopRecording();
