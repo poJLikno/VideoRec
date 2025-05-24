@@ -27,6 +27,7 @@ private:
     HGDIOBJ _old_obj = nullptr;
 
     SmtObj<BitmapsDblBuff> *_bitmaps_dbl_buff = nullptr;
+    bool _delete_preview_flag = false;
 
     SmtObj<std::thread> _paint_timer;
     bool _timer_flag = true;

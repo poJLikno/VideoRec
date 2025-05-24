@@ -151,6 +151,13 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
                 /* Configure DC */
                 SelectObject(_hdc, GetStockObject(HOLLOW_BRUSH));
 
+                /* Delete preview if need */
+                if (this->_delete_preview_flag)
+                {
+                    this->_bitmaps_dbl_buff = nullptr;
+                    this->_delete_preview_flag = false;
+                }
+
                 /* Paint */
                 auto [wnd_width, wnd_height] = _size;
                 if (this->_bitmaps_dbl_buff)
@@ -203,5 +210,9 @@ void PreviewWindow::SetPreview(SmtObj<BitmapsDblBuff> &frames_dbl_buff)
 
 void PreviewWindow::DeletePreview()
 {
-    _bitmaps_dbl_buff = nullptr;
+    _delete_preview_flag = true;
+    while (_delete_preview_flag)
+    {
+        std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+    }
 }

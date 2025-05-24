@@ -3,20 +3,22 @@
 #define NEW_PREVIEW_WIDTH (500)
 #define NEW_PREVIEW_HEIGHT ((int)round((float)NEW_PREVIEW_WIDTH * 9.0f / 16.0f))
 #define CTRL_BLOCK_POS_X (10)
-#define CTRL_BLOCK_POS_Y (NEW_PREVIEW_HEIGHT + 20)
+#define CTRL_BLOCK_POS_Y (10)
 
 UI::UI(const char *app_name, const char *app_version)
 {
     /* Create the main window */
     _wnd = new Window(app_name,
         WndPairValue{ CW_USEDEFAULT, CW_USEDEFAULT },
-        WndPairValue{ 520 + 16/* 752 - client rect */, 370 + 59/* 301 - client rect */ }, IDI_ICON1);
+        WndPairValue{ 520 + 16/* (+16) if-func loose compensation */ /* 520 - client rect */,
+        370 + 59/* (+59) if-func loose compensation */ /* 370 - client rect */ },
+        IDI_ICON1);
     /* Setup the main window */
     _wnd->SetWndText(std::string(app_name + std::string(" ") + app_version).c_str());
     _wnd->EnableControlsDialogMessages(true);
 
     /* Create a preview window */
-    _preview_wnd = new PreviewWindow(_wnd, WndPairValue{ 10, 10 }, WndPairValue{ 500, 281 });
+    _preview_wnd = new PreviewWindow(_wnd, WndPairValue{ 10, 10 + 57/* ctrl block height */ + 10}, WndPairValue{500, 281});
     _preview_wnd->ShowWnd(false);
     
     /* Create window controls */
@@ -129,9 +131,24 @@ UI::UI(const char *app_name, const char *app_version)
     auto main_wnd_sides_callback = [this](void *ptr)->void {
         GetMiscForParentResize(ptr);
 
-        if ((int)round((float)new_parent_size.first * 1000 / (float)new_parent_size.second) != (int)round(520.0f * 1000 / 370.0f)) {
-            parent_wnd->SetWndSize(WndPairValue{ new_parent_size.first + 16, (int)round((float)(new_parent_size.first) * 370.0f / 520.0f) + 59 });
+        if (_preview_chekced_menu_point->GetState())
+        {
+            int preview_wnd_bottom_pos = _preview_wnd->GetWndPos().second + _preview_wnd->GetWndSize().second;
+            if (parent_wnd->GetWndSize().second - preview_wnd_bottom_pos != 12)
+            {
+                parent_wnd->SetWndSize(WndPairValue{ new_parent_size.first /*!!!*/ + 16/* (+16) for in-function loose compensation */,
+                    preview_wnd_bottom_pos + 12 /*!!!*/ + 59/* (+59) for in-function loose compensation */ });
+            }
         }
+        else
+        {
+            if (parent_wnd->GetWndSize().second != 77)
+            {
+                parent_wnd->SetWndSize(WndPairValue{ new_parent_size.first /*!!!*/ + 16/* (+16) for in-function loose compensation */,
+                    77 /*!!!*/ + 59/* (+59) for in-function loose compensation */ });
+            }
+        }
+        
         };
 
     auto preview_wnd_resize_callback = [this](void *ptr)->void {

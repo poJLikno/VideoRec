@@ -44,9 +44,7 @@ public:
     void Start();
     void Stop();
 
-    const bool &IsRunning();
-
-    //void SetFps(const uint16_t &fps);
+    //const bool &IsRunning();
 };
 
 #endif /* STABLE_TIMER_H_ */

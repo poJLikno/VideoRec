@@ -122,19 +122,7 @@ void StableTimer::Stop()
     }
 }
 
-const bool &StableTimer::IsRunning()
-{
-    return _run_flag;
-}
-
-/*void StableTimer::SetFps(const uint16_t &fps)
-{
-    if (_timer_loop)
-    {
-        Stop();
-    }
-
-    _fps = fps;
-    _dst_loop_period = 1000000.0l / (long double)_fps;
-    _loop_period_ctrl = _dst_loop_period;
-}*/
+//const bool &StableTimer::IsRunning()
+//{
+//    return _run_flag;
+//}

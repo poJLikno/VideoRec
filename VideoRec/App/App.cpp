@@ -17,8 +17,12 @@ App::App(const char *app_name, const char *app_version)
 
     /* Set source */
     _model->get_video_rec()->SetNewSource(nullptr);
+    /* Start idle mode */
+    _model->get_video_rec()->StartIdleMode();
+    /* Set width & height edit fields */
     _ui->get_video_width_edit()->SetWndText(std::to_string(_model->get_video_rec()->GetSrcWidth()).c_str());
     _ui->get_video_height_edit()->SetWndText(std::to_string(_model->get_video_rec()->GetSrcHeight()).c_str());
+    /* Start preview */
     _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
     _ui->get_preview_wnd()->ShowWnd(true);
 
@@ -29,6 +33,7 @@ App::App(const char *app_name, const char *app_version)
         static std::chrono::time_point<std::chrono::steady_clock> millis_timer = std::chrono::steady_clock::now();
         static bool key_tmp_state_flag = true;
 
+        /* Alt + K combination for start/stop recording */
         if (GetAsyncKeyState('K') < 0 && GetAsyncKeyState(VK_MENU) < 0 && key_tmp_state_flag)
         {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - millis_timer).count() >= 1000)
@@ -50,10 +55,6 @@ App::App(const char *app_name, const char *app_version)
         {
             key_tmp_state_flag = true;
         }
-        /*else if (GetAsyncKeyState(VK_ESCAPE) != 0 && GetForegroundWindow() == wnd->GetHwnd())
-        {
-            DestroyWindow(wnd->GetHwnd());
-        }*/
         });
 
     /* Add controls' callbacks */
@@ -136,6 +137,8 @@ App::App(const char *app_name, const char *app_version)
 
         /* Stop recording */
         _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
+        /* Stop idle mode */
+        _model->get_video_rec()->StopIdleMode();
 
         _ui->get_preview_wnd()->DeletePreview();
 
@@ -157,6 +160,8 @@ App::App(const char *app_name, const char *app_version)
             {
                 throw std::string("Video height must be a number!");
             }
+
+            _model->get_video_rec()->ApplyFlags();
 
             _model->get_video_rec()->SetNewSource(
                 (wnd_name[0] == '\0' ? nullptr : wnd_name),
@@ -186,8 +191,8 @@ App::App(const char *app_name, const char *app_version)
         {
             /* Set preview context */
             _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
-            /* Stop recording (need restart for idle mode activation for preview) [NO NEED HERE] */
-            //_ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
+            /* Start idle mode */
+            _model->get_video_rec()->StartIdleMode();
         }
 
         
@@ -206,29 +211,35 @@ App::App(const char *app_name, const char *app_version)
         if (_model->get_allow_preview_flag())
         {
             _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
+            /* Update all sizes of the windows */
+            _ui->get_wnd()->SendMsg(WM_SIZE,
+                SIZE_RESTORED,
+                ((0xffff & _ui->get_wnd()->GetWndSize().second) << 16) + (0xffff & _ui->get_wnd()->GetWndSize().first));
+
+            /* Start idle mode (saves recording settings if record in process) */
+            _model->get_video_rec()->StartIdleMode();
+
+            /* Delay for first frame creation */
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
             _ui->get_preview_wnd()->ShowWnd(true);
-            /* Stop recording (need restart for idle mode activation for preview) */
-            _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
         }
         else if (!_model->get_allow_preview_flag())
         {
             _ui->get_preview_wnd()->DeletePreview();
             _ui->get_preview_wnd()->ShowWnd(false);
-            /* Stop recording (need restart for idle mode deactivation for preview) */
-            _ui->get_stop_recording_menu_point()->operator()("MainCallback", _ui->get_stop_recording_menu_point());
+            /* Update all sizes of the windows */
+            _ui->get_wnd()->SendMsg(WM_SIZE,
+                SIZE_RESTORED,
+                ((0xffff & _ui->get_wnd()->GetWndSize().second) << 16) + (0xffff & _ui->get_wnd()->GetWndSize().first));
+
+            /* Stop idle mode (continue recording) */
+            _model->get_video_rec()->StopIdleMode();
         }
         });
 
     _ui->get_start_recording_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
         MenuPoint *menu_point = GetControl(MenuPoint, ptr);
-
-        //if (_model->get_allow_preview_flag())
-        //{
-        //    _ui->get_preview_wnd()->DeletePreview();
-        //    _ui->get_preview_wnd()->ShowWnd(false);
-        //    /* Stop recording (need restart for idle mode deactivation for preview) */
-        //    _model->get_video_rec()->StopRecording();
-        //}
 
         try
         {
@@ -263,13 +274,11 @@ App::App(const char *app_name, const char *app_version)
     _ui->get_stop_recording_menu_point()->AddCallback("MainCallback", [this](void *ptr)->void {
         MenuPoint *menu_point = GetControl(MenuPoint, ptr);
 
-        /*if (_model->get_allow_preview_flag())
-        {
-            _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
-            _ui->get_preview_wnd()->ShowWnd(true);
-        }*/
-
         _model->get_video_rec()->StopRecording();
+        if (_model->get_allow_preview_flag())
+        {
+            _model->get_video_rec()->StartIdleMode();
+        }
 
         menu_point->SetState(false);
         _ui->get_start_recording_menu_point()->SetState(true);
