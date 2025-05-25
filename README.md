@@ -4,11 +4,12 @@
 
 ### This app supplies opportunity to record high quality and perfomace videos of screen or windows. ###
 
-![VideoRec_3_3_GDI-video](https://github.com/user-attachments/assets/14654787-59f0-4095-a19e-0d613e31b2a2)
+![VideoRec_3_8_GDI-video](https://github.com/user-attachments/assets/6887111e-2536-4748-bde9-511bd05f4a0f)
 
 ## Features ##
 * Video recording
 * Capture windows (support layered windows)
+
 * Capture cursor
 * Preview captured video
 * H264 codec 
