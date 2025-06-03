@@ -15,7 +15,7 @@ void VideoRecorder::_CursorCaptureLoop(void *this_class)
 void VideoRecorder::_FileWriterLoop(void *this_class)
 {
     ((VideoRecorder *)this_class)->_screen->GetFramesDblBuff()->Lock();
-    ((VideoRecorder *)this_class)->_file->WriteFrame(((VideoRecorder *)this_class)->_screen->GetFramesDblBuff()->GetFrame());
+    ((VideoRecorder *)this_class)->_file->WriteVideoFrame(((VideoRecorder *)this_class)->_screen->GetFramesDblBuff()->GetFrame());
     ((VideoRecorder *)this_class)->_screen->GetFramesDblBuff()->Unlock();
 }
 

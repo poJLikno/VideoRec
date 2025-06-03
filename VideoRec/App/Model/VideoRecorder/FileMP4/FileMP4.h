@@ -13,26 +13,56 @@ extern "C"
 #include <libavformat/avformat.h>
 }
 
+#include "../../../../SmtObj.h"
+
 class FileMP4
 {
 private:
-    AVFormatContext *_format_context = nullptr;
-    AVStream *_stream = nullptr;
-    const AVCodec *_codec;
-    AVCodecContext *_codec_context = nullptr;
-    AVPacket *_packet = nullptr;
+    // a wrapper around a single output AVStream
+    class OutputStream
+    {
+    public:
+        AVStream *stream = nullptr;
+        AVCodecContext *codec_context = nullptr;
 
-    long long _frame_duration = 0ll;
-    long long _frame_number = 0ll;
+        /* pts of the next frame that will be generated */
+        int64_t next_pts = 0;
+        //int samples_count;// for audio
+
+        AVPacket *packet;
+
+        /*float t = 0.0f;// for audio
+        float tincr = 0.0f;
+        float tincr2 = 0.0f;*/
+
+        //struct SwrContext *swr_ctx;// for audio resample
+
+        OutputStream(AVFormatContext *format_context, const AVCodec **codec, AVCodecID codec_id, const int &fps = 0, const int &width = 0, const int &height = 0);
+        ~OutputStream();
+
+        void CloseStream();
+    };
+
+    AVFormatContext *_format_context = nullptr;
+    SmtObj<OutputStream> _video_stream;
+    const AVCodec *_video_codec;
+    const AVOutputFormat *_output_format;
+
+    //long long _frame_duration = 0ll;
+    //long long _frame_number = 0ll;
 
     bool _file_is_closed = false;
+
+    void _OpenVideo();
+    //void _OpenAudio();
+    void _WriteFrame(AVFrame *frame, SmtObj<OutputStream> &output_stream);
 
 public:
     FileMP4(const char *file_name, const uint16_t &fps, const uint32_t &width, const uint32_t &height);
     FileMP4(const FileMP4 &) = delete;
     ~FileMP4();
 
-    void WriteFrame(AVFrame *frame);
+    void WriteVideoFrame(AVFrame *frame);
     void CloseFile();
 };
 
