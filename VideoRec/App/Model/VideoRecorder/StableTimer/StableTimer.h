@@ -20,7 +20,7 @@ private:
     bool _run_flag = false;
 
     /* Input value */
-    uint16_t _fps = 0;
+    uint32_t _fps = 0;
     void (*_loop_action)(void *) = nullptr;
     void *_action_parameters = nullptr;
 
@@ -37,14 +37,12 @@ private:
     static void _TimerLoop(StableTimer *integral_timer);
 
 public:
-    StableTimer(const uint16_t &dst_fps, void (*function)(void *) = nullptr, void *func_parameters = nullptr);
+    StableTimer(const uint32_t &dst_fps, void (*function)(void *) = nullptr, void *func_parameters = nullptr);
     StableTimer(const StableTimer &) = delete;
     ~StableTimer();
 
     void Start();
     void Stop();
-
-    //const bool &IsRunning();
 };
 
 #endif /* STABLE_TIMER_H_ */

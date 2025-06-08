@@ -70,28 +70,22 @@ void StableTimer::_TimerLoop(StableTimer *stable_timer)
         MultiByteToWideChar(CP_UTF8, 0, error.c_str(), str_size, w_error, str_size);
 
         MessageBoxW(NULL, w_error, L"Error", MB_OK);
-
-        /*std::cout << "!!!-- " << error << " --!!!\n";*/
-        stable_timer->Stop();
     }
 }
 
-StableTimer::StableTimer(const uint16_t &dst_fps, void (*function)(void *), void *func_parameters)
+StableTimer::StableTimer(const uint32_t &dst_fps, void (*function)(void *), void *func_parameters)
     : _fps(dst_fps), _loop_action(function), _action_parameters(func_parameters),
     _dst_loop_period(1000000.0l / (long double)_fps)/* in microseconds */, _loop_period_ctrl(_dst_loop_period)
 {}
 
 StableTimer::~StableTimer()
 {
-    if (_timer_loop)
-    {
-        Stop();
-    }
+    Stop();
 }
 
 void StableTimer::Start()
 {
-    if (_timer_loop || _run_flag == true)
+    if (_timer_loop)
     {
         throw std::string("StableTimer loop has been already started!");
     }
@@ -103,26 +97,19 @@ void StableTimer::Start()
 
     /* Create loop thread */
     _timer_loop = new std::thread(_TimerLoop, this);
+    if (_timer_loop == nullptr)
+    {
+        throw std::string("Couldn't run a timer loop!");
+    }
 }
 
 void StableTimer::Stop()
 {
-    if (_run_flag)
-    {
-        _run_flag = false;
-    }
+    _run_flag = false;
 
     if (_timer_loop)
     {
-        if (std::this_thread::get_id() != _timer_loop->get_id())
-        {
-            _timer_loop->join();
-            _timer_loop.reset();
-        }
+        _timer_loop->join();
+        _timer_loop.reset();
     }
 }
-
-//const bool &StableTimer::IsRunning()
-//{
-//    return _run_flag;
-//}

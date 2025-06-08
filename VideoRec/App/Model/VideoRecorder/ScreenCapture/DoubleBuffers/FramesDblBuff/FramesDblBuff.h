@@ -3,13 +3,14 @@
 
 #include <windows.h>
 
-#include "../CursorsDblBuff/CursorsDblBuff.h"
+
+#include "../DoubleBuffer.h"
 
 #include "HWAccelCL.h"
 
 extern "C"
 {
-#include <libswresample/swresample.h>
+#include <libswscale/swscale.h>
 }
 
 class FramesDblBuff : public DoubleBuffer

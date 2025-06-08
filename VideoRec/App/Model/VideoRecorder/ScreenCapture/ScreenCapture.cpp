@@ -109,7 +109,7 @@ ScreenCapture::~ScreenCapture()
     ReleaseDC(_hwnd, _wnd_dev_ctx);
 }
 
-void ScreenCapture::TakeShot()
+void ScreenCapture::CaptureScreenFrame()
 {
     _bitmaps_dbl_buff->Write();
 }

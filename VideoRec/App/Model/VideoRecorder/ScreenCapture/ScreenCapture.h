@@ -36,7 +36,7 @@ public:
     ScreenCapture(const ScreenCapture &) = delete;
     ~ScreenCapture();
 
-    void TakeShot();
+    void CaptureScreenFrame();
     void CaptureCursorState();
 
     const int &GetSrcWidth();
