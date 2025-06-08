@@ -17,10 +17,6 @@ private:
 
     const char *_window_name;
 
-    const bool _client_rect_only_flag;
-
-    int _dpi = 0;
-
     int _src_width = 0;
     int _src_height = 0;
 
@@ -36,7 +32,7 @@ public:
     ScreenCapture(const ScreenCapture &) = delete;
     ~ScreenCapture();
 
-    void TakeShot();
+    void CaptureScreenFrame();
     void CaptureCursorState();
 
     const int &GetSrcWidth();

@@ -40,7 +40,6 @@ void BitmapsDblBuff::_OnWrite(const uint8_t &index)
 BitmapsDblBuff::BitmapsDblBuff(
     const HWND &src_hwnd, const HDC &src_ctx,
     const int &src_width, const int &src_height,
-    const int &dst_width, const int &dst_height,
     SmtObj<FramesDblBuff> &frames_dbl_buff,
     SmtObj<CursorsDblBuff> &cursors_dbl_buff,
     const bool &use_optimization, const bool &capture_cursor)

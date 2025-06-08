@@ -3,12 +3,32 @@
 
 #include <stdint.h>
 
+#include <atomic>
+
+
 class DoubleBuffer
 {
 protected:
-    bool _indexes_busy[2] = {0};
-    uint8_t _lock_index = 0;/* For GetBuff method */
-    uint8_t _newest_index = 1;
+    class SpinLock
+    {
+    private:
+        std::atomic<bool> _lock = { false };
+
+    public:
+        SpinLock() = default;
+        SpinLock(const SpinLock &) = delete;
+        SpinLock(SpinLock &&) = delete;
+
+        ~SpinLock();
+
+        void Lock();
+        bool TryLock();
+        void Unlock();
+    };
+
+    SpinLock _indexes_busy[2] = { };
+    std::atomic<uint8_t> _newest_index = { 1 };
+    uint8_t _lock_index = 0;
 
     virtual void _OnWrite(const uint8_t &index) = 0;
 

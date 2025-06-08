@@ -27,18 +27,11 @@
 #pragma comment(lib, "swscale.lib")
 
 #pragma comment(lib, "OpenCL.lib")
+
+#pragma comment(lib, "ole32.lib")
 */
 
-/* No need. DPI preference in external app manifest */
-/* Very important */
-/*void SetupDpiAwareness()
-{
-    if (!SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE_GDISCALED))
-    {
-        throw std::string("SetThreadDpiAwarenessContext failed!");
-    }
-}
-*/
+/* Using -O2 (speed) optimization */
 
 int main(int argc, const char **argv)
 {
@@ -49,9 +42,6 @@ int main(int argc, const char **argv)
 
     try
     {
-        /* No need. DPI preference in external app manifest */
-        //SetupDpiAwareness();
-
         App app(APP_NAME, APP_VERSION);
         result = app.Run();
     }
