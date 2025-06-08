@@ -7,7 +7,6 @@
 #include "../../../../SmtObj.h"
 #include "DoubleBuffers/BitmapsDblBuff/BitmapsDblBuff.h"
 #include "DoubleBuffers/FramesDblBuff/FramesDblBuff.h"
-#include "DoubleBuffers/CursorsDblBuff/CursorsDblBuff.h"
 
 class ScreenCapture
 {
@@ -17,10 +16,6 @@ private:
 
     const char *_window_name;
 
-    const bool _client_rect_only_flag;
-
-    int _dpi = 0;
-
     int _src_width = 0;
     int _src_height = 0;
 
@@ -29,15 +24,13 @@ private:
 
     SmtObj<BitmapsDblBuff> _bitmaps_dbl_buff;
     SmtObj<FramesDblBuff> _frames_dbl_buff;
-    SmtObj<CursorsDblBuff> _cursors_dbl_buff;
 
 public:
     ScreenCapture(const char *window_name, const bool &client_rect_only, const bool &use_optimization, const bool &capture_cursor, const int &dst_width = -1, const int &dst_height = -1);
     ScreenCapture(const ScreenCapture &) = delete;
     ~ScreenCapture();
 
-    void TakeShot();
-    void CaptureCursorState();
+    void CaptureScreenFrame();
 
     const int &GetSrcWidth();
     const int &GetSrcHeight();

@@ -2,6 +2,48 @@
 
 void BitmapsDblBuff::_OnWrite(const uint8_t &index)
 {
+    /* Get cursor if need */
+    Cursor cursor = { 0 };
+
+    if (_capture_cursor_flag)
+    {
+        if (_is_window_flag ? GetForegroundWindow() == _src_hwnd : true)
+        {
+            CURSORINFO cursor_info = { 0 };
+            cursor_info.cbSize = sizeof(CURSORINFO);
+            GetCursorInfo(&cursor_info);
+
+            if (cursor_info.flags & CURSOR_SHOWING)
+            {
+                ICONINFO icon_info = { 0 };
+                GetIconInfo(cursor_info.hCursor, &icon_info);
+
+                BITMAP bmp = { 0 };
+                GetObject(icon_info.hbmColor, sizeof(BITMAP), (void *)&bmp);
+
+                RECT rect = { 0 };
+                if (_client_rect_only_flag)
+                {
+                    ClientToScreen(_src_hwnd, (POINT *)&rect);
+                }
+                else
+                {
+                    GetWindowRect(_src_hwnd, &rect);
+                }
+
+
+                cursor.h_cursor = cursor_info.hCursor;
+                cursor.relative_pos_x = (cursor_info.ptScreenPos.x - (int)icon_info.xHotspot - rect.left) * _src_dpi / USER_DEFAULT_SCREEN_DPI;
+                cursor.relative_pos_y = (cursor_info.ptScreenPos.y - (int)icon_info.yHotspot - rect.top) * _src_dpi / USER_DEFAULT_SCREEN_DPI;
+                cursor.width = bmp.bmWidth * _src_dpi / USER_DEFAULT_SCREEN_DPI;
+                cursor.height = bmp.bmHeight * _src_dpi / USER_DEFAULT_SCREEN_DPI;
+
+                DeleteObject(icon_info.hbmColor);
+                DeleteObject(icon_info.hbmMask);
+            }
+        }
+    }
+
     /* Get captured frame */
     if (_use_optimization_flag)
     {
@@ -13,24 +55,16 @@ void BitmapsDblBuff::_OnWrite(const uint8_t &index)
     }
 
     /* Draw a cursor */
-    if (_capture_cursor_flag)
+    if (cursor.h_cursor)
     {
-        _cursors_dbl_buff->Lock();
-        Cursor *cursor = _cursors_dbl_buff->GetCursor();
-
-        if (cursor->h_cursor)
-        {
-            DrawIconEx(
-                _bitmaps_ctxs[index],/* dst */
-                cursor->relative_pos_x,/* x */
-                cursor->relative_pos_y,/* y */
-                cursor->h_cursor,/* src */
-                cursor->width,/* width */
-                cursor->height,/* height */
-                0, NULL, DI_NORMAL);
-        }
-
-        _cursors_dbl_buff->Unlock();
+        DrawIconEx(
+            _bitmaps_ctxs[index],/* dst */
+            cursor.relative_pos_x,/* x */
+            cursor.relative_pos_y,/* y */
+            cursor.h_cursor,/* src */
+            cursor.width,/* width */
+            cursor.height,/* height */
+            0, NULL, DI_NORMAL);
     }
 
     _frames_dbl_buff->SetBuffer(&_dib_buffers[index]);
@@ -39,16 +73,13 @@ void BitmapsDblBuff::_OnWrite(const uint8_t &index)
 
 BitmapsDblBuff::BitmapsDblBuff(
     const HWND &src_hwnd, const HDC &src_ctx,
-    const int &src_width, const int &src_height,
-    const int &dst_width, const int &dst_height,
+    const int &src_width, const int &src_height, const int &src_dpi,
     SmtObj<FramesDblBuff> &frames_dbl_buff,
-    SmtObj<CursorsDblBuff> &cursors_dbl_buff,
-    const bool &use_optimization, const bool &capture_cursor)
+    const bool &is_window, const bool &client_rect_only, const bool &use_optimization, const bool &capture_cursor)
     : _src_hwnd(src_hwnd), _src_ctx(src_ctx),
-    _src_width(src_width), _src_height(src_height),
+    _src_width(src_width), _src_height(src_height), _src_dpi(src_dpi),
     _frames_dbl_buff(frames_dbl_buff),
-    _cursors_dbl_buff(cursors_dbl_buff),
-    _use_optimization_flag(use_optimization), _capture_cursor_flag(capture_cursor)
+    _is_window_flag(is_window), _client_rect_only_flag(client_rect_only), _use_optimization_flag(use_optimization), _capture_cursor_flag(capture_cursor)
 {
     /* Fill bitmap information */
     BITMAPINFO _bitmap_info = { 0 };

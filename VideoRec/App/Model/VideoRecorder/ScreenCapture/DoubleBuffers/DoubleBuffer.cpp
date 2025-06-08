@@ -1,6 +1,8 @@
 #include "DoubleBuffer.h"
 
 #include <string>
+#include <thread>
+#include <chrono>
 
 void DoubleBuffer::Lock()
 {
@@ -13,7 +15,11 @@ void DoubleBuffer::Lock()
     }
     else
     {
-        while (_indexes_busy[(local_newest_index ^ (1 << 0))] == true);
+        while (_indexes_busy[(local_newest_index ^ (1 << 0))] == true)
+        {
+            std::this_thread::yield();
+        }
+
         _indexes_busy[(local_newest_index ^ (1 << 0))] = true;
 
         _lock_index = local_newest_index ^ (1 << 0);
@@ -38,7 +44,11 @@ void DoubleBuffer::Write()
     }
     else
     {
-        while (_indexes_busy[_newest_index] == true);
+        while (_indexes_busy[_newest_index] == true)
+        {
+            std::this_thread::yield();
+        }
+
         _indexes_busy[_newest_index] = true;
 
         _OnWrite(_newest_index);

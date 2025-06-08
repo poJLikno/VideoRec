@@ -30,44 +30,11 @@ LRESULT PreviewWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
             result = 1;
         }
         else {
-            //if (uMsg == WM_PAINT) { /* Other messages create freezing in this way
-            //    /* Get device context */
-            //    PAINTSTRUCT ps = { 0 };
-            //    HDC hdc = BeginPaint(hwnd, &ps);
-            //    /* Configure DC */
-            //    SetStretchBltMode(hdc, HALFTONE);/* Make normal scale */
-            //    HPEN pen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
-            //    HGDIOBJ old_obj = SelectObject(hdc, (HGDIOBJ)pen);
-            //    SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
-
-            //    /* Paint */
-            //    auto [wnd_width, wnd_height] = Wnd->GetWndSize();
-            //    if (Wnd->_bitmaps_dbl_buff)
-            //    {
-            //        SmtObj<BitmapsDblBuff> &frames_dbl_buff = *Wnd->_bitmaps_dbl_buff;
-            //        frames_dbl_buff->Lock();
-            //        StretchBlt(
-            //            hdc, 0, 0, wnd_width, wnd_height,
-            //            frames_dbl_buff->GetBitmapContext(), 0, 0, frames_dbl_buff->GetSrcWidth(), frames_dbl_buff->GetSrcHeight(),
-            //            SRCCOPY);
-            //        frames_dbl_buff->Unlock();
-            //    }
-            //    else
-            //    {
-            //        SelectObject(hdc, GetStockObject(WHITE_BRUSH));
-            //    }
-            //    Rectangle(hdc, 0, 0, wnd_width, wnd_height);
-
-            //    /**/
-
-            //    /* Cleanup */
-            //    SelectObject(hdc, old_obj);
-            //    DeleteObject((HGDIOBJ)pen);
-
-            //    EndPaint(hwnd, &ps);
-            //    result = 0;
-            //}
-            /*else */if (uMsg == WM_CLOSE) {
+            if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN || uMsg == WM_MBUTTONDOWN)
+            {
+                SetFocus(Wnd->GetWndParent()->GetHwnd());
+            }
+            else if (uMsg == WM_CLOSE) {
                 DestroyWindow(hwnd);
                 result = 0;
             }
@@ -176,8 +143,10 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
                 }
                 Rectangle(_hdc, 0, 0, wnd_width, wnd_height);
             }
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            else
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
         }
         });
 }
@@ -186,7 +155,10 @@ PreviewWindow::~PreviewWindow()
 {
     /* Stop preview drawing loop */
     _timer_flag = false;
-    _paint_timer->join();
+    if (_paint_timer)
+    {
+        _paint_timer->join();
+    }
 
     /* Cleanup graphics */
     SelectObject(_hdc, _old_obj);
@@ -211,8 +183,8 @@ void PreviewWindow::SetPreview(SmtObj<BitmapsDblBuff> &frames_dbl_buff)
 void PreviewWindow::DeletePreview()
 {
     _delete_preview_flag = true;
-    while (_delete_preview_flag)
+    while (_delete_preview_flag == true)
     {
-        std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+        std::this_thread::yield();
     }
 }

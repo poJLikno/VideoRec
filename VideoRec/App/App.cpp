@@ -286,6 +286,12 @@ App::App(const char *app_name, const char *app_version)
 
 }
 
+App::~App()
+{
+    _ui.reset();
+    _model.reset();
+}
+
 int App::Run()
 {
     _ui->get_wnd()->ShowWnd(true);

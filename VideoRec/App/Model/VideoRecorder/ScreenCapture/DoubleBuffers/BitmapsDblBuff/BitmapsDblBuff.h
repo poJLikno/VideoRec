@@ -7,11 +7,20 @@
 
 #include "../DoubleBuffer.h"
 #include "../FramesDblBuff/FramesDblBuff.h"
-#include "../CursorsDblBuff/CursorsDblBuff.h"
 
 class BitmapsDblBuff : public DoubleBuffer
 {
 protected:
+    class Cursor
+    {
+    public:
+        HCURSOR h_cursor = nullptr;
+        int relative_pos_x = 0;
+        int relative_pos_y = 0;
+        int width = 0;
+        int height = 0;
+    };
+
     HDC _bitmaps_ctxs[2] = { 0 };
     HBITMAP _bitmaps[2] = { 0 };
     uint8_t *_dib_buffers[2] = { 0 };
@@ -20,12 +29,15 @@ protected:
 
     HWND _src_hwnd = nullptr;
     HDC _src_ctx = nullptr;
-    int _src_width = 0;
-    int _src_height = 0;
+
+    const int _src_dpi;
+    const int _src_width;
+    const int _src_height;
 
     SmtObj<FramesDblBuff> &_frames_dbl_buff;
-    SmtObj<CursorsDblBuff> &_cursors_dbl_buff;
 
+    const bool _is_window_flag;
+    const bool _client_rect_only_flag;
     const bool _use_optimization_flag;
     const bool _capture_cursor_flag;
 
@@ -33,11 +45,10 @@ protected:
 
 public:
     BitmapsDblBuff(const HWND &src_hwnd, const HDC &src_ctx,
-        const int &src_width, const int &src_height,
-        const int &dst_width, const int &dst_height,
+        const int &src_width, const int &src_height, const int &src_dpi,
         SmtObj<FramesDblBuff> &frames_dbl_buff,
-        SmtObj<CursorsDblBuff> &cursors_dbl_buff,
-        const bool &use_optimization, const bool &capture_cursor);
+        const bool &is_window, const bool &client_rect_only, const bool &use_optimization, const bool &capture_cursor);
+
     BitmapsDblBuff(const BitmapsDblBuff &) = delete;
     virtual ~BitmapsDblBuff() override;
 
