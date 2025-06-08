@@ -30,44 +30,11 @@ LRESULT PreviewWindow::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
             result = 1;
         }
         else {
-            //if (uMsg == WM_PAINT) { /* Other messages create freezing in this way
-            //    /* Get device context */
-            //    PAINTSTRUCT ps = { 0 };
-            //    HDC hdc = BeginPaint(hwnd, &ps);
-            //    /* Configure DC */
-            //    SetStretchBltMode(hdc, HALFTONE);/* Make normal scale */
-            //    HPEN pen = CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
-            //    HGDIOBJ old_obj = SelectObject(hdc, (HGDIOBJ)pen);
-            //    SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
-
-            //    /* Paint */
-            //    auto [wnd_width, wnd_height] = Wnd->GetWndSize();
-            //    if (Wnd->_bitmaps_dbl_buff)
-            //    {
-            //        SmtObj<BitmapsDblBuff> &frames_dbl_buff = *Wnd->_bitmaps_dbl_buff;
-            //        frames_dbl_buff->Lock();
-            //        StretchBlt(
-            //            hdc, 0, 0, wnd_width, wnd_height,
-            //            frames_dbl_buff->GetBitmapContext(), 0, 0, frames_dbl_buff->GetSrcWidth(), frames_dbl_buff->GetSrcHeight(),
-            //            SRCCOPY);
-            //        frames_dbl_buff->Unlock();
-            //    }
-            //    else
-            //    {
-            //        SelectObject(hdc, GetStockObject(WHITE_BRUSH));
-            //    }
-            //    Rectangle(hdc, 0, 0, wnd_width, wnd_height);
-
-            //    /**/
-
-            //    /* Cleanup */
-            //    SelectObject(hdc, old_obj);
-            //    DeleteObject((HGDIOBJ)pen);
-
-            //    EndPaint(hwnd, &ps);
-            //    result = 0;
-            //}
-            /*else */if (uMsg == WM_CLOSE) {
+            if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN || uMsg == WM_MBUTTONDOWN)
+            {
+                SetFocus(Wnd->GetWndParent()->GetHwnd());
+            }
+            else if (uMsg == WM_CLOSE) {
                 DestroyWindow(hwnd);
                 result = 0;
             }
@@ -137,56 +104,58 @@ PreviewWindow::PreviewWindow(WndBase *parent_wnd, const WndPairValue &pos, const
     _old_obj = SelectObject(_hdc, (HGDIOBJ)_pen);
 
     /* Create a paint timer loop */
-    _paint_timer = new std::thread([this]()->void {
-        std::chrono::time_point<std::chrono::steady_clock> millis_timer = std::chrono::steady_clock::now();
+    _paint_loop = new LoopThread([](void *ptr)->void {
+        PreviewWindow *this_class = (PreviewWindow *)ptr;
 
-        while (_timer_flag)
+        /* Draw window ~60 times per second */
+
+        //InvalidateRect(_hwnd, NULL, FALSE);
+
+        /* Configure DC */
+        SelectObject(this_class->_hdc, GetStockObject(HOLLOW_BRUSH));
+
+        /* Delete preview if need */
+        if (this_class->_delete_preview_flag.load(std::memory_order_relaxed))
         {
-            /* Draw window ~60 times per second */
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - millis_timer).count() >= 16)
-            {
-                millis_timer = std::chrono::steady_clock::now();
-                //InvalidateRect(_hwnd, NULL, FALSE);
+            std::atomic_thread_fence(std::memory_order_acquire);
 
-                /* Configure DC */
-                SelectObject(_hdc, GetStockObject(HOLLOW_BRUSH));
+            this_class->_bitmaps_dbl_buff = nullptr;
 
-                /* Delete preview if need */
-                if (this->_delete_preview_flag)
-                {
-                    this->_bitmaps_dbl_buff = nullptr;
-                    this->_delete_preview_flag = false;
-                }
-
-                /* Paint */
-                auto [wnd_width, wnd_height] = _size;
-                if (this->_bitmaps_dbl_buff)
-                {
-                    SmtObj<BitmapsDblBuff> &frames_dbl_buff = *this->_bitmaps_dbl_buff;
-                    frames_dbl_buff->Lock();
-                    StretchBlt(
-                        _hdc, 0, 0, wnd_width, wnd_height,
-                        frames_dbl_buff->GetBitmapContext(), 0, 0, frames_dbl_buff->GetSrcWidth(), frames_dbl_buff->GetSrcHeight(),
-                        SRCCOPY);
-                    frames_dbl_buff->Unlock();
-                }
-                else
-                {
-                    SelectObject(_hdc, GetStockObject(WHITE_BRUSH));
-                }
-                Rectangle(_hdc, 0, 0, wnd_width, wnd_height);
-            }
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            std::atomic_thread_fence(std::memory_order_release);
+            this_class->_delete_preview_flag.store(false, std::memory_order_relaxed);
         }
-        });
+
+        /* Paint */
+        auto [wnd_width, wnd_height] = this_class->_size;
+        if (this_class->_bitmaps_dbl_buff)
+        {
+            this_class->_bitmaps_dbl_buff->Lock();
+            StretchBlt(
+                this_class->_hdc, 0, 0, wnd_width, wnd_height,
+                this_class->_bitmaps_dbl_buff->GetBitmapContext(), 0, 0, this_class->_bitmaps_dbl_buff->GetSrcWidth(), this_class->_bitmaps_dbl_buff->GetSrcHeight(),
+                SRCCOPY);
+            this_class->_bitmaps_dbl_buff->Unlock();
+        }
+        else
+        {
+            SelectObject(this_class->_hdc, GetStockObject(WHITE_BRUSH));
+        }
+        Rectangle(this_class->_hdc, 0, 0, wnd_width, wnd_height);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(15));
+
+    }, this);
+
+    _paint_loop->Start();
 }
 
 PreviewWindow::~PreviewWindow()
 {
     /* Stop preview drawing loop */
-    _timer_flag = false;
-    _paint_timer->join();
+    if (_paint_loop)
+    {
+        _paint_loop.reset();
+    }
 
     /* Cleanup graphics */
     SelectObject(_hdc, _old_obj);
@@ -203,16 +172,20 @@ PreviewWindow::~PreviewWindow()
     _wnd_size_list[_wnd_list_index] = nullptr;
 }
 
-void PreviewWindow::SetPreview(SmtObj<BitmapsDblBuff> &frames_dbl_buff)
+void PreviewWindow::SetPreview(BitmapsDblBuff *frames_dbl_buff)
 {
-    _bitmaps_dbl_buff = &frames_dbl_buff;
+    _bitmaps_dbl_buff = frames_dbl_buff;
 }
 
 void PreviewWindow::DeletePreview()
 {
-    _delete_preview_flag = true;
-    while (_delete_preview_flag)
+    _delete_preview_flag.store(true, std::memory_order_relaxed);
+    std::atomic_thread_fence(std::memory_order_seq_cst);
+
+    bool tmp = false;
+    do
     {
-        std::this_thread::sleep_for(std::chrono::nanoseconds(1));
-    }
+        tmp = _delete_preview_flag.load(std::memory_order_relaxed);
+        std::atomic_thread_fence(std::memory_order_acquire);
+    } while (tmp);
 }

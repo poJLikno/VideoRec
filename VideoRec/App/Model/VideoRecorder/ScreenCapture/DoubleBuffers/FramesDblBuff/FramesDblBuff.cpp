@@ -1,7 +1,16 @@
 #include "FramesDblBuff.h"
 
+#include <string>
+
 void FramesDblBuff::_OnWrite(const uint8_t &index)
 {
+    /* when we pass a frame to the encoder, it may keep a reference to it
+     * internally; make sure we do not overwrite it here */
+    if (av_frame_make_writable(_frames[index]) < 0)
+    {
+        throw std::string("Couldn't make frame writable!");
+    }
+    
     /* Transform frame an GPU */
     _hw_accel_cl.Run(_frames[index]->data[0]/*Y*/, _frames[index]->data[1]/*U*/, _frames[index]->data[2], *_staged_buffer)/*V*/;
 }
@@ -35,11 +44,6 @@ FramesDblBuff::FramesDblBuff(
         if (av_frame_get_buffer(_frames[i], 0) < 0)
         {
             throw std::string("Couldn't allocate the video frame data!");
-        }
-
-        if (av_frame_make_writable(_frames[i]) < 0)
-        {
-            throw std::string("Couldn't make frame writable!");
         }
     }
 }

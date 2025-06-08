@@ -11,7 +11,7 @@ void RadioButton::SetWndParent(WndBase *wnd) {
     MultiByteToWideChar(CP_UTF8, 0, _text, text_size, w_text, text_size);
 
     this->_parent_wnd = wnd;
-    _hwnd = CreateWindowExW(0L, L"button", w_text, BS_AUTORADIOBUTTON | (_new_group ? WS_GROUP : 0) | WS_VISIBLE | WS_CHILD | WS_TABSTOP /*WS_POPUP*/,
+    _hwnd = CreateWindowExW(0L, L"button", w_text, BS_AUTORADIOBUTTON | (_new_group ? WS_GROUP | WS_TABSTOP : 0) | WS_VISIBLE | WS_CHILD /*WS_POPUP*/,
         _pos.first, _pos.second,
         _size.first, _size.second,
         wnd->GetHwnd(), NULL, NULL, NULL);

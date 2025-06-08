@@ -28,7 +28,7 @@ public:
     virtual ~WndBase();
 
     virtual void ShowWnd(const bool &flag) final;
-    virtual const LRESULT &SendMsg(const UINT &msg, const WPARAM &wparam, const LPARAM &lparam) final;
+    virtual const LRESULT SendMsg(const UINT &msg, const WPARAM &wparam, const LPARAM &lparam) final;
 
     virtual HWND GetHwnd() final;
 
@@ -39,7 +39,7 @@ public:
     virtual void SetWndText(const char *label) final;
 
     /* Problem section */
-    virtual const LONG_PTR &GetWndStyle() final;
+    virtual const LONG_PTR GetWndStyle() final;
     virtual void SetWndStyle(const LONG_PTR &params) final;
 
     virtual WndBase *GetWndParent() final;

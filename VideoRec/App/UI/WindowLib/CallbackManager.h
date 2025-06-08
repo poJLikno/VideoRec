@@ -94,11 +94,6 @@ public:
     bool HasCallback() {
         return (_callback ? true : false);
     }
-
-    template<class T>
-    static T &GetCallbackParams(void *params) {
-        return *((T *)params);
-    }
 };
 
 class CallbackManager {

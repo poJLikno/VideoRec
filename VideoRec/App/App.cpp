@@ -176,7 +176,7 @@ App::App(const char *app_name, const char *app_version)
 
             _model->get_source_wnd_changed_flag() = false;
         }
-        catch (std::string error)
+        catch (const std::string &error)
         {
             int str_size = (int)error.length() + 1;
             SmtObj<wchar_t[]> w_error = new wchar_t[str_size] { 0 };
@@ -210,7 +210,9 @@ App::App(const char *app_name, const char *app_version)
 
         if (_model->get_allow_preview_flag())
         {
+            /* Set preview */
             _ui->get_preview_wnd()->SetPreview(_model->get_video_rec()->GetPreview());
+
             /* Update all sizes of the windows */
             _ui->get_wnd()->SendMsg(WM_SIZE,
                 SIZE_RESTORED,
@@ -223,6 +225,7 @@ App::App(const char *app_name, const char *app_version)
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
             _ui->get_preview_wnd()->ShowWnd(true);
+
         }
         else if (!_model->get_allow_preview_flag())
         {
@@ -284,6 +287,12 @@ App::App(const char *app_name, const char *app_version)
         _ui->get_start_recording_menu_point()->SetState(true);
         });
 
+}
+
+App::~App()
+{
+    _ui.reset();
+    _model.reset();
 }
 
 int App::Run()

@@ -56,10 +56,10 @@ UI::UI(const char *app_name, const char *app_version)
         WndPairValue{ CTRL_BLOCK_POS_X + 250, CTRL_BLOCK_POS_Y + 40 }, WndPairValue{ 100, 17 });
 
     /* Radio Buttons */
-    _video_capture_client_rect_only_radio_btn = new RadioButton("Capture client region only", false,
+    _video_capture_client_rect_only_radio_btn = new RadioButton("Capture client region only", true,
         WndPairValue{ CTRL_BLOCK_POS_X + 246, CTRL_BLOCK_POS_Y }, WndPairValue{ 160, 17 });
 
-    _video_capture_entire_screen_radio_btn = new RadioButton("Capture entire window", true,
+    _video_capture_entire_screen_radio_btn = new RadioButton("Capture entire window", false,
         WndPairValue{ CTRL_BLOCK_POS_X + 246, CTRL_BLOCK_POS_Y + 20 }, WndPairValue{ 160, 17 });
 
     /* Buttons */
@@ -94,10 +94,11 @@ UI::UI(const char *app_name, const char *app_version)
     _wnd->AttachChildControl(_video_fps_edit);
 
     _wnd->AttachChildControl(_video_capture_optimization_checkbox);
-    _wnd->AttachChildControl(_video_capture_cursor_checkbox);
 
     _wnd->AttachChildControl(_video_capture_client_rect_only_radio_btn);
     _wnd->AttachChildControl(_video_capture_entire_screen_radio_btn);
+
+    _wnd->AttachChildControl(_video_capture_cursor_checkbox);
 
     _wnd->AttachChildControl(_video_settings_apply_button);
 

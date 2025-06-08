@@ -4,18 +4,20 @@
 #include "../../SmtObj.h"
 
 #include "ScreenCapture/ScreenCapture.h"
+#include "AudioCapture/AudioCapture.h"
 #include "FileMP4/FileMP4.h"
-#include "StableTimer/StableTimer.h"
+#include "LoopThread/LoopThread.h"
 
 class VideoRecorder
 {
 private:
     SmtObj<ScreenCapture> _screen;
+    SmtObj<AudioCapture> _audio;
     SmtObj<FileMP4> _file;
 
-    SmtObj<StableTimer> _screen_capture_timer;
-    SmtObj<StableTimer> _cursor_capture_timer;
-    SmtObj<StableTimer> _file_writer_timer;
+    SmtObj<LoopThread> _screen_capture_loop;
+    SmtObj<LoopThread> _cursor_capture_loop;
+    SmtObj<LoopThread> _file_writer;
 
     const bool &_staged_client_rect_only_flag;
     const bool &_staged_optimization_flag;
@@ -25,12 +27,13 @@ private:
     bool _optimization_flag = false;
     bool _capture_cursor_flag = false;
 
-    static void _ScreenCaptureLoop(void *this_class);
-    static void _CursorCaptureLoop(void *this_class);
-    static void _FileWriterLoop(void *this_class);
+
+    static void _ScreenCaptureLoop(void *ptr);
+    static void _CursorCaptureLoop(void *ptr);
+    static void _FileWriterLoop(void *ptr);
 
 public:
-    VideoRecorder(const bool &client_rect_only_flag, /*const bool &preview_flag,*/ const bool &optimization_flag, const bool &capture_cursor_flag);
+    VideoRecorder(const bool &client_rect_only_flag, const bool &optimization_flag, const bool &capture_cursor_flag);
     VideoRecorder(const VideoRecorder &) = delete;
     ~VideoRecorder();
 
@@ -47,7 +50,7 @@ public:
     const int &GetSrcWidth();
     const int &GetSrcHeight();
 
-    SmtObj<BitmapsDblBuff> &GetPreview();
+    BitmapsDblBuff *GetPreview();
 };
 
 #endif

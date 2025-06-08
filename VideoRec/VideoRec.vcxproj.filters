@@ -24,12 +24,6 @@
     <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\ScreenCapture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="App\Model\VideoRecorder\StableTimer\StableTimer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\Model\VideoRecorder\StableTimer\CPUCounter\CPUCounter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App\Model\VideoRecorder\VideoRecorder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -102,18 +96,21 @@
     <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\BitmapsDblBuff\BitmapsDblBuff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="App\Model\VideoRecorder\AudioCapture\AudioCapture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Model\VideoRecorder\AudioCapture\SamplesBuff\SamplesBuff.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\Model\VideoRecorder\LoopThread\LoopThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\Model\VideoRecorder\FileMP4\FileMP4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\ScreenCapture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Model\VideoRecorder\StableTimer\CPUCounter\CPUCounter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Model\VideoRecorder\StableTimer\StableTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\Model\VideoRecorder\VideoRecorder.h">
@@ -192,6 +189,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\BitmapsDblBuff\BitmapsDblBuff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\VideoRecorder\AudioCapture\AudioCapture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\VideoRecorder\AudioCapture\SamplesBuff\SamplesBuff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\VideoRecorder\LoopThread\LoopThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

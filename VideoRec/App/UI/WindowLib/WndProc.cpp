@@ -64,9 +64,16 @@ LRESULT Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
                 result = 0;
             }*/
+            else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN || uMsg == WM_MBUTTONDOWN)
+            {
+                SetFocus(Wnd->GetHwnd());
+
+                result = 0;
+            }
             else if (uMsg == WM_MOVE) {
                 WndPos->first = LOWORD(lParam);
                 WndPos->second = HIWORD(lParam);
+
                 result = 0;
             }
             else if (uMsg == WM_SIZE) {

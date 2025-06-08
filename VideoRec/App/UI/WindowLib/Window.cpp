@@ -134,9 +134,7 @@ int Window::Run() {
                 else {
                     this->operator()("AsyncLoopCallback", this);
                 }
-                //Sleep(1);
-                //std::this_thread::sleep_for(std::chrono::microseconds(1));
-                std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+                std::this_thread::sleep_for(std::chrono::nanoseconds(500));
             }
         }
         else {
@@ -151,9 +149,7 @@ int Window::Run() {
                     TranslateMessage(&_msg);
                     DispatchMessageW(&_msg);
                 }
-                //Sleep(1);
-                //std::this_thread::sleep_for(std::chrono::microseconds(1));
-                std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+                std::this_thread::sleep_for(std::chrono::nanoseconds(500));
             }
         }
     }
