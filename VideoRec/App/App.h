@@ -15,7 +15,7 @@ private:
 public:
     App(const char *app_name, const char *app_version);
     App(const App &) = delete;
-    ~App() = default;
+    ~App();
 
     int Run();
 };

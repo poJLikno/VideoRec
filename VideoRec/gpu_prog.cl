@@ -57,20 +57,16 @@ __kernel void image_resample(__global unsigned char* dst_y, __global unsigned ch
     unsigned char p4g = src_rgb[4 * ((rel_h + 1) * src_width + rel_w) + 1];
     unsigned char p4r = src_rgb[4 * ((rel_h + 1) * src_width + rel_w) + 2];
 
-    unsigned char b = p1b * d1 + p2b * d2 + p3b * d3 + p4b * d4;
-    unsigned char g = p1g * d1 + p2g * d2 + p3g * d3 + p4g * d4;
-    unsigned char r = p1r * d1 + p2r * d2 + p3r * d3 + p4r * d4;
+    unsigned char b1 = p1b * d1 + p2b * d2 + p3b * d3 + p4b * d4;
+    unsigned char g1 = p1g * d1 + p2g * d2 + p3g * d3 + p4g * d4;
+    unsigned char r1 = p1r * d1 + p2r * d2 + p3r * d3 + p4r * d4;
 
-    b = b * 219 / 255 + 16;
-    g = g * 219 / 255 + 16;
-    r = r * 219 / 255 + 16;
+    b1 = b1 * 219 / 255 + 16;
+    g1 = g1 * 219 / 255 + 16;
+    r1 = r1 * 219 / 255 + 16;
 
     /* Set Y */
-    dst_y[y * dst_width + x] = ((66 * r + 129 * g + 25 * b) >> 8);
-
-    /* Set UV for 4x4 pixels square */
-    dst_u[(y * dst_width / 2 + x) / 2] = ((-38 * r + -74 * g + 112 * b) >> 8) + 128;
-    dst_v[(y * dst_width / 2 + x) / 2] = ((112 * r + -94 * g + -18 * b) >> 8) + 128;
+    dst_y[y * dst_width + x] = ((66 * r1 + 129 * g1 + 25 * b1) >> 8);
 
     /**/
     /* Find pixel #2 */
@@ -123,16 +119,16 @@ __kernel void image_resample(__global unsigned char* dst_y, __global unsigned ch
     p4g = src_rgb[4 * ((rel_h + 1) * src_width + rel_w) + 1];
     p4r = src_rgb[4 * ((rel_h + 1) * src_width + rel_w) + 2];
 
-    b = p1b * d1 + p2b * d2 + p3b * d3 + p4b * d4;
-    g = p1g * d1 + p2g * d2 + p3g * d3 + p4g * d4;
-    r = p1r * d1 + p2r * d2 + p3r * d3 + p4r * d4;
+    unsigned char b2 = p1b * d1 + p2b * d2 + p3b * d3 + p4b * d4;
+    unsigned char g2 = p1g * d1 + p2g * d2 + p3g * d3 + p4g * d4;
+    unsigned char r2 = p1r * d1 + p2r * d2 + p3r * d3 + p4r * d4;
 
-    b = b * 219 / 255 + 16;
-    g = g * 219 / 255 + 16;
-    r = r * 219 / 255 + 16;
+    b2 = b2 * 219 / 255 + 16;
+    g2 = g2 * 219 / 255 + 16;
+    r2 = r2 * 219 / 255 + 16;
     
     /* Set Y */
-    dst_y[y * dst_width + x + 1] = ((66 * r + 129 * g + 25 * b) >> 8);
+    dst_y[y * dst_width + x + 1] = ((66 * r2 + 129 * g2 + 25 * b2) >> 8);
 
     /**/
     /* Find pixel #3 */
@@ -185,16 +181,16 @@ __kernel void image_resample(__global unsigned char* dst_y, __global unsigned ch
     p4g = src_rgb[4 * ((rel_h + 1) * src_width + rel_w) + 1];
     p4r = src_rgb[4 * ((rel_h + 1) * src_width + rel_w) + 2];
 
-    b = p1b * d1 + p2b * d2 + p3b * d3 + p4b * d4;
-    g = p1g * d1 + p2g * d2 + p3g * d3 + p4g * d4;
-    r = p1r * d1 + p2r * d2 + p3r * d3 + p4r * d4;
+    unsigned char b3 = p1b * d1 + p2b * d2 + p3b * d3 + p4b * d4;
+    unsigned char g3 = p1g * d1 + p2g * d2 + p3g * d3 + p4g * d4;
+    unsigned char r3 = p1r * d1 + p2r * d2 + p3r * d3 + p4r * d4;
 
-    b = b * 219 / 255 + 16;
-    g = g * 219 / 255 + 16;
-    r = r * 219 / 255 + 16;
+    b3 = b3 * 219 / 255 + 16;
+    g3 = g3 * 219 / 255 + 16;
+    r3 = r3 * 219 / 255 + 16;
     
     /* Set Y */
-    dst_y[(y + 1) * dst_width + x + 1] = ((66 * r + 129 * g + 25 * b) >> 8);
+    dst_y[(y + 1) * dst_width + x + 1] = ((66 * r3 + 129 * g3 + 25 * b3) >> 8);
 
     /**/
     /* Find pixel #4 */
@@ -247,16 +243,25 @@ __kernel void image_resample(__global unsigned char* dst_y, __global unsigned ch
     p4g = src_rgb[4 * ((rel_h + 1) * src_width + rel_w) + 1];
     p4r = src_rgb[4 * ((rel_h + 1) * src_width + rel_w) + 2];
 
-    b = p1b * d1 + p2b * d2 + p3b * d3 + p4b * d4;
-    g = p1g * d1 + p2g * d2 + p3g * d3 + p4g * d4;
-    r = p1r * d1 + p2r * d2 + p3r * d3 + p4r * d4;
+    unsigned char b4 = p1b * d1 + p2b * d2 + p3b * d3 + p4b * d4;
+    unsigned char g4 = p1g * d1 + p2g * d2 + p3g * d3 + p4g * d4;
+    unsigned char r4 = p1r * d1 + p2r * d2 + p3r * d3 + p4r * d4;
 
-    b = b * 219 / 255 + 16;
-    g = g * 219 / 255 + 16;
-    r = r * 219 / 255 + 16;
+    b4 = b4 * 219 / 255 + 16;
+    g4 = g4 * 219 / 255 + 16;
+    r4 = r4 * 219 / 255 + 16;
     
     /* Set Y */
-    dst_y[(y + 1) * dst_width + x] = ((66 * r + 129 * g + 25 * b) >> 8);
+    dst_y[(y + 1) * dst_width + x] = ((66 * r4 + 129 * g4 + 25 * b4) >> 8);
+
+    /* Avg color */
+    unsigned char b = ((b1 + b2 + b3 + b4) >> 2);
+    unsigned char g = ((g1 + g2 + g3 + g4) >> 2);
+    unsigned char r = ((r1 + r2 + r3 + r4) >> 2);
+
+    /* Set UV for 4x4 pixels square */
+    dst_u[(y * dst_width / 2 + x) / 2] = ((-38 * r + -74 * g + 112 * b) >> 8) + 128;
+    dst_v[(y * dst_width / 2 + x) / 2] = ((112 * r + -94 * g + -18 * b) >> 8) + 128;
 }
 
 __kernel void image_resample_no_resize(__global unsigned char* dst_y, __global unsigned char* dst_u, __global unsigned char* dst_v, int width, int height, __global unsigned char* src_rgb)
@@ -271,47 +276,53 @@ __kernel void image_resample_no_resize(__global unsigned char* dst_y, __global u
     /* Find pixel #1 */
     /**/
 
-    unsigned char b = src_rgb[4 * (y * width + x)] * 219 / 255 + 16;
-    unsigned char g = src_rgb[4 * (y * width + x) + 1] * 219 / 255 + 16;
-    unsigned char r = src_rgb[4 * (y * width + x) + 2] * 219 / 255 + 16;
+    unsigned char b1 = src_rgb[4 * (y * width + x)] * 219 / 255 + 16;
+    unsigned char g1 = src_rgb[4 * (y * width + x) + 1] * 219 / 255 + 16;
+    unsigned char r1 = src_rgb[4 * (y * width + x) + 2] * 219 / 255 + 16;
 
     /* Set Y */
-    dst_y[y * width + x] = ((66 * r + 129 * g + 25 * b) >> 8);
+    dst_y[y * width + x] = ((66 * r1 + 129 * g1 + 25 * b1) >> 8);
 
-    /* Set UV for 4x4 pixels square */
-    dst_u[(y * width / 2 + x) / 2] = ((-38 * r + -74 * g + 112 * b) >> 8) + 128;
-    dst_v[(y * width / 2 + x) / 2] = ((112 * r + -94 * g + -18 * b) >> 8) + 128;
 
     /**/
     /* Find pixel #2 */
     /**/
 
-    b = src_rgb[4 * (y * width + x + 1)] * 219 / 255 + 16;
-    g = src_rgb[4 * (y * width + x + 1) + 1] * 219 / 255 + 16;
-    r = src_rgb[4 * (y * width + x + 1) + 2] * 219 / 255 + 16;
+    unsigned char b2 = src_rgb[4 * (y * width + x + 1)] * 219 / 255 + 16;
+    unsigned char g2 = src_rgb[4 * (y * width + x + 1) + 1] * 219 / 255 + 16;
+    unsigned char r2 = src_rgb[4 * (y * width + x + 1) + 2] * 219 / 255 + 16;
     
     /* Set Y */
-    dst_y[y * width + x + 1] = ((66 * r + 129 * g + 25 * b) >> 8);
+    dst_y[y * width + x + 1] = ((66 * r2 + 129 * g2 + 25 * b2) >> 8);
 
     /**/
     /* Find pixel #3 */
     /**/
 
-    b = src_rgb[4 * ((y + 1) * width + x + 1)] * 219 / 255 + 16;
-    g = src_rgb[4 * ((y + 1) * width + x + 1) + 1] * 219 / 255 + 16;
-    r = src_rgb[4 * ((y + 1) * width + x + 1) + 2] * 219 / 255 + 16;
+    unsigned char b3 = src_rgb[4 * ((y + 1) * width + x + 1)] * 219 / 255 + 16;
+    unsigned char g3 = src_rgb[4 * ((y + 1) * width + x + 1) + 1] * 219 / 255 + 16;
+    unsigned char r3 = src_rgb[4 * ((y + 1) * width + x + 1) + 2] * 219 / 255 + 16;
 
     /* Set Y */
-    dst_y[(y + 1) * width + x + 1] = ((66 * r + 129 * g + 25 * b) >> 8);
+    dst_y[(y + 1) * width + x + 1] = ((66 * r3 + 129 * g3 + 25 * b3) >> 8);
 
     /**/
     /* Find pixel #4 */
     /**/
 
-    b = src_rgb[4 * ((y + 1) * width + x)] * 219 / 255 + 16;
-    g = src_rgb[4 * ((y + 1) * width + x) + 1] * 219 / 255 + 16;
-    r = src_rgb[4 * ((y + 1) * width + x) + 2] * 219 / 255 + 16;
+    unsigned char b4 = src_rgb[4 * ((y + 1) * width + x)] * 219 / 255 + 16;
+    unsigned char g4 = src_rgb[4 * ((y + 1) * width + x) + 1] * 219 / 255 + 16;
+    unsigned char r4 = src_rgb[4 * ((y + 1) * width + x) + 2] * 219 / 255 + 16;
     
     /* Set Y */
-    dst_y[(y + 1) * width + x] = ((66 * r + 129 * g + 25 * b) >> 8);
+    dst_y[(y + 1) * width + x] = ((66 * r4 + 129 * g4 + 25 * b4) >> 8);
+
+    /* Avg color */
+    unsigned char b = ((b1 + b2 + b3 + b4) >> 2);
+    unsigned char g = ((g1 + g2 + g3 + g4) >> 2);
+    unsigned char r = ((r1 + r2 + r3 + r4) >> 2);
+
+    /* Set UV for 4x4 pixels square */
+    dst_u[(y * width / 2 + x) / 2] = ((-38 * r + -74 * g + 112 * b) >> 8) + 128;
+    dst_v[(y * width / 2 + x) / 2] = ((112 * r + -94 * g + -18 * b) >> 8) + 128;
 }

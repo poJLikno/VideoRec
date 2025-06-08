@@ -123,7 +123,7 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\lib;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;ole32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
@@ -146,6 +146,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\include;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -154,7 +156,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)vcpkg_installed\vcpkg\pkgs\opencl_x64-windows\lib;$(SolutionDir)vcpkg_installed\vcpkg\pkgs\ffmpeg_x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avcodec.lib;avutil.lib;avdevice.lib;avfilter.lib;avformat.lib;swresample.lib;swscale.lib;OpenCL.lib;ole32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
@@ -170,6 +172,9 @@
     <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\Model\FileNameGenerator\FileNameGenerator.cpp" />
     <ClCompile Include="App\Model\Model.cpp" />
+    <ClCompile Include="App\Model\VideoRecorder\AudioCapture\AudioCapture.cpp" />
+    <ClCompile Include="App\Model\VideoRecorder\AudioCapture\SamplesBuff\SamplesBuff.cpp" />
+    <ClCompile Include="App\Model\VideoRecorder\LoopThread\LoopThread.cpp" />
     <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\BitmapsDblBuff\BitmapsDblBuff.cpp" />
     <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\CursorsDblBuff\CursorsDblBuff.cpp" />
     <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\DoubleBuffer.cpp" />
@@ -191,8 +196,6 @@
     <ClCompile Include="App\UI\WindowLib\WndProc.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\FramesDblBuff\HWAccelCL.cpp" />
-    <ClCompile Include="App\Model\VideoRecorder\StableTimer\CPUCounter\CPUCounter.cpp" />
-    <ClCompile Include="App\Model\VideoRecorder\StableTimer\StableTimer.cpp" />
     <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\ScreenCapture.cpp" />
     <ClCompile Include="App\Model\VideoRecorder\FileMP4\FileMP4.cpp" />
     <ClCompile Include="App\Model\VideoRecorder\VideoRecorder.cpp" />
@@ -201,6 +204,9 @@
     <ClInclude Include="App\App.h" />
     <ClInclude Include="App\Model\FileNameGenerator\FileNameGenerator.h" />
     <ClInclude Include="App\Model\Model.h" />
+    <ClInclude Include="App\Model\VideoRecorder\AudioCapture\SamplesBuff\SamplesBuff.h" />
+    <ClInclude Include="App\Model\VideoRecorder\AudioCapture\AudioCapture.h" />
+    <ClInclude Include="App\Model\VideoRecorder\LoopThread\LoopThread.h" />
     <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\BitmapsDblBuff\BitmapsDblBuff.h" />
     <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\CursorsDblBuff\CursorsDblBuff.h" />
     <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\FramesDblBuff\FramesDblBuff.h" />
@@ -223,8 +229,6 @@
     <ClInclude Include="App\UI\WindowLib\WndBase.h" />
     <ClInclude Include="App\UI\WindowLib\WndList.h" />
     <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\FramesDblBuff\HWAccelCL.h" />
-    <ClInclude Include="App\Model\VideoRecorder\StableTimer\CPUCounter\CPUCounter.h" />
-    <ClInclude Include="App\Model\VideoRecorder\StableTimer\StableTimer.h" />
     <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\ScreenCapture.h" />
     <ClInclude Include="App\Model\VideoRecorder\FileMP4\FileMP4.h" />
     <ClInclude Include="App\Model\VideoRecorder\VideoRecorder.h" />

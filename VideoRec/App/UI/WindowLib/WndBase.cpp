@@ -11,7 +11,7 @@ void WndBase::ShowWnd(const bool &flag) {
     if (flag) UpdateWindow(this->_hwnd);
 }
 
-const LRESULT &WndBase::SendMsg(const UINT &msg, const WPARAM &wparam, const LPARAM &lparam) {
+const LRESULT WndBase::SendMsg(const UINT &msg, const WPARAM &wparam, const LPARAM &lparam) {
     return SendMessageW(this->_hwnd, msg, wparam, lparam);
 }
 
@@ -61,7 +61,7 @@ void WndBase::SetWndText(const char *text) {
     w_buffer = nullptr;
 }
 
-const LONG_PTR &WndBase::GetWndStyle() {
+const LONG_PTR WndBase::GetWndStyle() {
     return GetWindowLongPtrW(this->_hwnd, GWL_STYLE);
 }
 

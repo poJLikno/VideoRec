@@ -20,8 +20,8 @@ protected:
 
     HWND _src_hwnd = nullptr;
     HDC _src_ctx = nullptr;
-    int _src_width = 0;
-    int _src_height = 0;
+    const int _src_width;
+    const int _src_height;
 
     SmtObj<FramesDblBuff> &_frames_dbl_buff;
     SmtObj<CursorsDblBuff> &_cursors_dbl_buff;
@@ -34,7 +34,6 @@ protected:
 public:
     BitmapsDblBuff(const HWND &src_hwnd, const HDC &src_ctx,
         const int &src_width, const int &src_height,
-        const int &dst_width, const int &dst_height,
         SmtObj<FramesDblBuff> &frames_dbl_buff,
         SmtObj<CursorsDblBuff> &cursors_dbl_buff,
         const bool &use_optimization, const bool &capture_cursor);
