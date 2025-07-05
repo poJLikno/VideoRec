@@ -1,16 +1,17 @@
-#ifndef WINDOWLIB_COMBO_BOX_H
-#define WINDOWLIB_COMBO_BOX_H
+#ifndef WINDOWLIB_COMBO_BOX_H_
+#define WINDOWLIB_COMBO_BOX_H_
 
 #include "WndBase.h"
 #include "CallbackManager.h"
 
-class ComboBox : public WndBase, public CallbackManager {
+class ComboBox : public WndBase, public CallbackManager
+{
 private:
     using WndBase::GetWndText;
     using WndBase::SetWndText;
 
 public:
-    ComboBox(const WndPairValue &pos = { 0, 0 }, const WndPairValue &size = { 20, 20 });
+    ComboBox(const std::pair<int, int> &pos = { 0, 0 }, const std::pair<int, int> &size = { 20, 20 });
 
     virtual void SetWndParent(WndBase *wnd) override;
 
@@ -20,12 +21,17 @@ public:
 
     int GetItemId();
 
-    /* Without null ending */
+    /* Number of symbols (wide char) without null ending */
     int GetItemLength();
 
-    void GetItem(char *buffer, const int &count);
+    /* Need free after use (delete[] ...) */
+    char *GetItem(int &bytes_were_written);
 
-    void GetOldItem(char *buffer, const int &buffer_size);
+    /* Need free after use (delete[] ...) */
+    char *GetItem();
+
+    /* Need free after use (delete[] ...) */
+    char *GetOldItem(const int &max_symbols_count);
 };
 
-#endif
+#endif /* WINDOWLIB_COMBO_BOX_H_ */

@@ -12,13 +12,11 @@ void FramesDblBuff::_OnWrite(const uint8_t &index)
     }
     
     /* Transform frame an GPU */
-    _hw_accel_cl.Run(_frames[index]->data[0]/*Y*/, _frames[index]->data[1]/*U*/, _frames[index]->data[2], *_staged_buffer)/*V*/;
+    _hw_accel_cl.Run(_frames[index]->data[0]/*Y*/, _frames[index]->data[1]/*U*/, _frames[index]->data[2]/*V*/, _staged_buffer);
 }
 
-FramesDblBuff::FramesDblBuff(
-    const int &src_width, const int &src_height,
-    const int &dst_width, const int &dst_height)
-    : _hw_accel_cl("gpu_prog.cl", "image_resample", dst_width, dst_height, src_width, src_height)
+FramesDblBuff::FramesDblBuff(const std::pair<int, int> &src_size, const std::pair<int, int> &dst_size)
+    : _hw_accel_cl("gpu_prog.cl", "image_resample", dst_size, src_size)
 {
     /* Allocate frames */
     for (uint8_t i = 0u; i < 2u; ++i)
@@ -32,8 +30,8 @@ FramesDblBuff::FramesDblBuff(
         /* Set frame parameters */
         _frames[i]->format = AV_PIX_FMT_YUV420P;//_codec_context->pix_fmt;
 
-        _frames[i]->width = dst_width;//_codec_context->width;
-        _frames[i]->height = dst_height;//_codec_context->height;
+        _frames[i]->width = dst_size.first;//_codec_context->width;
+        _frames[i]->height = dst_size.second;//_codec_context->height;
 
         /* Need for manual yuv convertation (after allocation) */
         _frames[i]->linesize[0] = _frames[i]->width;
@@ -60,7 +58,7 @@ FramesDblBuff::~FramesDblBuff()
     }
 }
 
-void FramesDblBuff::SetBuffer(uint8_t **staged_buffer)
+void FramesDblBuff::SetBuffer(uint8_t *staged_buffer)
 {
     _staged_buffer = staged_buffer;
 }

@@ -11,9 +11,9 @@
 class Model
 {
 private:
-    SmtObj<FileNameGenerator> _file_name_generator;
+    std::unique_ptr<FileNameGenerator> _file_name_generator;
 
-    SmtObj<VideoRecorder> _video_rec;
+    std::unique_ptr<VideoRecorder> _video_rec;
     bool _allow_preview_flag = true;
     bool _capture_client_rect_only_flag = true;
     bool _capture_optimization_flag = true;

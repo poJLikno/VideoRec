@@ -1,8 +1,9 @@
 #ifndef UI_H_
 #define UI_H_
 
-#include "../../SmtObj.h"
-#include "WindowLib/Window.h"
+#include <memory>
+
+#include "MainWindow/MainWindow.h"
 #include "WindowLib/NormalFont.h"
 #include "PreviewWindow/PreviewWindow.h"
 
@@ -15,35 +16,35 @@
 class UI
 {
 private:
-    SmtObj<Window> _wnd;
-    SmtObj<NormalFont> _normal_font;
+    std::unique_ptr<MainWindow> _wnd;
+    std::unique_ptr<NormalFont> _normal_font;
 
-    SmtObj<PreviewWindow> _preview_wnd;
+    std::unique_ptr<PreviewWindow> _preview_wnd;
 
-    SmtObj<Label> _video_source_wnd_label;
-    SmtObj<Label> _video_resolution_label;
-    SmtObj<Label> _video_resolution_x_symbol_label;
-    SmtObj<Label> _video_fps_label;
+    std::unique_ptr<Label> _source_wnd_label;
+    std::unique_ptr<Label> _resolution_label;
+    std::unique_ptr<Label> _x_symbol_label;
+    std::unique_ptr<Label> _fps_label;
 
-    SmtObj<Edit> _video_source_wnd_edit;
-    SmtObj<Edit> _video_width_edit;
-    SmtObj<Edit> _video_height_edit;
-    SmtObj<Edit> _video_fps_edit;
+    std::unique_ptr<Edit> _source_wnd_edit;
+    std::unique_ptr<Edit> _width_edit;
+    std::unique_ptr<Edit> _height_edit;
+    std::unique_ptr<Edit> _fps_edit;
 
-    SmtObj<CheckBox> _video_capture_optimization_checkbox;
-    SmtObj<CheckBox> _video_capture_cursor_checkbox;
+    std::unique_ptr<CheckBox> _capture_optimization_checkbox;
+    std::unique_ptr<CheckBox> _capture_cursor_checkbox;
 
-    SmtObj<RadioButton> _video_capture_client_rect_only_radio_btn;
-    SmtObj<RadioButton> _video_capture_entire_screen_radio_btn;
+    std::unique_ptr<RadioButton> _capture_client_rect_only_radio_btn;
+    std::unique_ptr<RadioButton> _capture_entire_window_radio_btn;
 
-    SmtObj<Button> _video_settings_apply_button;
+    std::unique_ptr<Button> _settings_apply_button;
 
-    SmtObj<MenuPoint> _preview_chekced_menu_point;
-    SmtObj<MenuPoint> _start_recording_menu_point;
-    SmtObj<MenuPoint> _stop_recording_menu_point;
+    std::unique_ptr<MenuPoint> _preview_chekced_menu_point;
+    std::unique_ptr<MenuPoint> _start_recording_menu_point;
+    std::unique_ptr<MenuPoint> _stop_recording_menu_point;
 
-    SmtObj<PopupMenu> _options_menu;
-    SmtObj<Menu> _wnd_menu;
+    std::unique_ptr<PopupMenu> _options_menu;
+    std::unique_ptr<Menu> _wnd_menu;
 
 public:
     UI(const char *app_name, const char *app_version);
@@ -54,23 +55,23 @@ public:
 
     GETTER(_preview_wnd)
 
-    GETTER(_video_source_wnd_label)
-    GETTER(_video_resolution_label)
-    GETTER(_video_resolution_x_symbol_label)
-    GETTER(_video_fps_label)
+    GETTER(_source_wnd_label)
+    GETTER(_resolution_label)
+    GETTER(_x_symbol_label)
+    GETTER(_fps_label)
 
-    GETTER(_video_source_wnd_edit)
-    GETTER(_video_width_edit)
-    GETTER(_video_height_edit)
-    GETTER(_video_fps_edit)
+    GETTER(_source_wnd_edit)
+    GETTER(_width_edit)
+    GETTER(_height_edit)
+    GETTER(_fps_edit)
 
-    GETTER(_video_capture_optimization_checkbox)
-    GETTER(_video_capture_cursor_checkbox)
+    GETTER(_capture_optimization_checkbox)
+    GETTER(_capture_cursor_checkbox)
 
-    GETTER(_video_capture_client_rect_only_radio_btn)
-    GETTER(_video_capture_entire_screen_radio_btn)
+    GETTER(_capture_client_rect_only_radio_btn)
+    GETTER(_capture_entire_window_radio_btn)
 
-    GETTER(_video_settings_apply_button)
+    GETTER(_settings_apply_button)
 
     GETTER(_preview_chekced_menu_point)
     GETTER(_start_recording_menu_point)

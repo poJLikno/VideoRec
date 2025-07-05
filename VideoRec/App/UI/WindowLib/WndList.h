@@ -1,14 +1,16 @@
-#ifndef WINDOWLIB_WND_LIST_H
-#define WINDOWLIB_WND_LIST_H
+#ifndef WINDOWLIB_WND_LIST_H_
+#define WINDOWLIB_WND_LIST_H_
 
 #include <iostream>
+#include <vector>
 #include <stdlib.h>
 
 template<class T>
-class WndList {
+class WndList
+{
 private:
-    int _wnd_count = 0;
-    T **_wnd_list = nullptr;
+    int _wnd_count_deleted = 0;
+    std::vector<T *> _wnd_list = std::vector<T *>();
 
 public:
     WndList() = default;
@@ -17,58 +19,56 @@ public:
     T *&operator[](int i);
 
     int GetCount();
-    void Append(T *wnd);
+    int GetListLength();
+
+    int Append(T *wnd);/* Return new index of window */
+
+    void Delete(const int &index);
 };
 
 template<class T>
-inline WndList<T>::~WndList() {
-    if (_wnd_list) {
-        for (int i = 0; i < _wnd_count; ++i) {
-            _wnd_list[i] = nullptr;
-        }
-
-        free(_wnd_list);
-        _wnd_list = nullptr;
+inline WndList<T>::~WndList()
+{
+    for (int i = 0; i < _wnd_list.size(); ++i)
+    {
+        _wnd_list[i] = nullptr;
     }
 }
 
 template<class T>
-inline T *&WndList<T>::operator[](int i) {
+inline T *&WndList<T>::operator[](int i)
+{
     return _wnd_list[i];
 }
 
 template<class T>
-inline int WndList<T>::GetCount() {
-    return _wnd_count;
+inline int WndList<T>::GetCount()
+{
+    return (int)_wnd_list.size() - _wnd_count_deleted;
 }
 
 template<class T>
-inline void WndList<T>::Append(T *wnd) {
-    if (!_wnd_count) {
-        _wnd_list = (T **)malloc((_wnd_count + 1) * sizeof(T *));
-        if (_wnd_list == nullptr) {
-            throw std::string("Malloc error!");
-        }
-        ++_wnd_count;
-    }
-    else if (_wnd_count && _wnd_list) {
-        T **tmp = (T **)realloc(_wnd_list, (_wnd_count + 1) * sizeof(T *));
-        if (!tmp) {
-            for (int i = 0; i < _wnd_count; ++i) {
-                _wnd_list[i] = nullptr;
-            }
-            free(_wnd_list);
-            _wnd_list = nullptr;
+inline int WndList<T>::GetListLength()
+{
+    return (int)_wnd_list.size();
+}
 
-            throw std::string("Realloc error!");
-        }
-        _wnd_list = tmp;
-        ++_wnd_count;
-    }
+template<class T>
+inline int WndList<T>::Append(T *wnd)
+{
+    _wnd_list.push_back(wnd);
 
-    if (_wnd_list) {
-        _wnd_list[_wnd_count - 1] = wnd;
+    return (int)_wnd_list.size() - 1;
+}
+
+template<class T>
+inline void WndList<T>::Delete(const int &index)
+{
+    if (_wnd_list[index])
+    {
+        _wnd_list[index] = nullptr;
+        ++_wnd_count_deleted;
     }
 }
 
-#endif
+#endif /* WINDOWLIB_WND_LIST_H_ */

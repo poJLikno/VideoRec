@@ -1,58 +1,68 @@
-#ifndef WINDOWLIB_WND_BASE_H
-#define WINDOWLIB_WND_BASE_H
+#ifndef WINDOWLIB_WND_BASE_H_
+#define WINDOWLIB_WND_BASE_H_
 
 #include <iostream>
+#include <utility>
 #include <string>
 #include <windows.h>
 
-class WndPairValue {
-public:
-    int first = 0;
-    int second = 0;
-};
+#include "TextUtils.h"
 
 class WndBase {
 protected:
-    HWND _hwnd = { 0 };
-    WndPairValue _pos = { 0, 0};
-    WndPairValue _size = { 0, 0};
+    HWND _hwnd = nullptr;
+    std::pair<int, int> _pos = { 0, 0 };
+    std::pair<int, int> _size = { 0, 0 };
     bool _is_visible = true;
     bool _input_state = true;
 
     WndBase *_parent_wnd = nullptr;
 
-    WndBase(const WndPairValue &pos, const WndPairValue &size)
+    WndBase(const std::pair<int, int> &pos, const std::pair<int, int> &size)
         : _pos(pos), _size(size) {};
 
 public:
     virtual ~WndBase();
 
     virtual void ShowWnd(const bool &flag) final;
-    virtual const LRESULT SendMsg(const UINT &msg, const WPARAM &wparam, const LPARAM &lparam) final;
+    virtual LRESULT SendMsg(const UINT &msg, const WPARAM &wparam, const LPARAM &lparam) final;
 
     virtual HWND GetHwnd() final;
 
-    virtual const bool &GetInputState() const final;
+    virtual bool GetInputState() const final;
     virtual void SetInputState(const bool &flag) final;
 
-    virtual void GetWndText(char *buffer, const int &count) final;
+    /* Need free after use (delete[] ...); max_symbols_count include null-symbol */
+    virtual char *GetWndText(const int &max_symbols_count) final;
     virtual void SetWndText(const char *label) final;
 
     /* Problem section */
-    virtual const LONG_PTR GetWndStyle() final;
+    virtual LONG_PTR GetWndStyle() final;
     virtual void SetWndStyle(const LONG_PTR &params) final;
 
     virtual WndBase *GetWndParent() final;
-    virtual void SetWndParent(WndBase *wnd);// Non final cause can be problems
+    virtual void SetWndParent(WndBase *wnd);/* Non final cause can be problems */
     /* --------------- */
 
-    virtual const WndPairValue &GetWndPos() final;
-    virtual void SetWndPos(const WndPairValue &pos) final;
+    virtual void UpdateWnd() final;
 
-    virtual const WndPairValue &GetWndSize() final;
-    virtual void SetWndSize(const WndPairValue &size) final;
+    virtual std::pair<int, int> GetWndPos() final;
+    virtual void SetWndPos(const std::pair<int, int> &pos) final;
 
-    virtual void SetWndOrderZ(const HWND &hwnd) final;
+    virtual std::pair<int, int> GetWndSize() final;
+    virtual void SetWndSize(const std::pair<int, int> &size) final;
+
+    virtual int GetWndHeaderSize() final;
+    virtual int GetWndSideBorderSize() final;
+    virtual int GetWndBottomBorderSize() final;
+
+    virtual std::pair<int, int> GetWndClientPos() final;
+    virtual void SetWndClientPos(const std::pair<int, int> &pos) final;
+
+    virtual std::pair<int, int> GetWndClientSize() final;
+    virtual void SetWndClientSize(const std::pair<int, int> &size) final;
+
+    virtual void SetWndOrderZ(HWND hwnd) final;
 };
 
-#endif
+#endif /* WINDOWLIB_WND_BASE_H_ */

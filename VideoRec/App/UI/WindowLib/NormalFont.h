@@ -1,20 +1,20 @@
-#ifndef NORMAL_FONT_H
-#define NORMAL_FONT_H
+#ifndef NORMAL_FONT_H_
+#define NORMAL_FONT_H_
 
 #include "WndBase.h"
 
 class NormalFont
 {
 private:
-    HFONT _normal_font = {};
+    HFONT _normal_font = nullptr;
 
 public:
     NormalFont();
     ~NormalFont();
 
-    void SetFont(const HWND &hwnd);
+    void SetFont(HWND hwnd);
 
     void SetFont(WndBase *wnd);
 };
 
-#endif
+#endif /* NORMAL_FONT_H_ */

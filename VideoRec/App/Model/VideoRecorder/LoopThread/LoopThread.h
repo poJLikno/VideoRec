@@ -1,15 +1,14 @@
 #ifndef LOOP_THREAD_H_
 #define LOOP_THREAD_H_
 
+#include <memory>
 #include <thread>
 #include <atomic>
-
-#include "../../../../SmtObj.h"
 
 class LoopThread
 {
 private:
-    SmtObj<std::thread> _loop_thread;
+    std::unique_ptr<std::thread> _loop_thread;
     std::atomic<bool> _run_flag = { false };
 
     void (*_loop_action)(void *) = nullptr;

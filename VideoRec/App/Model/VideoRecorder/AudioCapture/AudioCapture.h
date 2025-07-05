@@ -1,6 +1,7 @@
 #ifndef AUDIO_CAPTURE_H_
 #define AUDIO_CAPTURE_H_
 
+#include <memory>
 #include <stdint.h>
 
 #include <mmdeviceapi.h>
@@ -9,7 +10,6 @@
 
 /* #pragma comment(lib, "ole32.lib") */
 
-#include "../../../../SmtObj.h"
 #include "SamplesBuff/SamplesBuff.h"
 
 class AudioCapture
@@ -27,7 +27,7 @@ private:
     uint32_t _frame_buffer_size = 0u;
     /**/
 
-    SmtObj<SamplesBuff> _samples_sgl_buff;
+    std::unique_ptr<SamplesBuff> _samples_sgl_buff;
 
     /* Play */
     IAudioClient *_play_audio_client = nullptr;
@@ -44,7 +44,7 @@ public:
     void StartPlayAndCaptureStreams();
     void StopPlayAndCaptureStreams();
 
-    SmtObj<SamplesBuff> &GetSamplesSglBuff();
+    std::unique_ptr<SamplesBuff> &GetSamplesSglBuff();
 
     void CaptureAudioSamples();
 

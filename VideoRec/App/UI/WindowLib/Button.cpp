@@ -1,21 +1,23 @@
 #include "Button.h"
 
-Button::Button(const char *text, const WndPairValue &pos, const WndPairValue &size)
-    : WndBase(pos, size), _text(text) {}
+Button::Button(const char *text, const std::pair<int, int> &pos, const std::pair<int, int> &size)
+    : WndBase(pos, size), _text(text)
+{}
 
-void Button::SetWndParent(WndBase *wnd) {
-    int text_size = (int)strlen(_text) + 1;
-    wchar_t *w_text = new wchar_t[text_size] { 0 };
-    MultiByteToWideChar(CP_UTF8, 0, _text, text_size, w_text, text_size);
+void Button::SetWndParent(WndBase *wnd)
+{
+    std::unique_ptr<wchar_t[]> w_text(to_utf16(_text));
 
-    this->_parent_wnd = wnd;
-    _hwnd = CreateWindowExW(0L, L"button", w_text, WS_VISIBLE | WS_CHILD | WS_TABSTOP /*WS_POPUP*/,
+    _hwnd = CreateWindowExW(
+        0L, L"button", w_text.get(), WS_VISIBLE | WS_CHILD | WS_TABSTOP /*WS_POPUP*/,
         _pos.first, _pos.second,
         _size.first, _size.second,
         wnd->GetHwnd(), NULL, NULL, NULL);
-    if (!_hwnd)
-        throw std::string("Can't create button -> Error code: " + std::to_string(GetLastError()));
 
-    delete[] w_text;
-    w_text = nullptr;
+    if (_hwnd == nullptr)
+    {
+        throw std::string("Can't create button -> Error code: " + std::to_string(GetLastError()));
+    }
+
+    _parent_wnd = wnd;
 }

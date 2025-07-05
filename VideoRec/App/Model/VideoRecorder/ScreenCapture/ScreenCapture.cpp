@@ -2,17 +2,17 @@
 
 #include <string>
 
-ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_only, const bool &use_optimization, const bool &capture_cursor, const int &dst_width, const int &dst_height)
+#include "../../../UI/WindowLib/TextUtils.h"
+
+ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_only, const bool &use_optimization, const bool &capture_cursor, const std::pair<int, int> &dst_size)
     : _window_name(window_name)
 {
     /* Get window */
     if (window_name)
     {
-        int text_size = (int)strlen(window_name) + 1;
-        SmtObj<wchar_t[]> w_window_name = new wchar_t[text_size] { 0 };
-        MultiByteToWideChar(CP_UTF8, 0, window_name, text_size, w_window_name, text_size);
+        std::unique_ptr<wchar_t[]> w_window_name(to_utf16(window_name));
 
-        _hwnd = FindWindowW(NULL, w_window_name);
+        _hwnd = FindWindowW(NULL, w_window_name.get());
         if (_hwnd == NULL)
         {
             throw std::string("Couldn't find window!");
@@ -68,32 +68,28 @@ ScreenCapture::ScreenCapture(const char *window_name, const bool &client_rect_on
 #pragma warning(pop)
 
     /* Get source frame resolution */
-    _src_width = (rect.right - rect.left) * dpi / USER_DEFAULT_SCREEN_DPI;
-    _src_height = (rect.bottom - rect.top) * dpi / USER_DEFAULT_SCREEN_DPI;
+    _src_size = { (rect.right - rect.left) * dpi / USER_DEFAULT_SCREEN_DPI, (rect.bottom - rect.top) * dpi / USER_DEFAULT_SCREEN_DPI };
 
     /* Set destination frame resolution */
-    _dst_width = (dst_width == -1 ? _src_width : dst_width);
-    _dst_height = (dst_height == -1 ? _src_height : dst_height);
-
+    _dst_size.first = (dst_size.first == -1 ? _src_size.first : dst_size.first);
+    _dst_size.second = (dst_size.second == -1 ? _src_size.second : dst_size.second);
 
     /* Create frames double buffer */
-    _frames_dbl_buff = new FramesDblBuff(
-        _src_width, _src_height,
-        _dst_width, _dst_height);
+    _frames_dbl_buff = std::unique_ptr<FramesDblBuff>(new FramesDblBuff(_src_size, _dst_size));
 
     /* Create cursors double buffer */
     if (capture_cursor)
     {
-        _cursors_dbl_buff = new CursorsDblBuff(_hwnd, (_window_name != nullptr), client_rect_only, dpi);
+        _cursors_dbl_buff = std::unique_ptr<CursorsDblBuff>(new CursorsDblBuff(_hwnd, (_window_name != nullptr), client_rect_only, dpi));
     }
 
     /* Create bitmaps double buffer */
-    _bitmaps_dbl_buff = new BitmapsDblBuff(
+    _bitmaps_dbl_buff = std::unique_ptr<BitmapsDblBuff>(new BitmapsDblBuff(
         _hwnd, _wnd_dev_ctx,
-        _src_width, _src_height,
+        _src_size,
         _frames_dbl_buff,
         _cursors_dbl_buff,
-        use_optimization, capture_cursor);
+        use_optimization, capture_cursor));
 }
 
 ScreenCapture::~ScreenCapture()
@@ -116,32 +112,22 @@ void ScreenCapture::CaptureCursorState()
     _cursors_dbl_buff->Write();
 }
 
-const int &ScreenCapture::GetSrcWidth()
+std::pair<int, int> ScreenCapture::GetSrcSize()
 {
-    return _src_width;
+    return _src_size;
 }
 
-const int &ScreenCapture::GetSrcHeight()
+std::pair<int, int> ScreenCapture::GetDstSize()
 {
-    return _src_height;
+    return _dst_size;
 }
 
-const int &ScreenCapture::GetDstWidth()
-{
-    return _dst_width;
-}
-
-const int &ScreenCapture::GetDstHeight()
-{
-    return _dst_height;
-}
-
-SmtObj<BitmapsDblBuff> &ScreenCapture::GetBitmapsDblBuff()
+std::unique_ptr<BitmapsDblBuff> &ScreenCapture::GetBitmapsDblBuff()
 {
     return _bitmaps_dbl_buff;
 }
 
-SmtObj<FramesDblBuff> &ScreenCapture::GetFramesDblBuff()
+std::unique_ptr<FramesDblBuff> &ScreenCapture::GetFramesDblBuff()
 {
     return _frames_dbl_buff;
 }

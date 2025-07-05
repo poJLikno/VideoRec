@@ -1,9 +1,9 @@
 #define APP_NAME "VideoRec"
 
 #ifdef _DEBUG
-#define APP_VERSION "4.0 (GDI-video) Debug"
+#define APP_VERSION "4.1 (GDI-video) Debug"
 #else
-#define APP_VERSION "4.0 (GDI-video) Release"
+#define APP_VERSION "4.1 (GDI-video) Release"
 #endif
 
 /* Also uses external app manifest */
@@ -47,11 +47,8 @@ int main(int argc, const char **argv)
     }
     catch (const std::string &error)
     {
-        int str_size = (int)error.length() + 1;
-        SmtObj<wchar_t[]> w_error = new wchar_t[str_size] { 0 };
-        MultiByteToWideChar(CP_UTF8, 0, error.c_str(), str_size, w_error, str_size);
-
-        MessageBoxW(NULL, w_error, L"Error", MB_OK);
+        std::unique_ptr<wchar_t[]> w_error(to_utf16(error.c_str()));
+        MessageBoxW(NULL, w_error.get(), L"Error", MB_OK);
     }
     
     return result;

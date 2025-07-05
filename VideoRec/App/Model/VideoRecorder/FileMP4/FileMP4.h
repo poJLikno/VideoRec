@@ -1,6 +1,8 @@
 #ifndef FILE_MP4_H_
 #define FILE_MP4_H_
 
+#include <memory>
+#include <utility>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -14,8 +16,6 @@ extern "C"
 #include <libavutil/imgutils.h>
 #include <libavformat/avformat.h>
 }
-
-#include "../../../../SmtObj.h"
 
 class FileMP4
 {
@@ -34,7 +34,7 @@ private:
 
         OutputStream(AVFormatContext *format_context, const AVCodec **codec, AVCodecID codec_id,
             const int &fps = 0,
-            const int &width = 0, const int &height = 0);
+            const std::pair<int, int> &resolution = { 0, 0 });
 
         ~OutputStream();
 
@@ -43,24 +43,24 @@ private:
 
     AVFormatContext *_format_context = nullptr;
 
-    SmtObj<OutputStream> _video_stream;
+    std::unique_ptr<OutputStream> _video_stream;
     const AVCodec *_video_codec;
 
-    SmtObj<OutputStream> _audio_stream;
+    std::unique_ptr<OutputStream> _audio_stream;
     const AVCodec *_audio_codec;
 
     bool _file_is_closed = false;
 
-    void _OpenCodec(SmtObj<OutputStream> &output_stream, const AVCodec *codec);
-    void _WriteFrame(AVFrame *frame, SmtObj<OutputStream> &output_stream);
+    void _OpenCodec(std::unique_ptr<OutputStream> &output_stream, const AVCodec *codec);
+    void _WriteFrame(AVFrame *frame, std::unique_ptr<OutputStream> &output_stream);
 
 public:
-    FileMP4(const char *file_name, const uint16_t &fps, const uint32_t &width, const uint32_t &height, WAVEFORMATEX *wave_format);
+    FileMP4(const char *file_name, const uint16_t &fps, const std::pair<int, int> &resolution, WAVEFORMATEX *wave_format);
     FileMP4(const FileMP4 &) = delete;
     ~FileMP4();
 
-    SmtObj<OutputStream> &GetVideoStream();
-    SmtObj<OutputStream> &GetAudioStream();
+    std::unique_ptr<OutputStream> &GetVideoStream();
+    std::unique_ptr<OutputStream> &GetAudioStream();
 
     void WriteVideoFrame(AVFrame *frame);
     void WriteAudioFrame(AVFrame *frame);

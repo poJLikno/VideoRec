@@ -1,19 +1,21 @@
-#ifndef WINDOWLIB_BUTTON_H
-#define WINDOWLIB_BUTTON_H
+#ifndef WINDOWLIB_BUTTON_H_
+#define WINDOWLIB_BUTTON_H_
 
 #include "WndBase.h"
 #include "CallbackManager.h"
 
-class Button : public WndBase, public CallbackManager {
+class Button : public WndBase, public CallbackManager
+{
 protected:
     const char *_text;
 
 public:
-    Button(const char *text,
-        const WndPairValue &pos = { 0, 0 },
-        const WndPairValue &size = { 20, 20 });
+    Button(
+        const char *text,
+        const std::pair<int, int> &pos = { 0, 0 },
+        const std::pair<int, int> &size = { 20, 20 });
 
     virtual void SetWndParent(WndBase *wnd) override;
 };
 
-#endif
+#endif /* WINDOWLIB_BUTTON_H_ */

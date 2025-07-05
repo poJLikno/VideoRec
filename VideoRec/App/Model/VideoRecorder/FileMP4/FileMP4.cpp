@@ -5,11 +5,12 @@
 #include <thread>
 #include <chrono>
 
+#include "../../../UI/WindowLib/TextUtils.h"
+
 FileMP4::FileMP4(
     const char *file_name,
-    const uint16_t &fps,
-    const uint32_t &width,
-    const uint32_t &height, WAVEFORMATEX *wave_format)
+    const uint16_t &fps, const std::pair<int, int> &resolution,
+    WAVEFORMATEX *wave_format)
 {
     /* Output file configuration */
     if (avformat_alloc_output_context2(&_format_context, NULL, NULL, file_name) < 0)
@@ -21,12 +22,12 @@ FileMP4::FileMP4(
     if (_format_context->oformat->video_codec != AV_CODEC_ID_NONE)
     {
         /* Create stream with another codec id (h264 instead of mpeg4 for .mp4) */
-        _video_stream = new OutputStream(_format_context, &_video_codec, AV_CODEC_ID_H264, fps, width, height);
+        _video_stream = std::unique_ptr<OutputStream>(new OutputStream(_format_context, &_video_codec, AV_CODEC_ID_H264, fps, resolution));
     }
     if (_format_context->oformat->audio_codec != AV_CODEC_ID_NONE)
     {
         /* Create stream with ACC (equal acc in output format for .mp4) */
-        _audio_stream = new OutputStream(_format_context, &_audio_codec, AV_CODEC_ID_MP3/*AV_CODEC_ID_AAC*//*AV_CODEC_ID_FIRST_AUDIO for WAV*/);
+        _audio_stream = std::unique_ptr<OutputStream>(new OutputStream(_format_context, &_audio_codec, AV_CODEC_ID_MP3/*AV_CODEC_ID_AAC*//*AV_CODEC_ID_FIRST_AUDIO for WAV*/));
     }
 
     /* Prepare codecs */
@@ -61,22 +62,25 @@ FileMP4::~FileMP4()
     _audio_codec = nullptr;
 }
 
-SmtObj<FileMP4::OutputStream> &FileMP4::GetVideoStream()
+std::unique_ptr<FileMP4::OutputStream> &FileMP4::GetVideoStream()
 {
     return _video_stream;
 }
 
-SmtObj<FileMP4::OutputStream> &FileMP4::GetAudioStream()
+std::unique_ptr<FileMP4::OutputStream> &FileMP4::GetAudioStream()
 {
     return _audio_stream;
 }
 
-void FileMP4::_OpenCodec(SmtObj<OutputStream> &output_stream, const AVCodec *codec)
+void FileMP4::_OpenCodec(std::unique_ptr<OutputStream> &output_stream, const AVCodec *codec)
 {
     /* open the codec */
     if (avcodec_open2(output_stream->codec_context, codec, nullptr) < 0)
     {
-        throw std::string(codec->type == AVMEDIA_TYPE_VIDEO ? "Couldn't open codec! You should try setting a different resolution!" : "Couldn't open codec!");
+        throw std::string(
+            codec->type == AVMEDIA_TYPE_VIDEO
+            ? "Couldn't open codec! You should try setting a different resolution or fps!"
+            : "Couldn't open codec!");
     }
 
     /* copy the stream parameters to the muxer */
@@ -86,7 +90,7 @@ void FileMP4::_OpenCodec(SmtObj<OutputStream> &output_stream, const AVCodec *cod
     }
 }
 
-void FileMP4::_WriteFrame(AVFrame *frame, SmtObj<OutputStream> &output_stream)
+void FileMP4::_WriteFrame(AVFrame *frame, std::unique_ptr<OutputStream> &output_stream)
 {
     int ret = 0;
 
@@ -161,11 +165,8 @@ void FileMP4::CloseFile()
         }
         catch (const std::string &error)
         {
-            int str_size = (int)error.length() + 1;
-            SmtObj<wchar_t[]> w_error = new wchar_t[str_size] { 0 };
-            MultiByteToWideChar(CP_UTF8, 0, error.c_str(), str_size, w_error, str_size);
-
-            MessageBoxW(NULL, w_error, L"Error", MB_OK);
+            std::unique_ptr<wchar_t[]> w_error(to_utf16(error.c_str()));
+            MessageBoxW(NULL, w_error.get(), L"Error", MB_OK);
         }
 
         _video_stream.reset();
@@ -179,11 +180,8 @@ void FileMP4::CloseFile()
         }
         catch (const std::string &error)
         {
-            int str_size = (int)error.length() + 1;
-            SmtObj<wchar_t[]> w_error = new wchar_t[str_size] { 0 };
-            MultiByteToWideChar(CP_UTF8, 0, error.c_str(), str_size, w_error, str_size);
-
-            MessageBoxW(NULL, w_error, L"Error", MB_OK);
+            std::unique_ptr<wchar_t[]> w_error(to_utf16(error.c_str()));
+            MessageBoxW(NULL, w_error.get(), L"Error", MB_OK);
         }
 
         _audio_stream.reset();
@@ -206,7 +204,9 @@ void FileMP4::CloseFile()
     _file_is_closed = true;
 }
 
-FileMP4::OutputStream::OutputStream(AVFormatContext *format_context, const AVCodec **codec, AVCodecID codec_id, const int &fps, const int &width, const int &height)
+FileMP4::OutputStream::OutputStream(
+    AVFormatContext *format_context, const AVCodec **codec, AVCodecID codec_id,
+    const int &fps, const std::pair<int, int> &resolution)
 {
     /* Find the encoder */
     *codec = avcodec_find_encoder(codec_id);
@@ -242,11 +242,11 @@ FileMP4::OutputStream::OutputStream(AVFormatContext *format_context, const AVCod
     {
         codec_context->codec_id = codec_id;
 
-        codec_context->bit_rate = fps * width * height * 12/* avg bits per pixel */;
+        codec_context->bit_rate = 700000000;//fps * resolution.first * resolution.second * 12/* avg bits per pixel */;
 
         /* "resolution must be a multiple of two" ??? */
-        codec_context->width = width;
-        codec_context->height = height;
+        codec_context->width = resolution.first;
+        codec_context->height = resolution.second;
         /* timebase: This is the fundamental unit of time (in seconds) in terms
          * of which frame timestamps are represented. For fixed-fps content,
          * timebase should be 1/framerate and timestamp increments should be

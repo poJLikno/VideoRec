@@ -1,132 +1,262 @@
 #include "UI.h"
 
-#define NEW_PREVIEW_WIDTH (500)
-#define NEW_PREVIEW_HEIGHT ((int)round((float)NEW_PREVIEW_WIDTH * 9.0f / 16.0f))
-#define CTRL_BLOCK_POS_X (10)
-#define CTRL_BLOCK_POS_Y (10)
+#define CtrlBlockX (10)
+#define CtrlBlockY (10)
+//#define CtrlBlockWidth (?)
+#define CtrlBlockHeight (SourceWndLabelHeight + 3/*gap*/ + ResolutionLabelHeight + 3/*gap*/ + FpsLabelHeight)
+
+/* Main window */
+#define MainWndWidth (520 + 16 /* 520 - client rect */)
+#define MainWndHeight (370 + 59 /* 370 - client rect */)
+/**/
+#define NewMainWndHeightFull (preview_wnd_client_bottom_pos + 12/*gap*/ + parent_wnd->GetWndHeaderSize() + parent_wnd->GetWndBottomBorderSize())
+#define NewMainWndHeightShort (77/*client height*/ + parent_wnd->GetWndHeaderSize() + parent_wnd->GetWndBottomBorderSize())
+
+/* Preview window */
+#define PreviewWndX (CtrlBlockX)
+#define PreviewWndY (CtrlBlockY + CtrlBlockHeight + 10/*gap*/)
+#define PreviewWndWidth (500)
+#define PreviewWndHeight (281)
+/**/
+#define NewPreviewWndWidth (parent_wnd->GetWndClientSize().first - (2 * 10)/*gap*/)
+#define NewPreviewWndHeight ((int)round((float)NewPreviewWndWidth * 9.0f / 16.0f))
+
+/* Labels */
+#define SourceWndLabelX (CtrlBlockX)
+#define SourceWndLabelY (CtrlBlockY)
+#define SourceWndLabelWidth (100)
+#define SourceWndLabelHeight (17)
+
+#define ResolutionLabelX (SourceWndLabelX)
+#define ResolutionLabelY (SourceWndLabelY + SourceWndLabelHeight + 3/*gap*/)
+#define ResolutionLabelWidth (100)
+#define ResolutionLabelHeight (17)
+
+#define XSymbolLabelX (WidthEditX + WidthEditWidth + 5/*gap*/)
+#define XSymbolLabelY (ResolutionLabelY)
+#define XSymbolLabelWidth (10)
+#define XSymbolLabelHeight (17)
+/**/
+#define NewXSymbolLabelX (WidthEditX + NewWidthEditWidth + 5/*gap*/)
+
+#define FpsLabelX (CtrlBlockX)
+#define FpsLabelY (ResolutionLabelY + ResolutionLabelHeight + 3/*gap*/)
+#define FpsLabelWidth (60)
+#define FpsLabelHeight (17)
+
+/* Edits */
+#define SourceWndEditX (SourceWndLabelX + SourceWndLabelWidth + 10/*gap*/)
+#define SourceWndEditY (SourceWndLabelY)
+#define SourceWndEditWidth (WidthEditWidth + 5/*gap*/ + XSymbolLabelWidth + 3/*gap*/ + HeightEditWidth)
+#define SourceWndEditHeight (17)
+/**/
+#define NewSourceWndEditWidth (NewWidthEditWidth + 5/*gap*/ + XSymbolLabelWidth + 3/*gap*/ + NewHeightEditWidth)
+
+#define WidthEditX (ResolutionLabelX + ResolutionLabelWidth + 10/*gap*/)
+#define WidthEditY (ResolutionLabelY)
+#define WidthEditWidth (48)
+#define WidthEditHeight (17)
+/**/
+#define NewWidthEditWidth (NewPreviewWndWidth * WidthEditWidth / PreviewWndWidth)
+
+#define HeightEditX (XSymbolLabelX + XSymbolLabelWidth + 3/*gap*/)
+#define HeightEditY (ResolutionLabelY)
+#define HeightEditWidth (48)
+#define HeightEditHeight (17)
+/**/
+#define NewHeightEditX (NewXSymbolLabelX + XSymbolLabelWidth + 3/*gap*/)
+#define NewHeightEditWidth (NewPreviewWndWidth * HeightEditWidth / PreviewWndWidth)
+
+#define FpsEditX (WidthEditX)
+#define FpsEditY (FpsLabelY)
+#define FpsEditWidth (30)
+#define FpsEditHeight (17)
+
+/* Checkboxes */
+#define CaptureCursorCheckboxX (FpsEditX + FpsEditWidth + 10/*gap*/)
+#define CaptureCursorCheckboxY (FpsLabelY)
+#define CaptureCursorCheckboxWidth (100)
+#define CaptureCursorCheckboxHeight (17)
+
+#define CaptureOptimizationCheckboxX (CaptureEntireWindowRadioBtnX + 16/*gap*/)
+#define CaptureOptimizationCheckboxY (CaptureEntireWindowRadioBtnY + CaptureEntireWindowRadioBtnHeight + 3/*gap*/)
+#define CaptureOptimizationCheckboxWidth (90)
+#define CaptureOptimizationCheckboxHeight (17)
+/**/
+#define NewCaptureOptimizationCheckboxX (NewCaptureEntireWindowRadioBtnX + 16/*gap*/)
+
+/* Radio buttons */
+#define CaptureClientRectOnlyRadioBtnX (SourceWndEditX + SourceWndEditWidth + 22/*gap*/)
+#define CaptureClientRectOnlyRadioBtnY (SourceWndLabelY)
+#define CaptureClientRectOnlyRadioBtnWidth (160)
+#define CaptureClientRectOnlyRadioBtnHeight (17)
+/**/
+#define NewCaptureClientRectOnlyRadioBtnX (SourceWndEditX + NewSourceWndEditWidth + 22/*gap*/)
+
+#define CaptureEntireWindowRadioBtnX (CaptureClientRectOnlyRadioBtnX)
+#define CaptureEntireWindowRadioBtnY (CaptureClientRectOnlyRadioBtnY + CaptureClientRectOnlyRadioBtnHeight + 3/*gap*/)
+#define CaptureEntireWindowRadioBtnWidth (160)
+#define CaptureEntireWindowRadioBtnHeight (17)
+/**/
+#define NewCaptureEntireWindowRadioBtnX (NewCaptureClientRectOnlyRadioBtnX)
+
+/* Buttons */
+#define SettingsApplyButtonX (CaptureClientRectOnlyRadioBtnX + CaptureClientRectOnlyRadioBtnWidth + 14/*gap*/)
+#define SettingsApplyButtonY (CaptureClientRectOnlyRadioBtnY)
+#define SettingsApplyButtonWidth (70)
+#define SettingsApplyButtonHeight (37)
+/**/
+#define NewSettingsApplyButtonX (NewCaptureClientRectOnlyRadioBtnX + CaptureClientRectOnlyRadioBtnWidth + 14/*gap*/)
+
 
 UI::UI(const char *app_name, const char *app_version)
 {
     /* Create the main window */
-    _wnd = new Window(app_name,
-        WndPairValue{ CW_USEDEFAULT, CW_USEDEFAULT },
-        WndPairValue{ 520 + 16/* (+16) if-func loose compensation */ /* 520 - client rect */,
-        370 + 59/* (+59) if-func loose compensation */ /* 370 - client rect */ },
-        IDI_ICON1);
+    _wnd = std::unique_ptr<MainWindow>(new MainWindow(
+        app_name,
+        { CW_USEDEFAULT, CW_USEDEFAULT },
+        { MainWndWidth, MainWndHeight },
+        IDI_ICON1));
     /* Setup the main window */
     _wnd->SetWndText(std::string(app_name + std::string(" ") + app_version).c_str());
     _wnd->EnableControlsDialogMessages(true);
 
     /* Create a preview window */
-    _preview_wnd = new PreviewWindow(_wnd, WndPairValue{ 10, 10 + 57/* ctrl block height */ + 10}, WndPairValue{500, 281});
+    _preview_wnd = std::unique_ptr<PreviewWindow>(new PreviewWindow(
+        { PreviewWndX, PreviewWndY },
+        { PreviewWndWidth, PreviewWndHeight }));
+
     _preview_wnd->ShowWnd(false);
+    _preview_wnd->SetWndParent(_wnd.get());
     
     /* Create window controls */
     /* Labels */
-    _video_source_wnd_label = new Label("Captured window: ",
-        WndPairValue{ CTRL_BLOCK_POS_X, CTRL_BLOCK_POS_Y }, WndPairValue{ 100, 17 });
+    _source_wnd_label = std::unique_ptr<Label>(new Label(
+        "Captured window: ",
+        { SourceWndLabelX, SourceWndLabelY },
+        { SourceWndLabelWidth, SourceWndLabelHeight }));
 
-    _video_resolution_label = new Label("Video resolution: ",
-        WndPairValue{ CTRL_BLOCK_POS_X, CTRL_BLOCK_POS_Y + 20 }, WndPairValue{ 100, 17 });
+    _resolution_label = std::unique_ptr<Label>(new Label(
+        "Video resolution: ",
+        { ResolutionLabelX, ResolutionLabelY },
+        { ResolutionLabelWidth, ResolutionLabelHeight }));
 
-    _video_resolution_x_symbol_label = new Label("X",
-        WndPairValue{ CTRL_BLOCK_POS_X + 164, CTRL_BLOCK_POS_Y + 20 }, WndPairValue{ 10, 17 });
+    _x_symbol_label = std::unique_ptr<Label>(new Label(
+        "X",
+        { XSymbolLabelX, XSymbolLabelY },
+        { XSymbolLabelWidth, XSymbolLabelHeight }));
 
-    _video_fps_label = new Label("Video FPS: ",
-        WndPairValue{ CTRL_BLOCK_POS_X, CTRL_BLOCK_POS_Y + 40 }, WndPairValue{ 60, 17 });
+    _fps_label = std::unique_ptr<Label>(new Label(
+        "Video FPS: ",
+        { FpsLabelX, FpsLabelY },
+        { FpsLabelWidth, FpsLabelHeight }));
 
     /* Edits */
-    _video_source_wnd_edit = new Edit(
-        WndPairValue{ CTRL_BLOCK_POS_X + 110, CTRL_BLOCK_POS_Y }, WndPairValue{ 116, 17 });
+    _source_wnd_edit = std::unique_ptr<Edit>(new Edit(
+        { SourceWndEditX, SourceWndEditY },
+        { SourceWndEditWidth, SourceWndEditHeight }));
 
-    _video_width_edit = new Edit(
-        WndPairValue{ CTRL_BLOCK_POS_X + 110, CTRL_BLOCK_POS_Y + 20 }, WndPairValue{ 48, 17 });
+    _width_edit = std::unique_ptr<Edit>(new Edit(
+        { WidthEditX, WidthEditY },
+        { WidthEditWidth, WidthEditHeight }));
 
-    _video_height_edit = new Edit(
-        WndPairValue{ CTRL_BLOCK_POS_X + 178, CTRL_BLOCK_POS_Y + 20 }, WndPairValue{ 48, 17 });
+    _height_edit = std::unique_ptr<Edit>(new Edit(
+        { HeightEditX, HeightEditY },
+        { HeightEditWidth, HeightEditHeight }));
 
-    _video_fps_edit = new Edit(
-        WndPairValue{ CTRL_BLOCK_POS_X + 110, CTRL_BLOCK_POS_Y + 40 }, WndPairValue{ 30, 17 });
+    _fps_edit = std::unique_ptr<Edit>(new Edit(
+        { FpsEditX, FpsEditY },
+        { FpsEditWidth, FpsEditHeight }));
 
     /* Checkboxes */
-    _video_capture_optimization_checkbox = new CheckBox("Optimization",
-        WndPairValue{ CTRL_BLOCK_POS_X + 150, CTRL_BLOCK_POS_Y + 40 }, WndPairValue{ 90, 17 });
+    _capture_cursor_checkbox = std::unique_ptr<CheckBox>(new CheckBox(
+        "Capture cursor",
+        { CaptureCursorCheckboxX, CaptureCursorCheckboxY },
+        { CaptureCursorCheckboxWidth, CaptureCursorCheckboxHeight }));
 
-    _video_capture_cursor_checkbox = new CheckBox("Capture cursor",
-        WndPairValue{ CTRL_BLOCK_POS_X + 250, CTRL_BLOCK_POS_Y + 40 }, WndPairValue{ 100, 17 });
+    _capture_optimization_checkbox = std::unique_ptr<CheckBox>(new CheckBox(
+        "Optimization",
+        { CaptureOptimizationCheckboxX, CaptureOptimizationCheckboxY },
+        { CaptureOptimizationCheckboxWidth, CaptureOptimizationCheckboxHeight }));
 
     /* Radio Buttons */
-    _video_capture_client_rect_only_radio_btn = new RadioButton("Capture client region only", true,
-        WndPairValue{ CTRL_BLOCK_POS_X + 246, CTRL_BLOCK_POS_Y }, WndPairValue{ 160, 17 });
+    _capture_client_rect_only_radio_btn = std::unique_ptr<RadioButton>(new RadioButton(
+        "Capture client region only", true,
+        { CaptureClientRectOnlyRadioBtnX, CaptureClientRectOnlyRadioBtnY },
+        { CaptureClientRectOnlyRadioBtnWidth, CaptureClientRectOnlyRadioBtnHeight }));
 
-    _video_capture_entire_screen_radio_btn = new RadioButton("Capture entire window", false,
-        WndPairValue{ CTRL_BLOCK_POS_X + 246, CTRL_BLOCK_POS_Y + 20 }, WndPairValue{ 160, 17 });
+    _capture_entire_window_radio_btn = std::unique_ptr<RadioButton>(new RadioButton(
+        "Capture entire window", false,
+        { CaptureEntireWindowRadioBtnX, CaptureEntireWindowRadioBtnY },
+        { CaptureEntireWindowRadioBtnWidth, CaptureEntireWindowRadioBtnHeight }));
 
     /* Buttons */
-    _video_settings_apply_button = new Button("Apply", 
-        WndPairValue{ CTRL_BLOCK_POS_X + 426, CTRL_BLOCK_POS_Y }, WndPairValue{ 70, 37 });
+    _settings_apply_button = std::unique_ptr<Button>(new Button(
+        "Apply",
+        { SettingsApplyButtonX, SettingsApplyButtonY },
+        { SettingsApplyButtonWidth, SettingsApplyButtonHeight }));
 
     /* Menus */
-    _preview_chekced_menu_point = new MenuPoint("Preview", Checked);
-    _start_recording_menu_point = new MenuPoint("Start recording (key: Alt + K)");
-    _stop_recording_menu_point = new MenuPoint("Stop recording (key: Alt + K)");
+    _preview_chekced_menu_point = std::unique_ptr<MenuPoint>(new MenuPoint("Preview", Checked));
+    _start_recording_menu_point = std::unique_ptr<MenuPoint>(new MenuPoint("Start recording (key: Alt + K)"));
+    _stop_recording_menu_point = std::unique_ptr<MenuPoint>(new MenuPoint("Stop recording (key: Alt + K)"));
 
-    _options_menu = new PopupMenu("Options");
-    _wnd_menu = new Menu();
+    _options_menu = std::unique_ptr<PopupMenu>(new PopupMenu("Options"));
+    _wnd_menu = std::unique_ptr<Menu>(new Menu());
 
     /* Setup the menu points relations */
-    _options_menu->AttachMenuPoint(_preview_chekced_menu_point);
+    _options_menu->AttachMenuPoint(_preview_chekced_menu_point.get());
     _options_menu->AppendSeparator();
-    _options_menu->AttachMenuPoint(_start_recording_menu_point);
-    _options_menu->AttachMenuPoint(_stop_recording_menu_point);
+    _options_menu->AttachMenuPoint(_start_recording_menu_point.get());
+    _options_menu->AttachMenuPoint(_stop_recording_menu_point.get());
 
-    _wnd_menu->AttachPopupMenu(_options_menu);
+    _wnd_menu->AttachPopupMenu(_options_menu.get());
 
     /* Attach controls to window */
-    _wnd->AttachChildControl(_video_source_wnd_label);
-    _wnd->AttachChildControl(_video_resolution_label);
-    _wnd->AttachChildControl(_video_resolution_x_symbol_label);
-    _wnd->AttachChildControl(_video_fps_label);
+    _wnd->AttachChildControl(_source_wnd_label.get());
+    _wnd->AttachChildControl(_resolution_label.get());
+    _wnd->AttachChildControl(_x_symbol_label.get());
+    _wnd->AttachChildControl(_fps_label.get());
 
-    _wnd->AttachChildControl(_video_source_wnd_edit);
-    _wnd->AttachChildControl(_video_width_edit);
-    _wnd->AttachChildControl(_video_height_edit);
-    _wnd->AttachChildControl(_video_fps_edit);
+    _wnd->AttachChildControl(_source_wnd_edit.get());
+    _wnd->AttachChildControl(_width_edit.get());
+    _wnd->AttachChildControl(_height_edit.get());
+    _wnd->AttachChildControl(_fps_edit.get());
 
-    _wnd->AttachChildControl(_video_capture_optimization_checkbox);
+    _wnd->AttachChildControl(_capture_cursor_checkbox.get());
 
-    _wnd->AttachChildControl(_video_capture_client_rect_only_radio_btn);
-    _wnd->AttachChildControl(_video_capture_entire_screen_radio_btn);
+    _wnd->AttachChildControl(_capture_client_rect_only_radio_btn.get());
+    _wnd->AttachChildControl(_capture_entire_window_radio_btn.get());
 
-    _wnd->AttachChildControl(_video_capture_cursor_checkbox);
+    _wnd->AttachChildControl(_capture_optimization_checkbox.get());
 
-    _wnd->AttachChildControl(_video_settings_apply_button);
+    _wnd->AttachChildControl(_settings_apply_button.get());
 
-    _wnd->AttachMenu(_wnd_menu);
+    _wnd->AttachMenu(_wnd_menu.get());
 
     /* Normal font */
-    _normal_font = new NormalFont();
-    _normal_font->SetFont(_video_source_wnd_label);
-    _normal_font->SetFont(_video_resolution_label);
-    _normal_font->SetFont(_video_resolution_x_symbol_label);
-    _normal_font->SetFont(_video_fps_label);
+    _normal_font = std::unique_ptr<NormalFont>(new NormalFont());
+    _normal_font->SetFont(_source_wnd_label.get());
+    _normal_font->SetFont(_resolution_label.get());
+    _normal_font->SetFont(_x_symbol_label.get());
+    _normal_font->SetFont(_fps_label.get());
 
-    _normal_font->SetFont(_video_source_wnd_edit);
-    _normal_font->SetFont(_video_width_edit);
-    _normal_font->SetFont(_video_height_edit);
-    _normal_font->SetFont(_video_fps_edit);
+    _normal_font->SetFont(_source_wnd_edit.get());
+    _normal_font->SetFont(_width_edit.get());
+    _normal_font->SetFont(_height_edit.get());
+    _normal_font->SetFont(_fps_edit.get());
 
-    _normal_font->SetFont(_video_capture_optimization_checkbox);
-    _normal_font->SetFont(_video_capture_cursor_checkbox);
+    _normal_font->SetFont(_capture_optimization_checkbox.get());
+    _normal_font->SetFont(_capture_cursor_checkbox.get());
 
-    _normal_font->SetFont(_video_capture_client_rect_only_radio_btn);
-    _normal_font->SetFont(_video_capture_entire_screen_radio_btn);
+    _normal_font->SetFont(_capture_client_rect_only_radio_btn.get());
+    _normal_font->SetFont(_capture_entire_window_radio_btn.get());
 
-    _normal_font->SetFont(_video_settings_apply_button);
+    _normal_font->SetFont(_settings_apply_button.get());
 
     /* Transform callbacks */
 #undef NEW_PREVIEW_WIDTH
-#define NEW_PREVIEW_WIDTH (new_parent_size.first - 20)
+#define NEW_PREVIEW_WIDTH (parent_wnd->GetWndClientSize().first - (2 * 10)/*gap*/)
 
     /* The main window sides relstion callback (will be attached to last label parent resize callback) */
     auto main_wnd_sides_callback = [this](void *ptr)->void {
@@ -134,19 +264,17 @@ UI::UI(const char *app_name, const char *app_version)
 
         if (_preview_chekced_menu_point->GetState())
         {
-            int preview_wnd_bottom_pos = _preview_wnd->GetWndPos().second + _preview_wnd->GetWndSize().second;
-            if (parent_wnd->GetWndSize().second - preview_wnd_bottom_pos != 12)
+            int preview_wnd_client_bottom_pos = _preview_wnd->GetWndPos().second + _preview_wnd->GetWndSize().second;
+            if (parent_wnd->GetWndSize().second - preview_wnd_client_bottom_pos != 12)
             {
-                parent_wnd->SetWndSize(WndPairValue{ new_parent_size.first /*!!!*/ + 16/* (+16) for in-function loose compensation */,
-                    preview_wnd_bottom_pos + 12 /*!!!*/ + 59/* (+59) for in-function loose compensation */ });
+                parent_wnd->SetWndSize({ new_parent_wnd_size.first, NewMainWndHeightFull });
             }
         }
         else
         {
-            if (parent_wnd->GetWndSize().second != 77)
+            if (parent_wnd->GetWndClientSize().second != 77)
             {
-                parent_wnd->SetWndSize(WndPairValue{ new_parent_size.first /*!!!*/ + 16/* (+16) for in-function loose compensation */,
-                    77 /*!!!*/ + 59/* (+59) for in-function loose compensation */ });
+                parent_wnd->SetWndSize({ new_parent_wnd_size.first, NewMainWndHeightShort });
             }
         }
         
@@ -155,36 +283,37 @@ UI::UI(const char *app_name, const char *app_version)
     auto preview_wnd_resize_callback = [this](void *ptr)->void {
         GetMiscForParentResize(ptr);
 
-        _preview_wnd->SetWndSize(WndPairValue{ NEW_PREVIEW_WIDTH, NEW_PREVIEW_HEIGHT });
+        _preview_wnd->SetWndSize({ NewPreviewWndWidth, NewPreviewWndHeight });
         };
 
+
     /* Labels */
-    _video_source_wnd_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _source_wnd_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         Label *label = GetControlForParentResize(Label, ptr);
         GetMiscForParentResize(ptr);
 
-        label->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X, CTRL_BLOCK_POS_Y });
+        label->UpdateWnd();
         });
 
-    _video_resolution_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _resolution_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         Label *label = GetControlForParentResize(Label, ptr);
         GetMiscForParentResize(ptr);
 
-        label->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X, CTRL_BLOCK_POS_Y + 20 });
+        label->UpdateWnd();
         });
 
-    _video_resolution_x_symbol_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _x_symbol_label->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         Label *label = GetControlForParentResize(Label, ptr);
         GetMiscForParentResize(ptr);
 
-        label->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110 + /* Video width edit size */(NEW_PREVIEW_WIDTH * 48 / 500) + 5, CTRL_BLOCK_POS_Y + 20});
+        label->SetWndPos({ NewXSymbolLabelX, XSymbolLabelY });
         });
 
-    _video_fps_label->AddCallback("ParentResizeCallback", [this, preview_wnd_resize_callback, main_wnd_sides_callback](void *ptr)->void {
+    _fps_label->AddCallback("ParentResizeCallback", [this, preview_wnd_resize_callback, main_wnd_sides_callback](void *ptr)->void {
         Label *label = GetControlForParentResize(Label, ptr);
         GetMiscForParentResize(ptr);
 
-        label->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X, CTRL_BLOCK_POS_Y + 40 });
+        label->UpdateWnd();
 
          /* Preview window resize */
         preview_wnd_resize_callback(ptr);
@@ -195,72 +324,73 @@ UI::UI(const char *app_name, const char *app_version)
 
 
     /* Edits */
-    _video_source_wnd_edit->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _source_wnd_edit->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         Edit *edit = GetControlForParentResize(Edit, ptr);
         GetMiscForParentResize(ptr);
 
-        edit->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110, CTRL_BLOCK_POS_Y });
-        edit->SetWndSize(WndPairValue{ NEW_PREVIEW_WIDTH * 96 / 500 + 20, 17 });
+        edit->SetWndSize({ NewSourceWndEditWidth, SourceWndEditHeight });
         });
 
-    _video_width_edit->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _width_edit->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         Edit *edit = GetControlForParentResize(Edit, ptr);
         GetMiscForParentResize(ptr);
 
-        edit->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110, CTRL_BLOCK_POS_Y + 20 });
-        edit->SetWndSize(WndPairValue{ NEW_PREVIEW_WIDTH * 48 / 500, 17 });
+        edit->SetWndSize({ NewWidthEditWidth, WidthEditHeight });
         });
 
-    _video_height_edit->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _height_edit->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         Edit *edit = GetControlForParentResize(Edit, ptr);
         GetMiscForParentResize(ptr);
 
-        edit->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110 + /* Video width edit size */(NEW_PREVIEW_WIDTH * 48 / 500) + 20, CTRL_BLOCK_POS_Y + 20 });
-        edit->SetWndSize(WndPairValue{ NEW_PREVIEW_WIDTH * 48 / 500, 17 });
+        edit->SetWndPos({ NewHeightEditX, HeightEditY });
+        edit->SetWndSize({ NewHeightEditWidth, HeightEditHeight });
         });
 
-    _video_fps_edit->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _fps_edit->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         Edit *edit = GetControlForParentResize(Edit, ptr);
         GetMiscForParentResize(ptr);
 
-        edit->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110, CTRL_BLOCK_POS_Y + 40 });
+        edit->UpdateWnd();
         });
+
 
     /* Checkboxes */
-    _video_capture_optimization_checkbox->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _capture_cursor_checkbox->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         CheckBox *button = GetControlForParentResize(CheckBox, ptr);
         GetMiscForParentResize(ptr);
 
-        button->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 150, CTRL_BLOCK_POS_Y + 40 });
+        button->UpdateWnd();
         });
 
-    _video_capture_cursor_checkbox->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _capture_optimization_checkbox->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         CheckBox *button = GetControlForParentResize(CheckBox, ptr);
         GetMiscForParentResize(ptr);
 
-        button->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 250, CTRL_BLOCK_POS_Y + 40 });
+        button->SetWndPos({ NewCaptureOptimizationCheckboxX, CaptureOptimizationCheckboxY });
         });
+
 
     /* Radio Buttons */
-    _video_capture_client_rect_only_radio_btn->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _capture_client_rect_only_radio_btn->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         Button *button = GetControlForParentResize(Button, ptr);
         GetMiscForParentResize(ptr);
 
-        button->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110 + /* Captured wnd name edit size */(NEW_PREVIEW_WIDTH * 96 / 500 + 20) + 20, CTRL_BLOCK_POS_Y});
+        button->SetWndPos({ NewCaptureClientRectOnlyRadioBtnX, CaptureClientRectOnlyRadioBtnY });
         });
 
-    _video_capture_entire_screen_radio_btn->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _capture_entire_window_radio_btn->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         Button *button = GetControlForParentResize(Button, ptr);
         GetMiscForParentResize(ptr);
 
-        button->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110 + /* Captured wnd name edit size */(NEW_PREVIEW_WIDTH * 96 / 500 + 20) + 20, CTRL_BLOCK_POS_Y + 20 });
+        button->SetWndPos({ NewCaptureEntireWindowRadioBtnX, CaptureEntireWindowRadioBtnY });
         });
+
 
     /* Buttons */
-    _video_settings_apply_button->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
+    _settings_apply_button->AddCallback("ParentResizeCallback", [this](void *ptr)->void {
         Button *button = GetControlForParentResize(Button, ptr);
         GetMiscForParentResize(ptr);
 
-        button->SetWndPos(WndPairValue{ CTRL_BLOCK_POS_X + 110 + /* Captured wnd name edit size */(NEW_PREVIEW_WIDTH * 96 / 500 + 20) + 20 + /* Radio button size */160 + 20, CTRL_BLOCK_POS_Y });
+        button->SetWndPos({ NewSettingsApplyButtonX, SettingsApplyButtonY });
         });
 }

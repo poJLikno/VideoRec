@@ -1,8 +1,9 @@
 #include "LoopThread.h"
 
 #include <string>
-
 #include <windows.h>
+
+#include "../../../UI/WindowLib/TextUtils.h"
 
 void LoopThread::_ActionLoop(LoopThread *loop_thread)
 {
@@ -27,11 +28,8 @@ void LoopThread::_ActionLoop(LoopThread *loop_thread)
     }
     catch (const std::string &error)/* Exeption termintion */
     {
-        int str_size = (int)error.length() + 1;
-        SmtObj<wchar_t[]> w_error = new wchar_t[str_size] { 0 };
-        MultiByteToWideChar(CP_UTF8, 0, error.c_str(), str_size, w_error, str_size);
-
-        MessageBoxW(NULL, w_error, L"Error", MB_OK);
+        std::unique_ptr<wchar_t[]> w_error(to_utf16(error.c_str()));
+        MessageBoxW(NULL, w_error.get(), L"Error", MB_OK);
     }
 }
 
@@ -54,7 +52,7 @@ void LoopThread::Start()
     /* Create loop thread */
     _run_flag.store(true, std::memory_order_relaxed);
     std::atomic_thread_fence(std::memory_order_release);
-    _loop_thread = new std::thread(_ActionLoop, this);
+    _loop_thread = std::unique_ptr<std::thread>(new std::thread(_ActionLoop, this));
     if (_loop_thread == nullptr)
     {
         throw std::string("Couldn't run a loop thread!");

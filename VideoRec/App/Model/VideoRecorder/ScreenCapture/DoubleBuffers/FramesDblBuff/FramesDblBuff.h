@@ -3,7 +3,6 @@
 
 #include <windows.h>
 
-
 #include "../DoubleBuffer.h"
 
 #include "HWAccelCL.h"
@@ -19,17 +18,18 @@ protected:
     AVFrame *_frames[2] = { 0 };
     HWAccelCL _hw_accel_cl;
 
-    uint8_t **_staged_buffer = nullptr;
+    uint8_t *_staged_buffer = nullptr;
 
     virtual void _OnWrite(const uint8_t &index) override final;
 
 public:
-    FramesDblBuff(const int &src_width, const int &src_height, const int &dst_width, const int &dst_height);
+    FramesDblBuff(const std::pair<int, int> &src_size, const std::pair<int, int> &dst_size);
     FramesDblBuff(const FramesDblBuff &) = delete;
     virtual ~FramesDblBuff() override;
 
-    virtual void SetBuffer(uint8_t **staged_buffer) final;
+    virtual void SetBuffer(uint8_t *staged_buffer) final;
 
+    /* Need lock */
     virtual AVFrame *GetFrame() final;
 };
 

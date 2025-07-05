@@ -1,10 +1,11 @@
-#ifndef WINDOWLIB_MENU_BASE_H
-#define WINDOWLIB_MENU_BASE_H
+#ifndef WINDOWLIB_MENU_BASE_H_
+#define WINDOWLIB_MENU_BASE_H_
 
 #include "MenuPoint.h"
 #include "WndList.h"
 
-class MenuBase {
+class MenuBase
+{
 protected:
     HMENU _hmenu = { 0 };
 
@@ -20,9 +21,9 @@ public:
 
     virtual void SetHParent(void *hparent) = 0;
 
-    WndList<MenuPoint> &GetMenuPointsList();
+    virtual WndList<MenuPoint> &GetMenuPointsList() final;
 
-    WndList<MenuBase> &GetPopupMenusList();
+    virtual WndList<MenuBase> &GetPopupMenusList() final;
 
     virtual void AttachMenuPoint(MenuPoint *menu_point) final;
 
@@ -31,4 +32,4 @@ public:
     virtual void AppendSeparator() final;
 };
 
-#endif
+#endif /* WINDOWLIB_MENU_BASE_H_ */

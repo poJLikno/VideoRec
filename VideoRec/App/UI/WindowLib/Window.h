@@ -1,7 +1,7 @@
-#ifndef WINDOWLIB_WINDOW_H
-#define WINDOWLIB_WINDOW_H
+#ifndef WINDOWLIB_WINDOW_H_
+#define WINDOWLIB_WINDOW_H_
 
-#define WINDOWLIB_VERSION "v1.4"
+#define WINDOWLIB_VERSION "v1.5"
 
 #include "WndList.h"
 #include "Button.h"
@@ -28,21 +28,33 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 #define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 #endif
 
-class Window : public WndBase, public CallbackManager {
-private:
+class Window;
+
+// Class - helper
+class WindowPosSize
+{
+public:
+    Window *wnd;
+    std::pair<int, int> *pos;
+    std::pair<int, int> *size;
+};
+
+class Window : public WndBase, public CallbackManager
+{
+protected:
     // Window variables
-    wchar_t *_w_class_name = nullptr;
+    std::unique_ptr<wchar_t[]> _w_class_name;
+
     MSG _msg = { 0 };
-    //HFONT _normal_font = { 0 };
     bool _ctrls_dlg_msg_flag = false;
 
+    WindowPosSize _wnd_pos_size = { this, &_pos, &_size };
+
     // All exist windows
-    static WndList<Window> _wnd_list;
-    // All windows pos/size variables
-    static WndList<WndPairValue> _wnd_pos_list;
-    static WndList<WndPairValue> _wnd_size_list;
-    /* the Window index in lists */
-    int _wnd_list_index = 0;
+    static WndList<WindowPosSize> _wnd_list;
+
+    // The Window index in lists
+    int _wnd_index = 0;
 
     // Window controls lists
     WndList<Button> _btns_list;
@@ -52,35 +64,36 @@ private:
     Menu *_menu = nullptr;
 
     // Main window procedure
-    static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    static LRESULT __stdcall _DefWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 public:
     Window(
         const char *name,
-        const WndPairValue &pos = { CW_USEDEFAULT, CW_USEDEFAULT },
-        const WndPairValue &size = { CW_USEDEFAULT, CW_USEDEFAULT },
+        const std::pair<int, int> &pos = { CW_USEDEFAULT, CW_USEDEFAULT },
+        const std::pair<int, int> &size = { CW_USEDEFAULT, CW_USEDEFAULT },
         const int &icon_id = -1,
-        const unsigned long &wnd_style = WS_OVERLAPPEDWINDOW);
-    ~Window();
+        const unsigned long &wnd_style = WS_OVERLAPPEDWINDOW, WNDPROC wnd_proc = nullptr);
+    virtual ~Window();
 
-    void AttachChildControl(WndBase *wnd);
-    void AttachMenu(Menu *menu);
+    virtual void AttachChildControl(WndBase *wnd);
+    virtual void AttachMenu(Menu *menu);
 
-    WndList<Button> &GetButtonsList();
-    WndList<ComboBox> &GetComboBoxesList();
-    WndList<Edit> &GetEditsList();
-    WndList<Label> &GetLabelsList();
-    Menu &GetMenu();
+    virtual WndList<Button> &GetButtonsList() final;
+    virtual WndList<ComboBox> &GetComboBoxesList() final;
+    virtual WndList<Edit> &GetEditsList() final;
+    virtual WndList<Label> &GetLabelsList() final;
+    virtual Menu &GetMenu() final;
 
-    void EnableControlsDialogMessages(const bool &flag);
+    virtual void EnableControlsDialogMessages(const bool &flag) final;
 
-    int Run();
+    virtual int Run();
 };
 
-class ParentResizeCallbackParams {
+class ParentResizeCallbackParams
+{
 public:
     WndBase *wnd;
-    WndPairValue old_size;
+    std::pair<int, int> old_size;
 };
 
-#endif
+#endif /* WINDOWLIB_WINDOW_H_ */

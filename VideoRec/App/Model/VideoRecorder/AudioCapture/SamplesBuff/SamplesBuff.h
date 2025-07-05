@@ -35,7 +35,7 @@ public:
     void Write();
 
     AVFrame *GetFrame() ;
-    const bool &GetNoDataFlag() ;
+    bool GetNoDataFlag() ;
 };
 
 #endif /* SAMPLES_BUFFER_H_ */

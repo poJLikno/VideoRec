@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-size_t HWAccelCL::_GetKernelCode(const char *file_name, SmtObj<char[]> *kernel_code)
+size_t HWAccelCL::_GetKernelCode(const char *file_name, std::unique_ptr<char[]> &kernel_code)
 {
     //size_t file_size = 0ull;
 
@@ -32,7 +32,7 @@ size_t HWAccelCL::_GetKernelCode(const char *file_name, SmtObj<char[]> *kernel_c
 
     //return file_size;
 
-    *kernel_code = new char[]
+    kernel_code = std::unique_ptr<char[]>(new char[]
         {
             "\
             __kernel void image_resample(__global unsigned char* dst_y, __global unsigned char* dst_u, __global unsigned char* dst_v, int dst_width, int dst_height, __global unsigned char* src_rgb, int src_width, int src_height)\
@@ -364,14 +364,14 @@ size_t HWAccelCL::_GetKernelCode(const char *file_name, SmtObj<char[]> *kernel_c
                 dst_v[(y * width / 2 + x) / 2] = ((112 * r + -94 * g + -18 * b) >> 8) + 128;\
             }\
             "
-        };
+        });
 
-    return strlen(*kernel_code) + 1;
+    return strlen(kernel_code.get()) + 1;
 }
 
-HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &dst_width, const int &dst_height, const int &src_width, const int &src_height)
-    : _src_width(src_width), _src_height(src_height), _dst_width(dst_width), _dst_height(dst_height),
-    _src_rgb_buffer_size(src_width * src_height * 4), _dst_y_buffer_size(dst_width * dst_height), _dst_uv_buffer_size(dst_width * dst_height / 4)
+HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const std::pair<int, int> &dst_size, const std::pair<int, int> &src_size)
+    : _src_size(src_size), _dst_size(dst_size),
+    _src_rgb_buffer_size(_src_size.first *_src_size.second * 4), _dst_y_buffer_size(_dst_size.first *_dst_size.second), _dst_uv_buffer_size(_dst_size.first *_dst_size.second / 4)
 {
     /* Get a default OpenCL platform */
     _result = clGetPlatformIDs(1, &_platform_id, nullptr);
@@ -402,7 +402,7 @@ HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &
     }
 
     /* Get kernel code */
-    size_t code_length = _GetKernelCode(file_name, &_kernel_code);
+    size_t code_length = _GetKernelCode(file_name, _kernel_code);
     if (!code_length)
     {
         throw std::string("Couldn't read the kernel code!");
@@ -425,7 +425,7 @@ HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &
     }
 
     /* Create the kernel */
-    _kernel = clCreateKernel(_program, (dst_width == src_width && dst_height == src_height ? std::string(kernel_name + std::string("_no_resize")).c_str() : kernel_name), &_result);
+    _kernel = clCreateKernel(_program, (dst_size.first == src_size.first && dst_size.second == src_size.second ? std::string(kernel_name + std::string("_no_resize")).c_str() : kernel_name), &_result);
     if (_result)
     {
         throw std::string("Couldn't create the kernel!");
@@ -469,12 +469,12 @@ HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &
     {
         throw std::string("Couldn't pass arg #2 to kernel!");
     }
-    _result = clSetKernelArg(_kernel, 3, sizeof(int), (void *)&_dst_width);
+    _result = clSetKernelArg(_kernel, 3, sizeof(int), (void *)&_dst_size.first);
     if (_result)
     {
         throw std::string("Couldn't pass arg #3 to kernel!");
     }
-    _result = clSetKernelArg(_kernel, 4, sizeof(int), (void *)&_dst_height);
+    _result = clSetKernelArg(_kernel, 4, sizeof(int), (void *)&_dst_size.second);
     if (_result)
     {
         throw std::string("Couldn't pass arg #4 to kernel!");
@@ -486,14 +486,14 @@ HWAccelCL::HWAccelCL(const char *file_name, const char *kernel_name, const int &
         throw std::string("Couldn't pass arg #5 to kernel!");
     }
 
-    if (dst_width != src_width || dst_height != src_height)
+    if (dst_size.first != src_size.first || dst_size.second != src_size.second)
     {
-        _result = clSetKernelArg(_kernel, 6, sizeof(int), (void *)&_src_width);
+        _result = clSetKernelArg(_kernel, 6, sizeof(int), (void *)&src_size.first);
         if (_result)
         {
             throw std::string("Couldn't pass arg #6 to kernel!");
         }
-        _result = clSetKernelArg(_kernel, 7, sizeof(int), (void *)&_src_height);
+        _result = clSetKernelArg(_kernel, 7, sizeof(int), (void *)&src_size.second);
         if (_result)
         {
             throw std::string("Couldn't pass arg #7 to kernel!");

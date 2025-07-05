@@ -96,10 +96,8 @@ AudioCapture::AudioCapture()
         throw std::string("Couldn't get audio capture client!");
     }
 
-    
-
     /* Create samples buffer */
-    _samples_sgl_buff = new SamplesBuff(_audio_capture_client, _wave_format);
+    _samples_sgl_buff = std::unique_ptr<SamplesBuff>(new SamplesBuff(_audio_capture_client, _wave_format));
 }
 
 AudioCapture::~AudioCapture()
@@ -176,7 +174,7 @@ void AudioCapture::StopPlayAndCaptureStreams()
     _play_audio_client->Stop();
 }
 
-SmtObj<SamplesBuff> &AudioCapture::GetSamplesSglBuff()
+std::unique_ptr<SamplesBuff> &AudioCapture::GetSamplesSglBuff()
 {
     return _samples_sgl_buff;
 }

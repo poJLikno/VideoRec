@@ -77,25 +77,25 @@ void VideoRecorder::StartRecording(const char *file_name, const int &fps)
     /* Init screen capture timer and cursor capture timer */
     if (_capture_cursor_flag && (_cursor_capture_loop == nullptr))
     {
-        _cursor_capture_loop = new LoopThread(_CursorCaptureLoop, this);
+        _cursor_capture_loop = std::unique_ptr<LoopThread>(new LoopThread(_CursorCaptureLoop, this));
         _cursor_capture_loop->Start();
     }
 
     if (_screen_capture_loop == nullptr)
     {
-        _screen_capture_loop = new LoopThread(_ScreenCaptureLoop, this);
+        _screen_capture_loop = std::unique_ptr<LoopThread>(new LoopThread(_ScreenCaptureLoop, this));
         _screen_capture_loop->Start();
     }
 
     /* Init audio capture */
-    _audio = new AudioCapture();
+    _audio = std::make_unique<AudioCapture>();
 
     /* Delay for first frame creation */
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
     /* Init a file and file writer */
-    _file = new FileMP4(file_name, fps, _screen->GetDstWidth(), _screen->GetDstHeight(), _audio->GetWaveFormat());
-    _file_writer = new LoopThread(_FileWriterLoop, this);
+    _file = std::unique_ptr<FileMP4>(new FileMP4(file_name, fps, _screen->GetDstSize(), _audio->GetWaveFormat()));
+    _file_writer = std::unique_ptr<LoopThread>(new LoopThread(_FileWriterLoop, this));
 
     /* Start video & audio file writer */
     _audio->StartPlayAndCaptureStreams();
@@ -130,7 +130,7 @@ void VideoRecorder::StopRecording()
     }
 }
 
-void VideoRecorder::SetNewSource(const char *wnd_name, const int &dst_width, const int &dst_height)
+void VideoRecorder::SetNewSource(const char *wnd_name, const std::pair<int, int> &dst_size)
 {
     /* Check requirements */
     if (_file)
@@ -140,7 +140,7 @@ void VideoRecorder::SetNewSource(const char *wnd_name, const int &dst_width, con
 
     /* Capture the screen or window */
     _screen.reset();/* Need for explicit nullptr in case "init failed" */
-    _screen = new ScreenCapture(wnd_name, _client_rect_only_flag, _optimization_flag, _capture_cursor_flag, dst_width, dst_height);
+    _screen = std::unique_ptr<ScreenCapture>(new ScreenCapture(wnd_name, _client_rect_only_flag, _optimization_flag, _capture_cursor_flag, dst_size));
 }
 
 void VideoRecorder::StartIdleMode()
@@ -157,11 +157,11 @@ void VideoRecorder::StartIdleMode()
     /* Init screen capture timer and cursor capture timer */
     if (_capture_cursor_flag)
     {
-        _cursor_capture_loop = new LoopThread(_CursorCaptureLoop, this);
+        _cursor_capture_loop = std::unique_ptr<LoopThread>(new LoopThread(_CursorCaptureLoop, this));
         _cursor_capture_loop->Start();
     }
 
-    _screen_capture_loop = new LoopThread(_ScreenCaptureLoop, this);
+    _screen_capture_loop = std::unique_ptr<LoopThread>(new LoopThread(_ScreenCaptureLoop, this));
     _screen_capture_loop->Start();
 }
 
@@ -182,31 +182,21 @@ void VideoRecorder::StopIdleMode()
     }
 }
 
-const int &VideoRecorder::GetSrcWidth()
+std::pair<int, int> VideoRecorder::GetSrcSize()
 {
     if (_screen)
     {
-        return (const int &)_screen->GetSrcWidth();
+        return _screen->GetSrcSize();
     }
 
-    throw std::string("Couldn't get src width!");
-}
-
-const int &VideoRecorder::GetSrcHeight()
-{
-    if (_screen)
-    {
-        return (const int &)_screen->GetSrcHeight();
-    }
-
-    throw std::string("Couldn't get src height!");
+    throw std::string("Couldn't get src size!");
 }
 
 BitmapsDblBuff *VideoRecorder::GetPreview()
 {
     if (_screen)
     {
-        return _screen->GetBitmapsDblBuff();
+        return _screen->GetBitmapsDblBuff().get();
     }
 
     return nullptr;

@@ -122,7 +122,7 @@ AVFrame *SamplesBuff::GetFrame()
     return _frame;
 }
 
-const bool &SamplesBuff::GetNoDataFlag()
+bool SamplesBuff::GetNoDataFlag()
 {
     return _no_data_flag;
 }

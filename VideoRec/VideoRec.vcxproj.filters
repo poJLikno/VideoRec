@@ -33,36 +33,6 @@
     <ClCompile Include="App\UI\UI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\Button.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\ComboBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\Edit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\Label.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\MenuBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\MenuPoint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\NormalFont.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\WndBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\WndProc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -73,12 +43,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="App\Model\FileNameGenerator\FileNameGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\CheckBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App\UI\WindowLib\RadioButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\DoubleBuffer.h">
@@ -105,6 +69,39 @@
     <ClCompile Include="App\Model\VideoRecorder\LoopThread\LoopThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\CheckBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\ComboBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\Edit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\Label.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\MenuBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\MenuPoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\NormalFont.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\RadioButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\WndBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\Model\VideoRecorder\FileMP4\FileMP4.h">
@@ -125,10 +122,46 @@
     <ClInclude Include="App\UI\UI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="App\App.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\PreviewWindow\PreviewWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\FileNameGenerator\FileNameGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\FramesDblBuff\FramesDblBuff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\CursorsDblBuff\CursorsDblBuff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\BitmapsDblBuff\BitmapsDblBuff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\VideoRecorder\AudioCapture\AudioCapture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\VideoRecorder\AudioCapture\SamplesBuff\SamplesBuff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Model\VideoRecorder\LoopThread\LoopThread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="App\UI\WindowLib\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\UI\WindowLib\CallbackManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\CheckBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\UI\WindowLib\ComboBox.h">
@@ -152,6 +185,12 @@
     <ClInclude Include="App\UI\WindowLib\NormalFont.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\RadioButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\WindowLib\TextUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="App\UI\WindowLib\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -159,45 +198,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\UI\WindowLib\WndList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\App.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Model\Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\UI\PreviewWindow\PreviewWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Model\FileNameGenerator\FileNameGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\UI\WindowLib\CheckBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\UI\WindowLib\RadioButton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\FramesDblBuff\FramesDblBuff.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\CursorsDblBuff\CursorsDblBuff.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\BitmapsDblBuff\BitmapsDblBuff.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Model\VideoRecorder\AudioCapture\AudioCapture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Model\VideoRecorder\AudioCapture\SamplesBuff\SamplesBuff.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="App\Model\VideoRecorder\LoopThread\LoopThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,7 @@
 #ifndef HW_ACCCEL_CL_H_
 #define HW_ACCCEL_CL_H_
 
+#include <memory>
 #include <stdint.h>
 
 #define CL_TARGET_OPENCL_VERSION 300
@@ -9,8 +10,6 @@ extern "C"
 {
 #include <CL/opencl.h>
 }
-
-#include "../../../../../../SmtObj.h"
 
 /* #pragma comment(lib, "OpenCL.lib") */
 
@@ -25,14 +24,12 @@ private:
     cl_context _context = nullptr;
     cl_command_queue _command_queue = nullptr;
 
-    SmtObj<char[]> _kernel_code;
+    std::unique_ptr<char[]> _kernel_code;
     cl_program _program = nullptr;
     cl_kernel _kernel = nullptr;
 
-    int _src_width = 0;
-    int _src_height = 0;
-    int _dst_width = 0;
-    int _dst_height = 0;
+    const std::pair<int, int> _src_size;
+    const std::pair<int, int> _dst_size;
 
     size_t _src_rgb_buffer_size = 0ull;
     size_t _dst_y_buffer_size = 0ull;
@@ -43,10 +40,10 @@ private:
     cl_mem _cl_dst_u = nullptr;
     cl_mem _cl_dst_v = nullptr;
 
-    size_t _GetKernelCode(const char *file_name, SmtObj<char[]> *kernel_code);
+    size_t _GetKernelCode(const char *file_name, std::unique_ptr<char[]> &kernel_code);
 
 public:
-    HWAccelCL(const char *file_name, const char *kernel_name, const int &dst_width, const int &dst_height, const int &src_width, const int &src_height);
+    HWAccelCL(const char *file_name, const char *kernel_name, const std::pair<int, int> &dst_size, const std::pair<int, int> &src_size);
     HWAccelCL(const HWAccelCL &) = delete;
 
     ~HWAccelCL();

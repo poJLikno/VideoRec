@@ -1,8 +1,6 @@
 #ifndef VIDEO_RECORDER_H_
 #define VIDEO_RECORDER_H_
 
-#include "../../SmtObj.h"
-
 #include "ScreenCapture/ScreenCapture.h"
 #include "AudioCapture/AudioCapture.h"
 #include "FileMP4/FileMP4.h"
@@ -11,13 +9,13 @@
 class VideoRecorder
 {
 private:
-    SmtObj<ScreenCapture> _screen;
-    SmtObj<AudioCapture> _audio;
-    SmtObj<FileMP4> _file;
+    std::unique_ptr<ScreenCapture> _screen;
+    std::unique_ptr<AudioCapture> _audio;
+    std::unique_ptr<FileMP4> _file;
 
-    SmtObj<LoopThread> _screen_capture_loop;
-    SmtObj<LoopThread> _cursor_capture_loop;
-    SmtObj<LoopThread> _file_writer;
+    std::unique_ptr<LoopThread> _screen_capture_loop;
+    std::unique_ptr<LoopThread> _cursor_capture_loop;
+    std::unique_ptr<LoopThread> _file_writer;
 
     const bool &_staged_client_rect_only_flag;
     const bool &_staged_optimization_flag;
@@ -42,13 +40,12 @@ public:
     void StartRecording(const char *file_name, const int &fps);
     void StopRecording();
 
-    void SetNewSource(const char *wnd_name, const int &dst_width = -1, const int &dst_height = -1);
+    void SetNewSource(const char *wnd_name, const std::pair<int, int> &dst_size = { -1, -1 });
 
     void StartIdleMode();
     void StopIdleMode();
 
-    const int &GetSrcWidth();
-    const int &GetSrcHeight();
+    std::pair<int, int> GetSrcSize();
 
     BitmapsDblBuff *GetPreview();
 };

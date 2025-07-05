@@ -20,7 +20,7 @@ class CursorsDblBuff : public DoubleBuffer
 protected:
     Cursor _cursors_buffers[2] = { 0 };
 
-    HWND _hwnd = nullptr;
+    HWND _hwnd;
     const bool _is_window_flag;
     const bool _client_rect_only_flag;
     const int _dpi;
@@ -32,6 +32,7 @@ public:
     CursorsDblBuff(const CursorsDblBuff &) = delete;
     virtual ~CursorsDblBuff() override = default;
 
+    /* Need lock */
     virtual Cursor *GetCursor() final;
 };
 

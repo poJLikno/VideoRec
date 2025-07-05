@@ -1,17 +1,21 @@
-#ifndef WINDOWLIB_MENU_POINT_H
-#define WINDOWLIB_MENU_POINT_H
+#ifndef WINDOWLIB_MENU_POINT_H_
+#define WINDOWLIB_MENU_POINT_H_
 
+#include <stdint.h>
 #include <windows.h>
+#include "TextUtils.h"
 #include "CallbackManager.h"
 
-enum MenuPointType {
+enum MenuPointType
+{
     Enabled = MF_ENABLED,
     Checked = MF_CHECKED
 };
 
-class MenuPoint : public CallbackManager {
+class MenuPoint : public CallbackManager
+{
 private:
-    static unsigned __int32 ID_COUNTER;
+    static uint32_t ID_COUNTER;
 
     HMENU _parent_hmenu = { 0 };
 
@@ -23,11 +27,11 @@ private:
 public:
     MenuPoint(const char *text, const MenuPointType &menu_point_type = MenuPointType::Enabled);
 
-    void SetMenuParent(const HMENU &hmenu);
+    void SetMenuParent(HMENU hmenu);
 
     unsigned int GetId() const;
     bool GetState() const;
-    void SetState(bool flag);
+    void SetState(const bool &flag);
 };
 
-#endif
+#endif /* WINDOWLIB_MENU_POINT_H_ */
