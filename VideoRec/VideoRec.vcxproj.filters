@@ -102,6 +102,12 @@
     <ClCompile Include="App\UI\WindowLib\WndBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="App\UI\MainWindow\MainWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App\UI\WindowLib\DefWndProc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\Model\VideoRecorder\FileMP4\FileMP4.h">
@@ -111,9 +117,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\Model\VideoRecorder\VideoRecorder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SmtObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\Model\VideoRecorder\ScreenCapture\DoubleBuffers\FramesDblBuff\HWAccelCL.h">
@@ -198,6 +201,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="App\UI\WindowLib\WndList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\UI\MainWindow\MainWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
